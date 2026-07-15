@@ -29,7 +29,7 @@ let currentUser = null, currentProfile = null, currentAddType = "memory";
 
 const $ = id => document.getElementById(id);
 const views = ["authView","pendingView","appView"];
-const pages = ["home","memories","trips","celebrations","study","admin"];
+const pages = ["home","memories","trips","celebrations","study","search","profile","admin"];
 const tableMap = {memory:"memories",trip:"trips",celebration:"celebrations",study:"study_materials"};
 
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
@@ -126,15 +126,16 @@ function navigate(page){
   pages.forEach(p=>$(p+"Page").classList.toggle("hidden",p!==page));
   document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   document.querySelectorAll(".mobile-nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebration",study:"Study Hub",admin:"Family Admin"})[page];
+  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
   if(page==="admin") loadMembers();
   if(page==="home") loadHomeExperience();
+  if(page==="profile") loadProfilePage();
 }
 document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>navigate(b.dataset.page));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>navigate(b.dataset.go));
-$("mobileMenu").onclick=()=>document.querySelector(".sidebar").classList.toggle("open");
+if($("mobileMenu")) $("mobileMenu").onclick=()=>document.querySelector(".sidebar")?.classList.toggle("open");
 
 document.querySelectorAll(".open-folder").forEach(b=>b.onclick=()=>{
   currentFolderSection=b.dataset.section;
@@ -407,7 +408,7 @@ async function loadFamilyCover(){
   const cover=$("coverImage");
   if(!cover) return;
   const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(coverStoragePath(),3600);
-  cover.style.backgroundImage=`linear-gradient(120deg,rgba(75,52,43,.12),rgba(75,52,43,.02)), url("${data?.signedUrl||DEFAULT_FAMILY_COVER}")`;
+  cover.style.backgroundImage=`url("${data?.signedUrl||DEFAULT_FAMILY_COVER}")`;
 }
 
 if($("changeCoverBtn")) $("changeCoverBtn").onclick=()=>$("coverFileInput").click();
@@ -496,4 +497,48 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   setTimeout(syncTopProfile, 500);
   setTimeout(syncTopProfile, 1500);
+});
+
+
+// Approved 2026 mobile navigation and utility pages
+let activePage = "home";
+const originalNavigate = navigate;
+navigate = function(page){
+  activePage = page;
+  originalNavigate(page);
+};
+
+function loadProfilePage(){
+  if(!currentProfile || !currentUser) return;
+  $("profileDisplayName").textContent=currentProfile.name||"Family Member";
+  $("profileDisplayEmail").textContent=currentProfile.email||currentUser.email||"";
+  $("profileLargeFallback").textContent=initials(currentProfile.name||currentUser.email);
+  $("familyAdminShortcut").classList.toggle("hidden",currentProfile.role!=="admin");
+}
+
+if($("quickAddBtn")) $("quickAddBtn").onclick=()=>$("quickAddDialog").showModal();
+if($("closeQuickAdd")) $("closeQuickAdd").onclick=()=>$("quickAddDialog").close();
+document.querySelectorAll("[data-quick-page]").forEach(btn=>btn.onclick=()=>{
+  const page=btn.dataset.quickPage;
+  $("quickAddDialog").close();
+  navigate(page);
+  setTimeout(()=>document.querySelector(`.open-folder[data-section="${page}"]`)?.click(),100);
+});
+if($("profileEditPhoto")) $("profileEditPhoto").onclick=()=>$("profilePhotoInput").click();
+if($("profileSignOut")) $("profileSignOut").onclick=signOut;
+if($("familyAdminShortcut")) $("familyAdminShortcut").onclick=()=>navigate("admin");
+if($("changePasswordShortcut")) $("changePasswordShortcut").onclick=()=>{showView("authView");showAuthForm("forgot");};
+if($("settingsShortcut")) $("settingsShortcut").onclick=()=>toast("Settings will be added here next.");
+if($("notificationBtn")) $("notificationBtn").onclick=()=>toast("Activity notifications will appear here.");
+
+if($("globalSearch")) $("globalSearch").addEventListener("input",async e=>{
+  const q=e.target.value.trim();
+  const out=$("searchResults");
+  if(q.length<2){out.innerHTML='<div class="empty">Type at least 2 characters.</div>';return;}
+  out.innerHTML='<div class="empty">Searching…</div>';
+  const {data,error}=await client.from("folders").select("*").ilike("name",`%${q}%`).order("created_at",{ascending:false});
+  if(error){out.innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return;}
+  if(!data?.length){out.innerHTML='<div class="empty">No matching folders found.</div>';return;}
+  out.innerHTML=data.map(f=>`<article class="folder-card search-hit" data-search-section="${f.section}" data-search-id="${f.id}"><div class="folder-icon">📁</div><div class="folder-info"><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.section)} · ${escapeHtml(f.description||"")}</p></div></article>`).join("");
+  out.querySelectorAll(".search-hit").forEach(card=>card.onclick=()=>navigate(card.dataset.searchSection));
 });
