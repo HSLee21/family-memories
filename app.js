@@ -1,4 +1,8 @@
 const cfg = window.APP_CONFIG;
+
+// Keep the Supabase session only for the current browser tab/session.
+// Refreshing the page keeps the login, but opening the app again after the
+// tab/browser session has ended requires a new sign-in.
 const client = window.supabase.createClient(
   cfg.SUPABASE_URL,
   cfg.SUPABASE_PUBLISHABLE_KEY,
@@ -11,6 +15,16 @@ const client = window.supabase.createClient(
     }
   }
 );
+
+// One-time cleanup of any old persistent Supabase login left in localStorage
+// by earlier versions of this app.
+const sessionMigrationKey = "family-memories-session-storage-v1";
+if (!sessionStorage.getItem(sessionMigrationKey)) {
+  Object.keys(localStorage)
+    .filter(key => key.startsWith("sb-") && key.endsWith("-auth-token"))
+    .forEach(key => localStorage.removeItem(key));
+  sessionStorage.setItem(sessionMigrationKey, "done");
+}
 let currentUser = null, currentProfile = null, currentAddType = "memory";
 
 const $ = id => document.getElementById(id);
