@@ -1,0 +1,6 @@
+V3 changes:
+- Left navigation panel hidden; bottom navigation is now primary.
+- Bottom navigation fixed at the bottom on desktop and phone.
+- Cover image remains bright with only a localized gradient behind text.
+- Four family sections changed to vertical colourful cards.
+- Existing V2 Supabase/auth/upload/navigation logic retained.
