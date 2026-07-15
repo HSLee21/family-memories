@@ -195,28 +195,87 @@ function openAddForFolder(type){
 }
 $("closeDialog").onclick=$("cancelDialog").onclick=()=>$("addDialog").close();
 
-$("addForm").onsubmit=async e=>{
+$("addForm").onsubmit = async e => {
   e.preventDefault();
-  if(!currentFolder) return toast("Open a folder first.");
-  const table=tableMap[currentAddType], files=[...$("itemFile").files];
-  try{
-    let file_path=null;
-    if(files[0]){
-      const safe=files[0].name.replace(/[^a-zA-Z0-9._-]/g,"_");
-      file_path=`${currentUser.id}/${currentFolder.id}/${Date.now()}-${safe}`;
-      const up=await client.storage.from(cfg.STORAGE_BUCKET).upload(file_path,files[0]);
-      if(up.error) throw up.error;
-    }
-    const payload={title:$("itemTitle").value,description:$("itemDescription").value||null,user_id:currentUser.id,folder_id:currentFolder.id};
-    if($("itemDate").value) payload.event_date=$("itemDate").value;
-    if(file_path) payload.file_path=file_path;
-    const {error}=await client.from(table).insert(payload);
-    if(error) throw error;
-    $("addDialog").close(); toast("Saved successfully.");
-    openFolder(currentFolderSection,currentFolder);
-  }catch(err){console.error(err);toast(err.message||"Could not save item.")}
-};
 
+  if (!currentFolder) {
+    return toast("Open a folder first.");
+  }
+
+  const table = tableMap[currentAddType];
+  const files = [...$("itemFile").files];
+
+  // Everything is optional, but at least one file or some text must be provided
+  const title = $("itemTitle").value.trim();
+  const description = $("itemDescription").value.trim();
+  const eventDate = $("itemDate").value;
+
+  if (!files.length && !title && !description && !eventDate) {
+    return toast("Please add a file, photo, or some information.");
+  }
+
+  try {
+    let file_path = null;
+
+    // Upload file/photo if selected
+    if (files[0]) {
+      const safe = files[0].name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${safe}`;
+
+      const { error: uploadError } = await client.storage
+        .from(cfg.STORAGE_BUCKET)
+        .upload(file_path, files[0]);
+
+      if (uploadError) throw uploadError;
+    }
+
+    // Use file name as title automatically if title is empty
+    const autoTitle = files[0]
+      ? files[0].name.replace(/\.[^/.]+$/, "")
+      : "Untitled";
+
+    const payload = {
+      title: title || autoTitle,
+      description: description || null,
+      user_id: currentUser.id,
+      folder_id: currentFolder.id
+    };
+
+    // Add date only if user entered one
+    if (eventDate) {
+      payload.event_date = eventDate;
+    }
+
+    // Add file path only if a file was uploaded
+    if (file_path) {
+      payload.file_path = file_path;
+    }
+
+    // Compatibility with your existing trips table
+    if (currentAddType === "trip") {
+      payload.trip_name = title || autoTitle;
+      payload.created_by = currentUser.id;
+    }
+
+    const { error } = await client
+      .from(table)
+      .insert(payload);
+
+    if (error) throw error;
+
+    $("addDialog").close();
+    $("addForm").reset();
+
+    toast("Saved successfully!");
+
+    // Refresh folder immediately
+    openFolder(currentFolderSection, currentFolder);
+
+  } catch (err) {
+    console.error(err);
+    toast(err.message || "Could not save item.");
+  }
+};
 async function loadFolderItems(type,folderId,target){
   $(target).innerHTML='<div class="empty">Loading…</div>';
   const table=tableMap[type];
