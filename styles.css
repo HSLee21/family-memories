@@ -10,3 +10,89 @@
 .text-link{border:0;background:transparent;color:var(--accent);padding:2px 0 4px;cursor:pointer;font-weight:700;text-align:right}
 .text-link:hover{text-decoration:underline}
 .auth-card h3{margin:4px 0 0}
+
+
+/* =========================================================
+   FAMILY MEMORIES — WARM PHOTO-APP REDESIGN
+   ========================================================= */
+:root{
+  --family-ink:#342a27;
+  --family-muted:#7d6e68;
+  --family-cream:#fbf7f2;
+  --family-paper:#fffdf9;
+  --family-rose:#b98278;
+  --family-sage:#81927b;
+  --family-gold:#c59a61;
+  --family-lilac:#93879d;
+  --family-shadow:0 18px 50px rgba(73,52,44,.10);
+}
+body{background:var(--family-cream);color:var(--family-ink)}
+.main{background:linear-gradient(180deg,#fffdf9 0%,#fbf7f2 100%)}
+header{background:rgba(255,253,249,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.family-cover{
+  position:relative;min-height:430px;border-radius:30px;overflow:hidden;
+  box-shadow:var(--family-shadow);margin-bottom:36px;background:#8d776c;
+}
+.cover-image{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(120deg,rgba(75,52,43,.12),rgba(75,52,43,.02)),
+    url("https://images.unsplash.com/photo-1504151932400-72d4384f04b3?auto=format&fit=crop&w=1800&q=85")
+    center 42%/cover no-repeat;
+  transform:scale(1.01);
+}
+.cover-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(38,28,25,.72) 0%,rgba(38,28,25,.35) 52%,rgba(38,28,25,.08) 100%)}
+.cover-content{position:relative;z-index:2;max-width:620px;padding:70px 64px;color:white}
+.cover-content h1{font-size:clamp(2.7rem,6vw,5.4rem);line-height:.98;margin:12px 0 18px;letter-spacing:-.045em}
+.cover-content p{font-size:1.08rem;line-height:1.7;max-width:540px;color:rgba(255,255,255,.9)}
+.cover-change{margin-top:18px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.14);color:white;padding:11px 16px;border-radius:999px;backdrop-filter:blur(10px);cursor:pointer}
+.home-section-head{display:flex;justify-content:space-between;align-items:end;margin:12px 0 18px}
+.home-section-head h2{margin:4px 0 0;font-size:1.65rem}
+.eyebrow.warm{color:#a56f63}
+.family-space-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.family-space-card{
+  border:0;text-align:left;border-radius:24px;padding:24px;min-height:170px;
+  display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;
+  cursor:pointer;color:var(--family-ink);box-shadow:0 12px 34px rgba(73,52,44,.07);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.family-space-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(73,52,44,.12)}
+.memories-card{background:linear-gradient(135deg,#f6e6e2,#fff9f7)}
+.trips-card{background:linear-gradient(135deg,#e6eee4,#f9fcf8)}
+.celebrations-card{background:linear-gradient(135deg,#f6ead5,#fffaf1)}
+.study-card{background:linear-gradient(135deg,#ebe6ef,#faf8fc)}
+.space-icon{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.7);font-size:1.6rem}
+.family-space-card h3{font-size:1.25rem;margin:0 0 8px}
+.family-space-card p{margin:0;color:var(--family-muted);line-height:1.5}
+.space-arrow{font-size:1.5rem;opacity:.55}
+.recent-home{margin-top:42px}
+.recent-memory-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.recent-photo-card{position:relative;aspect-ratio:1/1.08;border-radius:20px;overflow:hidden;background:#eee5de;box-shadow:0 10px 28px rgba(73,52,44,.08);cursor:pointer}
+.recent-photo-card img{width:100%;height:100%;object-fit:cover;display:block}
+.recent-photo-card .recent-caption{position:absolute;left:0;right:0;bottom:0;padding:34px 14px 14px;color:white;background:linear-gradient(transparent,rgba(25,18,16,.72));font-weight:700}
+.content-card{overflow:hidden}
+.content-card img.content-preview{width:100%;height:260px;object-fit:cover;border-radius:16px;margin-bottom:14px;cursor:pointer}
+.mobile-bottom-nav{display:none}
+
+@media(max-width:760px){
+  .main{padding-bottom:92px}
+  .sidebar{display:none}
+  #mobileMenu{display:none}
+  header{padding-left:18px;padding-right:18px}
+  .family-cover{min-height:390px;border-radius:0;margin-left:-18px;margin-right:-18px;margin-top:-18px}
+  .cover-content{padding:92px 24px 42px}
+  .cover-content h1{font-size:3.25rem}
+  .family-space-grid{grid-template-columns:1fr;gap:12px}
+  .family-space-card{min-height:126px;padding:18px;border-radius:20px}
+  .recent-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mobile-bottom-nav{
+    display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:50;
+    left:0;right:0;bottom:0;background:rgba(255,253,249,.96);
+    border-top:1px solid rgba(90,70,62,.10);padding:8px 6px max(8px,env(safe-area-inset-bottom));
+    box-shadow:0 -8px 30px rgba(73,52,44,.08);backdrop-filter:blur(18px);
+  }
+  .mobile-nav-item{border:0;background:transparent;color:#8b7b75;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 2px;cursor:pointer}
+  .mobile-nav-item span{font-size:1.25rem}
+  .mobile-nav-item small{font-size:.68rem}
+  .mobile-nav-item.active{color:#8f5f56;font-weight:700}
+}

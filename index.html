@@ -91,20 +91,59 @@
       </header>
 
       <section id="homePage" class="page">
-        <div class="hero">
-          <div>
-            <span class="eyebrow">OUR FAMILY SPACE</span>
-            <h1>Keep the moments that matter.</h1>
-            <p>Save memories, organise family trips and celebrations, and share useful study materials in one private place.</p>
+        <div class="family-cover" id="familyCover">
+          <div class="cover-image" id="coverImage"></div>
+          <div class="cover-shade"></div>
+          <div class="cover-content">
+            <span class="eyebrow">OUR PRIVATE FAMILY SPACE</span>
+            <h1>Our Family Story</h1>
+            <p>One place for the moments, journeys and milestones we want to keep close.</p>
+            <button id="changeCoverBtn" class="cover-change hidden" type="button">📷 Change cover</button>
+            <input id="coverFileInput" type="file" accept="image/*" hidden />
           </div>
-          <div class="hero-symbol">♡</div>
         </div>
-        <div class="card-grid">
-          <button class="feature-card" data-go="memories"><span>▣</span><h3>Our Memories</h3><p>Photos, videos and family stories.</p></button>
-          <button class="feature-card" data-go="trips"><span>✈</span><h3>Family Trips</h3><p>Keep travel moments and plans together.</p></button>
-          <button class="feature-card" data-go="celebrations"><span>★</span><h3>Celebration</h3><p>Birthdays, anniversaries and milestones.</p></button>
-          <button class="feature-card" data-go="study"><span>▤</span><h3>Study Hub</h3><p>Materials, calculator and conversion tools.</p></button>
+
+        <div class="home-section-head">
+          <div>
+            <span class="eyebrow warm">EXPLORE TOGETHER</span>
+            <h2>Our family spaces</h2>
+          </div>
         </div>
+
+        <div class="family-space-grid">
+          <button class="family-space-card memories-card" data-go="memories">
+            <span class="space-icon">♡</span>
+            <div><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
+            <span class="space-arrow">→</span>
+          </button>
+          <button class="family-space-card trips-card" data-go="trips">
+            <span class="space-icon">✈</span>
+            <div><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
+            <span class="space-arrow">→</span>
+          </button>
+          <button class="family-space-card celebrations-card" data-go="celebrations">
+            <span class="space-icon">✦</span>
+            <div><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
+            <span class="space-arrow">→</span>
+          </button>
+          <button class="family-space-card study-card" data-go="study">
+            <span class="space-icon">⌁</span>
+            <div><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
+            <span class="space-arrow">→</span>
+          </button>
+        </div>
+
+        <section class="recent-home">
+          <div class="home-section-head">
+            <div>
+              <span class="eyebrow warm">RECENTLY ADDED</span>
+              <h2>Latest family moments</h2>
+            </div>
+          </div>
+          <div id="recentMemories" class="recent-memory-grid">
+            <div class="empty">Your latest photos and memories will appear here.</div>
+          </div>
+        </section>
       </section>
 
       <section id="memoriesPage" class="page hidden">
@@ -178,6 +217,14 @@
         <div id="membersList" class="member-list"></div>
       </section>
     </main>
+
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <button class="mobile-nav-item active" data-page="home"><span>⌂</span><small>Home</small></button>
+      <button class="mobile-nav-item" data-page="memories"><span>♡</span><small>Memories</small></button>
+      <button class="mobile-nav-item" data-page="trips"><span>✈</span><small>Trips</small></button>
+      <button class="mobile-nav-item" data-page="celebrations"><span>✦</span><small>Celebrate</small></button>
+      <button class="mobile-nav-item" data-page="study"><span>⌁</span><small>Study</small></button>
+    </nav>
   </div>
 
 

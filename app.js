@@ -125,10 +125,12 @@ let currentFolder = null;
 function navigate(page){
   pages.forEach(p=>$(p+"Page").classList.toggle("hidden",p!==page));
   document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  document.querySelectorAll(".mobile-nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebration",study:"Study Hub",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
   if(page==="admin") loadMembers();
+  if(page==="home") loadHomeExperience();
 }
 document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>navigate(b.dataset.page));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>navigate(b.dataset.go));
@@ -307,13 +309,32 @@ async function loadFolderItems(type,folderId,target){
   const {data,error}=await client.from(table).select("*").eq("folder_id",folderId).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
   if(!data?.length){$(target).innerHTML='<div class="empty">This folder is empty. Add the first item or file.</div>';return}
-  $(target).innerHTML=data.map(item=>`<article class="content-card">
-    <div class="meta">${item.event_date||new Date(item.created_at).toLocaleDateString()}</div>
-    <h3>${escapeHtml(item.title||"Untitled")}</h3>
-    <p>${escapeHtml(item.description||"")}</p>
-    ${item.file_path?`<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`:""}
-  </article>`).join("");
-  document.querySelectorAll(`#${target} [data-file]`).forEach(btn=>btn.onclick=()=>openPrivateFile(decodeURIComponent(btn.dataset.file)));
+
+  const items=await Promise.all(data.map(async item=>{
+    let signedUrl=null;
+    if(item.file_path){
+      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
+      signedUrl=signed?.signedUrl||null;
+    }
+    return {...item,signedUrl};
+  }));
+
+  $(target).innerHTML=items.map(item=>{
+    const ext=(item.file_path||"").split(".").pop().toLowerCase();
+    const isImage=["jpg","jpeg","png","gif","webp","bmp","svg","avif"].includes(ext);
+    const media=item.file_path&&item.signedUrl
+      ? isImage
+        ? `<img class="content-preview" src="${item.signedUrl}" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
+        : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
+      : "";
+    return `<article class="content-card">
+      ${media}
+      <div class="meta">${item.event_date||new Date(item.created_at).toLocaleDateString()}</div>
+      <h3>${escapeHtml(item.title||"Untitled")}</h3>
+      ${item.description?`<p>${escapeHtml(item.description)}</p>`:""}
+    </article>`;
+  }).join("");
+  document.querySelectorAll(`#${target} [data-file]`).forEach(el=>el.onclick=()=>openPrivateFile(decodeURIComponent(el.dataset.file)));
 }
 async function openPrivateFile(path){
   const {data,error}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(path,60);
@@ -336,6 +357,56 @@ async function loadMembers(){
 async function approveMember(id){
   const {error}=await client.from("profiles").update({status:"approved"}).eq("id",id);
   if(error) toast(error.message); else {toast("Member approved.");loadMembers()}
+}
+
+
+// Warm family home experience
+const DEFAULT_FAMILY_COVER = "https://images.unsplash.com/photo-1504151932400-72d4384f04b3?auto=format&fit=crop&w=1800&q=85";
+const COVER_STORAGE_PATH = "app-settings/family-cover";
+
+async function loadHomeExperience(){
+  const changeBtn=$("changeCoverBtn");
+  if(changeBtn) changeBtn.classList.toggle("hidden",currentProfile?.role!=="admin");
+  await loadFamilyCover();
+  await loadRecentMemories();
+}
+
+async function loadFamilyCover(){
+  const cover=$("coverImage");
+  if(!cover) return;
+  const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(COVER_STORAGE_PATH,3600);
+  cover.style.backgroundImage=`linear-gradient(120deg,rgba(75,52,43,.12),rgba(75,52,43,.02)), url("${data?.signedUrl||DEFAULT_FAMILY_COVER}")`;
+}
+
+if($("changeCoverBtn")) $("changeCoverBtn").onclick=()=>$("coverFileInput").click();
+if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
+  const file=e.target.files?.[0];
+  if(!file) return;
+  if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
+  const {error}=await client.storage.from(cfg.STORAGE_BUCKET).upload(COVER_STORAGE_PATH,file,{upsert:true,contentType:file.type});
+  if(error) return toast(error.message);
+  toast("Family cover updated.");
+  await loadFamilyCover();
+  e.target.value="";
+};
+
+async function loadRecentMemories(){
+  const target=$("recentMemories");
+  if(!target) return;
+  const {data,error}=await client.from("memories").select("*").not("file_path","is",null).order("created_at",{ascending:false}).limit(8);
+  if(error || !data?.length){
+    target.innerHTML='<div class="empty">Your latest photos and memories will appear here.</div>';
+    return;
+  }
+  const cards=[];
+  for(const item of data){
+    const ext=(item.file_path||"").split(".").pop().toLowerCase();
+    if(!["jpg","jpeg","png","gif","webp","avif"].includes(ext)) continue;
+    const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
+    if(signed?.signedUrl) cards.push(`<article class="recent-photo-card" data-file="${encodeURIComponent(item.file_path)}"><img src="${signed.signedUrl}" alt="${escapeHtml(item.title||"Family memory")}"><div class="recent-caption">${escapeHtml(item.title||"Family memory")}</div></article>`);
+  }
+  target.innerHTML=cards.length?cards.join(""):'<div class="empty">Upload a photo to Our Memories and it will appear here.</div>';
+  target.querySelectorAll("[data-file]").forEach(card=>card.onclick=()=>openPrivateFile(decodeURIComponent(card.dataset.file)));
 }
 
 // Scientific calculator
