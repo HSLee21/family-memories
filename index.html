@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#8f6f61" />
+  <title>Family Memories</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast"></div>
+
+  <section id="authView" class="auth-shell">
+    <div class="auth-card">
+      <div class="brand-mark">FM</div>
+      <h1>Family Memories</h1>
+      <p class="muted">A private place for memories, family moments and learning.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-auth-tab="signin">Sign in</button>
+        <button class="tab" data-auth-tab="signup">Create account</button>
+      </div>
+
+      <form id="signInForm" class="stack">
+        <input id="signInEmail" type="email" placeholder="Email address" required />
+        <input id="signInPassword" type="password" placeholder="Password" minlength="6" required />
+        <button class="primary" type="submit">Sign in</button>
+      </form>
+
+      <form id="signUpForm" class="stack hidden">
+        <input id="signUpName" type="text" placeholder="Your name" required />
+        <input id="signUpEmail" type="email" placeholder="Email address" required />
+        <input id="signUpPassword" type="password" placeholder="Password (minimum 6 characters)" minlength="6" required />
+        <button class="primary" type="submit">Create account</button>
+        <p class="small muted">After email verification, a family admin may need to approve your account.</p>
+      </form>
+    </div>
+  </section>
+
+  <section id="pendingView" class="center-screen hidden">
+    <div class="message-card">
+      <div class="big-icon">⏳</div>
+      <h2>Approval pending</h2>
+      <p>Your email is verified. A family administrator needs to approve your account before you can enter.</p>
+      <button id="pendingSignOut" class="secondary">Sign out</button>
+    </div>
+  </section>
+
+  <div id="appView" class="app hidden">
+    <aside class="sidebar">
+      <div class="logo-row">
+        <div class="brand-mark small-logo">FM</div>
+        <div><strong>Family Memories</strong><span>Our private space</span></div>
+      </div>
+      <nav id="nav">
+        <button class="nav-item active" data-page="home">⌂ <span>Home</span></button>
+        <button class="nav-item" data-page="memories">▣ <span>Our Memories</span></button>
+        <button class="nav-item" data-page="trips">✈ <span>Family Trips</span></button>
+        <button class="nav-item" data-page="celebrations">★ <span>Celebration</span></button>
+        <button class="nav-item" data-page="study">▤ <span>Study Hub</span></button>
+        <button id="adminNav" class="nav-item hidden" data-page="admin">⚙ <span>Family Admin</span></button>
+      </nav>
+      <button id="signOutBtn" class="nav-item signout">↪ <span>Sign out</span></button>
+    </aside>
+
+    <main class="main">
+      <header>
+        <button id="mobileMenu" class="icon-btn">☰</button>
+        <div>
+          <h2 id="pageTitle">Home</h2>
+          <p id="welcomeText" class="muted"></p>
+        </div>
+        <div id="userBadge" class="user-badge"></div>
+      </header>
+
+      <section id="homePage" class="page">
+        <div class="hero">
+          <div>
+            <span class="eyebrow">OUR FAMILY SPACE</span>
+            <h1>Keep the moments that matter.</h1>
+            <p>Save memories, organise family trips and celebrations, and share useful study materials in one private place.</p>
+          </div>
+          <div class="hero-symbol">♡</div>
+        </div>
+        <div class="card-grid">
+          <button class="feature-card" data-go="memories"><span>▣</span><h3>Our Memories</h3><p>Photos, videos and family stories.</p></button>
+          <button class="feature-card" data-go="trips"><span>✈</span><h3>Family Trips</h3><p>Keep travel moments and plans together.</p></button>
+          <button class="feature-card" data-go="celebrations"><span>★</span><h3>Celebration</h3><p>Birthdays, anniversaries and milestones.</p></button>
+          <button class="feature-card" data-go="study"><span>▤</span><h3>Study Hub</h3><p>Materials, calculator and conversion tools.</p></button>
+        </div>
+      </section>
+
+      <section id="memoriesPage" class="page hidden">
+        <div class="section-head"><div><h2>Our Memories</h2><p class="muted">Create your own folders and keep family moments organised.</p></div><button class="primary open-folder" data-section="memories">+ New Folder</button></div>
+        <div id="memoriesFolders" class="folder-grid"></div>
+        <div id="memoriesBrowser" class="folder-browser hidden"></div>
+      </section>
+
+      <section id="tripsPage" class="page hidden">
+        <div class="section-head"><div><h2>Family Trips</h2><p class="muted">Create folders for each family adventure.</p></div><button class="primary open-folder" data-section="trips">+ New Folder</button></div>
+        <div id="tripsFolders" class="folder-grid"></div>
+        <div id="tripsBrowser" class="folder-browser hidden"></div>
+      </section>
+
+      <section id="celebrationsPage" class="page hidden">
+        <div class="section-head"><div><h2>Celebration</h2><p class="muted">Create folders for birthdays, milestones and special occasions.</p></div><button class="primary open-folder" data-section="celebrations">+ New Folder</button></div>
+        <div id="celebrationsFolders" class="folder-grid"></div>
+        <div id="celebrationsBrowser" class="folder-browser hidden"></div>
+      </section>
+
+      <section id="studyPage" class="page hidden">
+        <div class="section-head"><div><h2>Study Hub</h2><p class="muted">Create your own study folders and use practical learning tools.</p></div><button class="primary open-folder" data-section="study">+ New Folder</button></div>
+        <div id="studyFolders" class="folder-grid"></div>
+        <div id="studyBrowser" class="folder-browser hidden"></div>
+
+        <div class="tool-grid">
+          <div class="tool-card">
+            <h3>Scientific Calculator</h3>
+            <input id="calcDisplay" class="calc-display" placeholder="e.g. sin(30) + sqrt(16)" />
+            <div class="calc-actions">
+              <button id="calcRun" class="primary">Calculate</button>
+              <button id="calcClear" class="secondary">Clear</button>
+            </div>
+            <div id="calcResult" class="result-box">Result will appear here</div>
+            <p class="small muted">Supports +, −, ×, ÷, powers (^), sqrt, sin, cos, tan, log and ln. Trigonometry uses degrees.</p>
+          </div>
+
+          <div class="tool-card">
+            <h3>Unit Converter</h3>
+            <select id="convertType">
+              <option value="length">Length</option>
+              <option value="mass">Mass</option>
+              <option value="temperature">Temperature</option>
+              <option value="volume">Volume</option>
+            </select>
+            <div class="converter-row">
+              <input id="convertValue" type="number" value="1" step="any" />
+              <select id="convertFrom"></select>
+              <span>→</span>
+              <select id="convertTo"></select>
+            </div>
+            <div id="convertResult" class="result-box"></div>
+          </div>
+        </div>
+
+        <div class="tool-card reference-card">
+          <h3>Quick Conversion Reference</h3>
+          <div class="reference-grid">
+            <div><strong>Length</strong><span>1 inch = 2.54 cm</span><span>1 foot = 30.48 cm</span><span>1 mile = 1.609 km</span></div>
+            <div><strong>Mass</strong><span>1 oz = 28.35 g</span><span>1 lb = 0.4536 kg</span><span>1 kg = 2.205 lb</span></div>
+            <div><strong>Volume</strong><span>1 L = 1000 mL</span><span>1 US cup ≈ 236.6 mL</span><span>1 tbsp ≈ 14.79 mL</span></div>
+            <div><strong>Temperature</strong><span>°F = (°C × 9/5) + 32</span><span>°C = (°F − 32) × 5/9</span><span>K = °C + 273.15</span></div>
+          </div>
+        </div>
+
+
+      </section>
+
+      <section id="adminPage" class="page hidden">
+        <div class="section-head"><div><h2>Family Admin</h2><p class="muted">Approve family members who may access the app.</p></div></div>
+        <div id="membersList" class="member-list"></div>
+      </section>
+    </main>
+  </div>
+
+
+  <dialog id="folderDialog">
+    <form id="folderForm" method="dialog" class="dialog-card">
+      <div class="section-head"><div><h2 id="folderDialogTitle">New Folder</h2></div><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div>
+      <input id="folderName" placeholder="Folder name" maxlength="100" required />
+      <textarea id="folderDescription" placeholder="Description (optional)"></textarea>
+      <div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button type="submit" class="primary">Create Folder</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="addDialog">
+    <form id="addForm" method="dialog" class="dialog-card">
+      <div class="section-head"><div><h2 id="dialogTitle">Add item</h2></div><button type="button" id="closeDialog" class="icon-btn">×</button></div>
+      <input id="itemTitle" placeholder="Title" required />
+      <textarea id="itemDescription" placeholder="Description or notes"></textarea>
+      <input id="itemDate" type="date" />
+      <input id="itemFile" type="file" multiple />
+      <p class="small muted">Files are stored in your private Supabase Storage bucket.</p>
+      <div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button type="submit" class="primary">Save</button></div>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
