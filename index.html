@@ -191,14 +191,20 @@
   </dialog>
 
   <dialog id="addDialog">
-    <form id="addForm" method="dialog" class="dialog-card">
-      <div class="section-head"><div><h2 id="dialogTitle">Add item</h2></div><button type="button" id="closeDialog" class="icon-btn">×</button></div>
-      <input id="itemTitle" placeholder="Title" required />
-      <textarea id="itemDescription" placeholder="Description or notes"></textarea>
+    <form id="addForm" class="dialog-card" novalidate>
+      <div class="section-head">
+        <div><h2 id="dialogTitle">Add item</h2></div>
+        <button type="button" id="closeDialog" class="icon-btn">×</button>
+      </div>
+      <input id="itemTitle" type="text" placeholder="Title (optional)" />
+      <textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea>
       <input id="itemDate" type="date" />
       <input id="itemFile" type="file" multiple />
-      <p class="small muted">Files are stored in your private Supabase Storage bucket.</p>
-      <div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button type="submit" class="primary">Save</button></div>
+      <p class="small muted">Title, description and date are optional. You can upload a photo or file only.</p>
+      <div class="dialog-actions">
+        <button type="button" id="cancelDialog" class="secondary">Cancel</button>
+        <button type="submit" class="primary">Save</button>
+      </div>
     </form>
   </dialog>
 
