@@ -12,7 +12,12 @@
 
   <section id="authView" class="auth-shell">
     <div class="auth-card">
-      <div class="brand-mark">FM</div>
+      <button class="profile-photo-button" id="profilePhotoBtn" type="button" title="Change profile photo">
+          <img id="profilePhotoImage" alt="Family profile" class="hidden" />
+          <span id="profilePhotoFallback">FM</span>
+          <span class="profile-edit-badge">✎</span>
+        </button>
+        <input id="profilePhotoInput" type="file" accept="image/*" hidden />
       <h1>Family Memories</h1>
       <p class="muted">A private place for memories, family moments and learning.</p>
 
@@ -132,18 +137,6 @@
             <span class="space-arrow">→</span>
           </button>
         </div>
-
-        <section class="recent-home">
-          <div class="home-section-head">
-            <div>
-              <span class="eyebrow warm">RECENTLY ADDED</span>
-              <h2>Latest family moments</h2>
-            </div>
-          </div>
-          <div id="recentMemories" class="recent-memory-grid">
-            <div class="empty">Your latest photos and memories will appear here.</div>
-          </div>
-        </section>
       </section>
 
       <section id="memoriesPage" class="page hidden">

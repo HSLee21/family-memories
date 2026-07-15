@@ -362,19 +362,51 @@ async function approveMember(id){
 
 // Warm family home experience
 const DEFAULT_FAMILY_COVER = "https://images.unsplash.com/photo-1504151932400-72d4384f04b3?auto=format&fit=crop&w=1800&q=85";
-const COVER_STORAGE_PATH = "app-settings/family-cover";
+
+const profileStoragePath = () => `${currentUser.id}/profile/profile-photo`;
+
+async function loadProfilePhoto(){
+  if(!currentUser) return;
+  const img=$("profilePhotoImage"), fallback=$("profilePhotoFallback");
+  if(!img || !fallback) return;
+  const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(profileStoragePath(),3600);
+  if(data?.signedUrl){
+    img.src=data.signedUrl;
+    img.classList.remove("hidden");
+    fallback.classList.add("hidden");
+  }else{
+    img.classList.add("hidden");
+    fallback.classList.remove("hidden");
+  }
+}
+
+if($("profilePhotoBtn")) $("profilePhotoBtn").onclick=()=>$("profilePhotoInput").click();
+if($("profilePhotoInput")) $("profilePhotoInput").onchange=async e=>{
+  const file=e.target.files?.[0];
+  if(!file || !currentUser) return;
+  const {error}=await client.storage.from(cfg.STORAGE_BUCKET).upload(
+    profileStoragePath(), file, {upsert:true,contentType:file.type}
+  );
+  if(error) return toast(error.message);
+  await loadProfilePhoto();
+  toast("Profile photo updated.");
+  e.target.value="";
+};
+
+const coverStoragePath = () => `${currentUser.id}/app-settings/family-cover`;
 
 async function loadHomeExperience(){
   const changeBtn=$("changeCoverBtn");
   if(changeBtn) changeBtn.classList.toggle("hidden",currentProfile?.role!=="admin");
   await loadFamilyCover();
-  await loadRecentMemories();
+  await loadProfilePhoto();
+  
 }
 
 async function loadFamilyCover(){
   const cover=$("coverImage");
   if(!cover) return;
-  const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(COVER_STORAGE_PATH,3600);
+  const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(coverStoragePath(),3600);
   cover.style.backgroundImage=`linear-gradient(120deg,rgba(75,52,43,.12),rgba(75,52,43,.02)), url("${data?.signedUrl||DEFAULT_FAMILY_COVER}")`;
 }
 
@@ -383,31 +415,14 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
   const file=e.target.files?.[0];
   if(!file) return;
   if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
-  const {error}=await client.storage.from(cfg.STORAGE_BUCKET).upload(COVER_STORAGE_PATH,file,{upsert:true,contentType:file.type});
+  const {error}=await client.storage.from(cfg.STORAGE_BUCKET).upload(coverStoragePath(),file,{upsert:true,contentType:file.type});
   if(error) return toast(error.message);
   toast("Family cover updated.");
   await loadFamilyCover();
+  await loadProfilePhoto();
   e.target.value="";
 };
 
-async function loadRecentMemories(){
-  const target=$("recentMemories");
-  if(!target) return;
-  const {data,error}=await client.from("memories").select("*").not("file_path","is",null).order("created_at",{ascending:false}).limit(8);
-  if(error || !data?.length){
-    target.innerHTML='<div class="empty">Your latest photos and memories will appear here.</div>';
-    return;
-  }
-  const cards=[];
-  for(const item of data){
-    const ext=(item.file_path||"").split(".").pop().toLowerCase();
-    if(!["jpg","jpeg","png","gif","webp","avif"].includes(ext)) continue;
-    const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
-    if(signed?.signedUrl) cards.push(`<article class="recent-photo-card" data-file="${encodeURIComponent(item.file_path)}"><img src="${signed.signedUrl}" alt="${escapeHtml(item.title||"Family memory")}"><div class="recent-caption">${escapeHtml(item.title||"Family memory")}</div></article>`);
-  }
-  target.innerHTML=cards.length?cards.join(""):'<div class="empty">Upload a photo to Our Memories and it will appear here.</div>';
-  target.querySelectorAll("[data-file]").forEach(card=>card.onclick=()=>openPrivateFile(decodeURIComponent(card.dataset.file)));
-}
 
 // Scientific calculator
 $("calcRun").onclick=()=>{

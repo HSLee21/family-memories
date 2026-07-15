@@ -1,0 +1,6 @@
+-- The redesigned app now stores cover/profile images under the signed-in user's folder:
+-- <auth.uid()>/app-settings/family-cover
+-- <auth.uid()>/profile/profile-photo
+--
+-- This matches your existing storage RLS pattern:
+-- storage.foldername(name)[1] = auth.uid()::text
