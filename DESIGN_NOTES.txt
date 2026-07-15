@@ -1,0 +1,9 @@
+Latest mockup design:
+- No left navigation panel.
+- Large bright family cover photo.
+- Profile/Family Memories identity at top left.
+- User/Admin badge at top right.
+- Four vertical colourful cards.
+- Fixed colourful bottom navigation as primary navigation.
+- Responsive phone/PWA layout.
+- Existing Supabase configuration and core app functions retained.

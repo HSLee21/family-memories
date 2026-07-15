@@ -463,3 +463,37 @@ function convert(){
 }
 ["convertType","convertValue","convertFrom","convertTo"].forEach(id=>$(id).addEventListener(id==="convertValue"?"input":"change",id==="convertType"?fillUnits:convert));
 fillUnits();
+
+
+// Latest mockup top profile-photo bridge
+document.addEventListener("DOMContentLoaded", () => {
+  const topBtn = document.getElementById("topProfilePhotoBtn");
+  const topImg = document.getElementById("topProfilePhotoImage");
+  const topFallback = document.getElementById("topProfilePhotoFallback");
+  const originalBtn = document.getElementById("profilePhotoBtn");
+  const originalImg = document.getElementById("profilePhotoImage");
+  const originalFallback = document.getElementById("profilePhotoFallback");
+
+  if (topBtn && originalBtn) topBtn.addEventListener("click", () => originalBtn.click());
+
+  const syncTopProfile = () => {
+    if (!topImg || !originalImg) return;
+    if (originalImg.src && !originalImg.classList.contains("hidden")) {
+      topImg.src = originalImg.src;
+      topImg.classList.remove("hidden");
+      if (topFallback) topFallback.classList.add("hidden");
+    } else {
+      topImg.classList.add("hidden");
+      if (topFallback) {
+        topFallback.classList.remove("hidden");
+        topFallback.textContent = originalFallback?.textContent || "FM";
+      }
+    }
+  };
+
+  if (originalImg) {
+    new MutationObserver(syncTopProfile).observe(originalImg, {attributes:true, attributeFilter:["src","class"]});
+  }
+  setTimeout(syncTopProfile, 500);
+  setTimeout(syncTopProfile, 1500);
+});
