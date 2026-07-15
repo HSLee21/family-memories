@@ -24,7 +24,24 @@
       <form id="signInForm" class="stack">
         <input id="signInEmail" type="email" placeholder="Email address" required />
         <input id="signInPassword" type="password" placeholder="Password" minlength="6" required />
+        <button id="forgotPasswordBtn" class="text-link" type="button">Forgot password?</button>
         <button class="primary" type="submit">Sign in</button>
+      </form>
+
+      <form id="forgotPasswordForm" class="stack hidden">
+        <h3>Reset your password</h3>
+        <p class="small muted">Enter your email address and we will send you a password reset link.</p>
+        <input id="resetEmail" type="email" placeholder="Email address" required />
+        <button class="primary" type="submit">Send reset link</button>
+        <button id="backToSignInBtn" class="secondary" type="button">Back to sign in</button>
+      </form>
+
+      <form id="newPasswordForm" class="stack hidden">
+        <h3>Set a new password</h3>
+        <p class="small muted">Enter your new password below.</p>
+        <input id="newPassword" type="password" placeholder="New password (minimum 6 characters)" minlength="6" required />
+        <input id="confirmNewPassword" type="password" placeholder="Confirm new password" minlength="6" required />
+        <button class="primary" type="submit">Update password</button>
       </form>
 
       <form id="signUpForm" class="stack hidden">

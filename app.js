@@ -11,11 +11,20 @@ function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show")
 function showView(id){views.forEach(v=>$(v).classList.toggle("hidden",v!==id))}
 function initials(name){return (name||"?").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()}
 
-document.querySelectorAll("[data-auth-tab]").forEach(btn=>btn.onclick=()=>{
-  document.querySelectorAll("[data-auth-tab]").forEach(x=>x.classList.remove("active")); btn.classList.add("active");
-  $("signInForm").classList.toggle("hidden",btn.dataset.authTab!=="signin");
-  $("signUpForm").classList.toggle("hidden",btn.dataset.authTab!=="signup");
-});
+function showAuthForm(name){
+  $("signInForm").classList.toggle("hidden",name!=="signin");
+  $("signUpForm").classList.toggle("hidden",name!=="signup");
+  $("forgotPasswordForm").classList.toggle("hidden",name!=="forgot");
+  $("newPasswordForm").classList.toggle("hidden",name!=="newpassword");
+  document.querySelector(".tabs").classList.toggle("hidden",name==="forgot"||name==="newpassword");
+  document.querySelectorAll("[data-auth-tab]").forEach(x=>x.classList.toggle("active",x.dataset.authTab===name));
+}
+document.querySelectorAll("[data-auth-tab]").forEach(btn=>btn.onclick=()=>showAuthForm(btn.dataset.authTab));
+$("forgotPasswordBtn").onclick=()=>{
+  $("resetEmail").value=$("signInEmail").value.trim();
+  showAuthForm("forgot");
+};
+$("backToSignInBtn").onclick=()=>showAuthForm("signin");
 
 $("signInForm").onsubmit=async e=>{
   e.preventDefault();
@@ -30,6 +39,26 @@ $("signUpForm").onsubmit=async e=>{
   });
   if(error) return toast(error.message);
   toast("Account created. Check your email to verify your address.");
+};
+$("forgotPasswordForm").onsubmit=async e=>{
+  e.preventDefault();
+  const email=$("resetEmail").value.trim();
+  const redirectTo=new URL(window.location.pathname,window.location.origin).href;
+  const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo});
+  if(error) return toast(error.message);
+  toast("Password reset email sent. Check your inbox.");
+  showAuthForm("signin");
+};
+$("newPasswordForm").onsubmit=async e=>{
+  e.preventDefault();
+  const password=$("newPassword").value;
+  const confirm=$("confirmNewPassword").value;
+  if(password!==confirm) return toast("Passwords do not match.");
+  const {error}=await client.auth.updateUser({password});
+  if(error) return toast(error.message);
+  toast("Password updated successfully.");
+  history.replaceState({},document.title,window.location.pathname);
+  showAuthForm("signin");
 };
 async function signOut(){await client.auth.signOut()}
 $("signOutBtn").onclick=signOut; $("pendingSignOut").onclick=signOut;
@@ -51,7 +80,15 @@ async function handleSession(session){
   await loadProfile();
 }
 client.auth.getSession().then(({data})=>handleSession(data.session));
-client.auth.onAuthStateChange((_event,session)=>setTimeout(()=>handleSession(session),0));
+client.auth.onAuthStateChange((event,session)=>{
+  if(event==="PASSWORD_RECOVERY"){
+    currentUser=session?.user||null;
+    showView("authView");
+    showAuthForm("newpassword");
+    return;
+  }
+  setTimeout(()=>handleSession(session),0);
+});
 
 
 const sectionType = {memories:"memory",trips:"trip",celebrations:"celebration",study:"study"};

@@ -24,3 +24,7 @@ If the SQL schema created earlier uses different column names, update the payloa
 ## Security
 
 Never place a Supabase secret key or `service_role` key in this repository or browser code. Only use the publishable key.
+
+
+## V3 update
+Added Forgot Password and password recovery flow using Supabase Auth.
