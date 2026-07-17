@@ -1,3 +1,24 @@
+
+function setCardImageDOM(card, src){
+  const cardEl = document.querySelector(`.family-space-card.${card}-card`);
+  const fullImg = document.querySelector(`[data-card-full="${card}"]`);
+  const art = document.querySelector(`[data-card-art="${card}"]`);
+  const artImg = art ? art.querySelector(".card-art-custom") : null;
+  if(!cardEl || !fullImg) return;
+  if(src){
+    fullImg.src = src;
+    fullImg.classList.remove("hidden");
+    cardEl.classList.add("has-full-custom");
+    // also set the small art img for fallback
+    if(artImg){ artImg.src = src; artImg.classList.remove("hidden"); art?.classList.add("has-custom"); }
+  }else{
+    fullImg.removeAttribute("src");
+    fullImg.classList.add("hidden");
+    cardEl.classList.remove("has-full-custom");
+    if(artImg){ artImg.removeAttribute("src"); artImg.classList.add("hidden"); art?.classList.remove("has-custom"); }
+  }
+}
+
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session only for the current browser tab/session.
@@ -432,21 +453,27 @@ const HOME_CARDS = ["memories","trips","celebrations","study"];
 const cardLocalKey = (card) => `family-memories:card-image:${card}`;
 const cardStoragePath = (card) => `${currentUser.id}/app-settings/card-${card}`;
 
-function setCardImageDOM(card, src){
+
+function setCardImageDOM_OLD(card, src){
+  const cardEl = document.querySelector(`.family-space-card.${card}-card`);
+  const fullImg = document.querySelector(`[data-card-full="${card}"]`);
   const art = document.querySelector(`[data-card-art="${card}"]`);
-  if(!art) return;
-  const img = art.querySelector(".card-art-custom");
-  if(!img) return;
+  const artImg = art ? art.querySelector(".card-art-custom") : null;
+  if(!cardEl || !fullImg) return;
   if(src){
-    img.src = src;
-    img.classList.remove("hidden");
-    art.classList.add("has-custom");
+    fullImg.src = src;
+    fullImg.classList.remove("hidden");
+    cardEl.classList.add("has-full-custom");
+    // also set the small art img for fallback
+    if(artImg){ artImg.src = src; artImg.classList.remove("hidden"); art?.classList.add("has-custom"); }
   }else{
-    img.removeAttribute("src");
-    img.classList.add("hidden");
-    art.classList.remove("has-custom");
+    fullImg.removeAttribute("src");
+    fullImg.classList.add("hidden");
+    cardEl.classList.remove("has-full-custom");
+    if(artImg){ artImg.removeAttribute("src"); artImg.classList.add("hidden"); art?.classList.remove("has-custom"); }
   }
 }
+
 
 async function loadCardImages(){
   for(const card of HOME_CARDS){
