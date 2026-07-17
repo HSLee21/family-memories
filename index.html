@@ -39,31 +39,42 @@
       <div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage"></div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br>journeys and milestones.</p></div><button id="changeCoverBtn" class="camera-fab hidden" type="button" title="Change cover photo">📷</button><input id="coverFileInput" type="file" accept="image/*" hidden></div>
       <div class="family-space-grid">
         <div class="family-space-card memories-card" data-go="memories">
-          <button class="card-camera-btn" data-card="memories" type="button" title="Change illustration" aria-label="Change Our Memories image">📷</button>
-          <img class="card-full-image hidden" data-card-full="memories" alt="" />
-          <div class="card-art" data-card-art="memories"><span class="card-art-default">🖼️💗</span><img class="card-art-custom hidden" alt="Our Memories" /></div>
-          <div><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div><span class="round-arrow">→</span>
+          <img class="card-full-custom hidden" data-card-full="memories" alt="" />
+          <button class="card-camera-btn" data-card="memories" type="button" title="Change card image" aria-label="Change image">📷</button>
+          <div class="card-default-content">
+            <div class="card-art">🖼️💗</div>
+            <div><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
+            <span class="round-arrow">→</span>
+          </div>
         </div>
         <div class="family-space-card trips-card" data-go="trips">
-          <button class="card-camera-btn" data-card="trips" type="button" title="Change illustration" aria-label="Change Family Trips image">📷</button>
-          <img class="card-full-image hidden" data-card-full="trips" alt="" />
-          <div class="card-art" data-card-art="trips"><span class="card-art-default">🧳📷</span><img class="card-art-custom hidden" alt="Family Trips" /></div>
-          <div><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div><span class="round-arrow">→</span>
+          <img class="card-full-custom hidden" data-card-full="trips" alt="" />
+          <button class="card-camera-btn" data-card="trips" type="button" title="Change card image">📷</button>
+          <div class="card-default-content">
+            <div class="card-art">🧳📷</div>
+            <div><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
+            <span class="round-arrow">→</span>
+          </div>
         </div>
         <div class="family-space-card celebrations-card" data-go="celebrations">
-          <button class="card-camera-btn" data-card="celebrations" type="button" title="Change illustration" aria-label="Change Celebrations image">📷</button>
-          <img class="card-full-image hidden" data-card-full="celebrations" alt="" />
-          <div class="card-art" data-card-art="celebrations"><span class="card-art-default">🎈🎉</span><img class="card-art-custom hidden" alt="Celebrations" /></div>
-          <div><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div><span class="round-arrow">→</span>
+          <img class="card-full-custom hidden" data-card-full="celebrations" alt="" />
+          <button class="card-camera-btn" data-card="celebrations" type="button">📷</button>
+          <div class="card-default-content">
+            <div class="card-art">🎈🎉</div>
+            <div><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
+            <span class="round-arrow">→</span>
+          </div>
         </div>
         <div class="family-space-card study-card" data-go="study">
-          <button class="card-camera-btn" data-card="study" type="button" title="Change illustration" aria-label="Change Study Hub image">📷</button>
-          <img class="card-full-image hidden" data-card-full="study" alt="" />
-          <div class="card-art" data-card-art="study"><span class="card-art-default">📚🌱</span><img class="card-art-custom hidden" alt="Study Hub" /></div>
-          <div><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div><span class="round-arrow">→</span>
+          <img class="card-full-custom hidden" data-card-full="study" alt="" />
+          <button class="card-camera-btn" data-card="study" type="button">📷</button>
+          <div class="card-default-content">
+            <div class="card-art">📚🌱</div>
+            <div><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
+            <span class="round-arrow">→</span>
+          </div>
         </div>
       </div>
-      <!-- Per-card hidden file inputs -->
       <input id="cardFile-memories" type="file" accept="image/*" hidden />
       <input id="cardFile-trips" type="file" accept="image/*" hidden />
       <input id="cardFile-celebrations" type="file" accept="image/*" hidden />

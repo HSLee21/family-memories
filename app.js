@@ -1,24 +1,3 @@
-
-function setCardImageDOM(card, src){
-  const cardEl = document.querySelector(`.family-space-card.${card}-card`);
-  const fullImg = document.querySelector(`[data-card-full="${card}"]`);
-  const art = document.querySelector(`[data-card-art="${card}"]`);
-  const artImg = art ? art.querySelector(".card-art-custom") : null;
-  if(!cardEl || !fullImg) return;
-  if(src){
-    fullImg.src = src;
-    fullImg.classList.remove("hidden");
-    cardEl.classList.add("has-full-custom");
-    // also set the small art img for fallback
-    if(artImg){ artImg.src = src; artImg.classList.remove("hidden"); art?.classList.add("has-custom"); }
-  }else{
-    fullImg.removeAttribute("src");
-    fullImg.classList.add("hidden");
-    cardEl.classList.remove("has-full-custom");
-    if(artImg){ artImg.removeAttribute("src"); artImg.classList.add("hidden"); art?.classList.remove("has-custom"); }
-  }
-}
-
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session only for the current browser tab/session.
@@ -448,41 +427,34 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
 
 
 
-// ---- Per-card custom illustration (camera button) ----
+// ==== Full-card custom images (camera per card) ====
 const HOME_CARDS = ["memories","trips","celebrations","study"];
-const cardLocalKey = (card) => `family-memories:card-image:${card}`;
-const cardStoragePath = (card) => `${currentUser.id}/app-settings/card-${card}`;
+const cardLocalKey = (c) => `family-memories:card-full:${c}`;
+const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;
 
-
-function setCardImageDOM_OLD(card, src){
+function setCardImageDOM(card, src){
   const cardEl = document.querySelector(`.family-space-card.${card}-card`);
   const fullImg = document.querySelector(`[data-card-full="${card}"]`);
-  const art = document.querySelector(`[data-card-art="${card}"]`);
-  const artImg = art ? art.querySelector(".card-art-custom") : null;
   if(!cardEl || !fullImg) return;
   if(src){
     fullImg.src = src;
     fullImg.classList.remove("hidden");
-    cardEl.classList.add("has-full-custom");
-    // also set the small art img for fallback
-    if(artImg){ artImg.src = src; artImg.classList.remove("hidden"); art?.classList.add("has-custom"); }
+    cardEl.classList.add("has-custom");
   }else{
     fullImg.removeAttribute("src");
     fullImg.classList.add("hidden");
-    cardEl.classList.remove("has-full-custom");
-    if(artImg){ artImg.removeAttribute("src"); artImg.classList.add("hidden"); art?.classList.remove("has-custom"); }
+    cardEl.classList.remove("has-custom");
   }
 }
-
 
 async function loadCardImages(){
   for(const card of HOME_CARDS){
     let src = null;
     if(currentUser){
       try{
-        const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 3600*24);
+        const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
         if(data?.signedUrl) src = data.signedUrl;
-      }catch(e){}
+      }catch{}
     }
     if(!src){
       const local = localStorage.getItem(cardLocalKey(card));
@@ -492,75 +464,60 @@ async function loadCardImages(){
   }
 }
 
-function previewCardImage(card, file){
-  return new Promise((resolve,reject)=>{
-    const r = new FileReader();
-    r.onload = () => resolve(r.result);
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
-}
-
-async function handleCardFile(card, file){
-  if(!file) return;
-  if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
-  if(file.size > 8*1024*1024) return toast("Image too large. Max 8MB.");
-  try{
-    const dataUrl = await previewCardImage(card, file);
-    setCardImageDOM(card, dataUrl);
-    try{ localStorage.setItem(cardLocalKey(card), dataUrl); }catch(e){}
-    if(currentUser){
-      const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
-      if(error){
-        toast("Saved locally. Cloud save failed: "+error.message);
-      }else{
-        toast("Card image updated.");
-        try{
-          const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 3600*24);
-          if(data?.signedUrl) setCardImageDOM(card, data.signedUrl);
-        }catch{}
-      }
-    }else{
-      toast("Card image saved locally.");
-    }
-  }catch(err){
-    console.error(err);
-    toast(err.message||"Could not update image.");
-  }
-}
-
 function initCardCameraButtons(){
-  document.querySelectorAll(".family-space-card[data-go]").forEach(cardEl=>{
-    cardEl.addEventListener("click",(e)=>{
+  // Navigate when card clicked, except camera btn
+  document.querySelectorAll(".family-space-card[data-go]").forEach(el=>{
+    el.addEventListener("click",(e)=>{
       if(e.target.closest(".card-camera-btn")) return;
-      navigate(cardEl.dataset.go);
+      navigate(el.dataset.go);
     });
   });
   document.querySelectorAll(".card-camera-btn").forEach(btn=>{
     btn.addEventListener("click",(e)=>{
       e.stopPropagation();
       const card = btn.dataset.card;
-      const input = document.getElementById(`cardFile-${card}`);
-      if(input) input.click();
+      document.getElementById(`cardFile-${card}`)?.click();
     });
   });
   HOME_CARDS.forEach(card=>{
     const input = document.getElementById(`cardFile-${card}`);
-    if(input){
-      input.addEventListener("change",(e)=>{
-        const file = e.target.files?.[0];
-        if(file) handleCardFile(card, file);
-        e.target.value = "";
-      });
-    }
+    if(!input) return;
+    input.addEventListener("change", async (e)=>{
+      const file = e.target.files?.[0];
+      if(!file) return;
+      if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
+      if(file.size > 10*1024*1024) return toast("Image too large (max 10MB).");
+      // immediate preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        setCardImageDOM(card, dataUrl);
+        try{ localStorage.setItem(cardLocalKey(card), dataUrl); }catch{}
+      };
+      reader.readAsDataURL(file);
+      // upload to supabase if logged in
+      if(currentUser){
+        try{
+          const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
+          if(error) toast("Saved locally. Cloud error: "+error.message);
+          else {
+            toast("Card image updated.");
+            // reload signed url
+            try{
+              const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
+              if(data?.signedUrl) setCardImageDOM(card, data.signedUrl);
+            }catch{}
+          }
+        }catch(err){ toast(err.message); }
+      }else{
+        toast("Card image saved locally.");
+      }
+      e.target.value = "";
+    });
   });
 }
 
-if(document.readyState === "loading"){
-  document.addEventListener("DOMContentLoaded", initCardCameraButtons);
-}else{
-  initCardCameraButtons();
-}
+document.addEventListener("DOMContentLoaded", initCardCameraButtons);
 
 
 // Scientific calculator
