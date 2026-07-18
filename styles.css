@@ -175,37 +175,22 @@ dialog{border:0;border-radius:24px;padding:0;box-shadow:var(--shadow);width:min(
 
 /* v12-1784358136 Plus 22 Home 30 */ .add-main .add-plus{width:22px!important;height:22px!important} .mobile-nav-item .home-ico{font-size:30px!important}
 
-/* === V13 from V12-debug v13-1784359392 === */
-.mobile-nav{ display:flex!important; justify-content:space-around!important; align-items:flex-end!important; padding:6px 0 calc(8px + env(safe-area-inset-bottom))!important; background:#fff!important; border-top:1px solid #e5e7eb!important; position:fixed!important; bottom:0!important; left:0!important; right:0!important; z-index:100!important; }
-.mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:flex-end!important; gap:3px!important; background:none!important; border:none!important; min-width:60px!important; color:#1670f8!important; cursor:pointer!important; }
-.mobile-nav-item .nav-ico{ display:flex!important; align-items:center!important; justify-content:center!important; width:28px!important; height:28px!important; color:#1670f8!important; }
-.mobile-nav-item .nav-label{ font-size:12.5px!important; line-height:1!important; margin:0!important; color:#1670f8!important; font-weight:700!important; }
-.mobile-nav-item.add-main .nav-ico.add-plus{ width:42px!important; height:42px!important; border-radius:50%!important; background:#1670f8!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 4px 12px rgba(22,112,248,0.4)!important; }
-/* Cards overflow */
-.home-cards{ display:grid!important; grid-template-columns:1fr 1fr!important; gap:12px!important; padding:12px!important; }
-.home-card{ position:relative!important; border-radius:18px!important; overflow:hidden!important; height:156px!important; isolation:isolate!important; }
-.home-card .card-bg, .home-card img.card-bg{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important; object-fit:cover!important; object-position:center!important; }
-.home-card-content{ position:relative!important; z-index:1!important; padding:12px!important; height:100%!important; display:flex!important; flex-direction:column!important; justify-content:flex-end!important; }
-/* Camera centered */
-.card-camera-btn, button.card-camera-btn{ position:absolute!important; top:8px!important; right:8px!important; width:28px!important; height:28px!important; border-radius:50%!important; background:rgba(255,255,255,0.95)!important; border:none!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 1px 6px rgba(0,0,0,0.18)!important; z-index:2!important; padding:0!important; }
-.card-camera-btn svg{ display:block!important; margin:0 auto!important; }
-/* Keep your sizes: Plus 22 for add memory sheet, hero taller */
-.family-cover{ height:32vh!important; min-height:200px!important; max-height:260px!important; }
-#appLoader{ transition:opacity 0.2s!important; }
-
-
-/* === V14 PERFECT ALIGNMENT v14-1784360610 === */
-.mobile-nav{ display:flex!important; justify-content:space-around!important; align-items:stretch!important; height:64px!important; padding:0 0 env(safe-area-inset-bottom)!important; background:#fff!important; border-top:1px solid #e5e7eb!important; position:fixed!important; bottom:0!important; left:0!important; right:0!important; z-index:999!important; }
-.mobile-nav-item{ flex:1!important; display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:4px!important; border:none!important; background:none!important; color:#1670f8!important; padding:6px 0 4px!important; margin:0!important; }
-.mobile-nav-item .nav-ico{ width:100%!important; height:28px!important; display:flex!important; align-items:center!important; justify-content:center!important; color:#1670f8!important; line-height:0!important; }
-.mobile-nav-item .nav-label{ height:14px!important; line-height:14px!important; font-size:12px!important; font-weight:700!important; color:#1670f8!important; margin:0!important; padding:0!important; display:block!important; text-align:center!important; }
-.mobile-nav-item.add-main .nav-ico{ height:28px!important; }
-.mobile-nav-item.add-main .add-plus{ width:36px!important; height:36px!important; background:#1670f8!important; border-radius:50%!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 3px 10px rgba(22,112,248,0.35)!important; }
-/* Prevent Safari shift */
-.mobile-nav-item svg{ display:block!important; }
-/* Cards fix keep from v13 */
-.home-cards{ display:grid!important; grid-template-columns:1fr 1fr!important; gap:12px!important; padding:12px!important; padding-bottom:80px!important; }
-.home-card{ position:relative!important; border-radius:18px!important; overflow:hidden!important; height:156px!important; }
-.home-card .card-bg{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important; object-fit:cover!important; }
-.card-camera-btn{ position:absolute!important; top:8px!important; right:8px!important; width:28px!important; height:28px!important; border-radius:50%!important; background:#fff!important; display:flex!important; align-items:center!important; justify-content:center!important; }
-.family-cover{ height:32vh!important; min-height:200px!important; max-height:260px!important; }
+/* V16 FINAL v16-1784361539 */
+#authView:not(.hidden) ~ #mobileNav, #authView:not(.hidden) ~ nav.mobile-nav, #pendingView:not(.hidden) ~ #mobileNav, #pendingView:not(.hidden) ~ nav.mobile-nav{ display:none!important; }
+body:has(#authView:not(.hidden)) .mobile-nav, body:has(#pendingView:not(.hidden)) .mobile-nav{ display:none!important; }
+.mobile-nav{ display:flex!important; flex-direction:row!important; justify-content:space-around!important; align-items:center!important; height:64px!important; padding:0 0 env(safe-area-inset-bottom)!important; background:#fff!important; border-top:1px solid #e5e7eb!important; position:fixed!important; bottom:0!important; left:0!important; right:0!important; z-index:999!important; width:100%!important; box-sizing:border-box!important; }
+.mobile-nav-item{ flex:1!important; display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:3px!important; background:none!important; border:none!important; padding:0!important; }
+.mobile-nav-item .nav-ico{ width:32px!important; height:32px!important; display:flex!important; align-items:center!important; justify-content:center!important; flex:none!important; }
+.mobile-nav-item .nav-label{ font-size:11px!important; font-weight:700!important; color:#1670f8!important; line-height:12px!important; }
+/* Plus perfect circle - fix oval bug */
+.mobile-nav-item.add-main .nav-ico{ width:46px!important; height:46px!important; }
+.mobile-nav-item.add-main .add-plus{ display:inline-flex!important; width:44px!important; height:44px!important; min-width:44px!important; min-height:44px!important; max-width:44px!important; max-height:44px!important; background:#1670f8!important; color:#fff!important; border-radius:22px!important; align-items:center!important; justify-content:center!important; font-size:26px!important; line-height:44px!important; text-align:center!important; flex:none!important; box-sizing:border-box!important; transform:none!important; }
+/* Cards - stop out of frame */
+.home-cards{ display:grid!important; grid-template-columns:1fr 1fr!important; gap:12px!important; padding:12px 12px 90px 12px!important; width:100%!important; box-sizing:border-box!important; }
+.home-card{ position:relative!important; border-radius:16px!important; overflow:hidden!important; background:#f8faff!important; display:flex!important; flex-direction:column!important; min-height:158px!important; width:100%!important; box-sizing:border-box!important; }
+.home-card img{ width:100%!important; height:88px!important; object-fit:contain!important; object-position:center!important; display:block!important; }
+.home-card-content{ padding:8px 10px 10px!important; }
+.home-card-content h3{ font-size:13.5px!important; margin:0 0 3px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
+.home-card-content p{ font-size:10.5px!important; line-height:1.3!important; margin:0!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
+.card-camera-btn{ position:absolute!important; top:6px!important; right:6px!important; width:26px!important; height:26px!important; border-radius:50%!important; background:#fff!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 1px 4px rgba(0,0,0,0.15)!important; }
+.family-cover{ height:30vh!important; min-height:200px!important; }
