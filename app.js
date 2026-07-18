@@ -427,7 +427,7 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
 
 
 
-// ==== Full-card custom images v7 + Back button + Profile fix ====
+// v8 - camera top-right, centered, back button
 const HOME_CARDS = ["memories","trips","celebrations","study"];
 const cardLocalKey = (c) => `family-memories:card-full:${c}`;
 const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;

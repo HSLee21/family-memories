@@ -7,12 +7,12 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <!-- v7-1784354058 -->
+  <!-- v8-1784355373 -->
   <title>Family Memories</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v7-1784354058" />
+  <link rel="stylesheet" href="styles.css?v=v8-1784355373" />
 </head>
 <body>
 <div id="toast"></div>
@@ -41,7 +41,7 @@
       <button id="topProfilePhotoBtn" class="top-profile"><img id="topProfilePhotoImage" class="hidden" alt="Profile"><span id="topProfilePhotoFallback">👤</span></button>
     </div>
   </header>
-  <!-- CACHE BUSTER v7-1784354058 -->
+  <!-- v8-1784355373 -->
   <button id="mobileMenu" class="hidden" type="button">☰</button>
   <aside class="sidebar hidden"><nav id="nav"><button class="nav-item" data-page="home">Home</button><button class="nav-item" data-page="memories">Our Memories</button><button class="nav-item" data-page="trips">Family Trips</button><button class="nav-item" data-page="celebrations">Celebrations</button><button class="nav-item" data-page="study">Study Hub</button><button id="adminNav" class="nav-item hidden" data-page="admin">Family Admin</button></nav><button id="signOutBtn" class="nav-item signout">Sign out</button></aside>
 
@@ -125,7 +125,7 @@
   </main>
 
     <nav class="mobile-bottom-nav" aria-label="Main navigation">
-    <button class="mobile-nav-item active" data-page="home"><span class="nav-ico">⌂</span><small>Home</small></button>
+    <button class="mobile-nav-item active" data-page="home"><span class="nav-ico home-ico">⌂</span><small>Home</small></button>
     <button class="mobile-nav-item" id="bottomBackBtn"><span class="nav-ico">↩</span><small>Back</small></button>
     <button class="mobile-nav-item add-main" id="quickAddBtn"><span class="add-plus">+</span><small>Add</small></button>
     <button class="mobile-nav-item" data-page="profile"><span class="nav-ico">👤</span><small>Profile</small></button>
@@ -135,5 +135,5 @@
 <dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" placeholder="Folder name" maxlength="100" required><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button class="primary">Create</button></div></form></dialog>
 <dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
 <dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v7-1784354058"></script><script src="app.js?v=v7-1784354058"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v8-1784355373"></script><script src="app.js?v=v8-1784355373"></script>
 </body></html>
