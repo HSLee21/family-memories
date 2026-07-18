@@ -427,7 +427,7 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
 
 
 
-// ==== Full-card custom images (camera per card) ====
+// ==== Full-card custom images (camera per card) v6 ====
 const HOME_CARDS = ["memories","trips","celebrations","study"];
 const cardLocalKey = (c) => `family-memories:card-full:${c}`;
 const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;
@@ -465,7 +465,6 @@ async function loadCardImages(){
 }
 
 function initCardCameraButtons(){
-  // Navigate when card clicked, except camera btn
   document.querySelectorAll(".family-space-card[data-go]").forEach(el=>{
     el.addEventListener("click",(e)=>{
       if(e.target.closest(".card-camera-btn")) return;
@@ -487,7 +486,6 @@ function initCardCameraButtons(){
       if(!file) return;
       if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
       if(file.size > 10*1024*1024) return toast("Image too large (max 10MB).");
-      // immediate preview
       const reader = new FileReader();
       reader.onload = () => {
         const dataUrl = reader.result;
@@ -495,14 +493,12 @@ function initCardCameraButtons(){
         try{ localStorage.setItem(cardLocalKey(card), dataUrl); }catch{}
       };
       reader.readAsDataURL(file);
-      // upload to supabase if logged in
       if(currentUser){
         try{
           const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
           if(error) toast("Saved locally. Cloud error: "+error.message);
           else {
             toast("Card image updated.");
-            // reload signed url
             try{
               const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
               if(data?.signedUrl) setCardImageDOM(card, data.signedUrl);
@@ -516,7 +512,6 @@ function initCardCameraButtons(){
     });
   });
 }
-
 document.addEventListener("DOMContentLoaded", initCardCameraButtons);
 
 

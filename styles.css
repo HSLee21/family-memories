@@ -9,46 +9,66 @@ dialog{border:0;border-radius:24px;padding:0;box-shadow:var(--shadow);width:min(
 @media(max-width:900px){.topbar{height:88px;padding:12px 18px}.top-family-avatar{width:54px;height:54px}.brand-words .script-logo{font-size:20px}.brand-words strong{font-size:22px}.brand-words small{display:none}.top-actions .icon-btn{display:none}.top-profile{width:48px;height:48px}.main{width:calc(100% - 20px)}.family-cover{height:52vh;min-height:380px;border-radius:24px}.cover-content{left:7%;top:12%}.cover-script{font-size:30px}.cover-content h1{font-size:58px}.cover-content p{font-size:18px}.family-space-grid{grid-template-columns:1fr 1fr;gap:12px}.family-space-card{min-height:210px;padding:18px}.card-art{font-size:44px}.family-space-card h3{font-size:19px}.family-space-card p{font-size:13px}.section-hero{padding:22px;gap:14px}.section-hero .hero-art{font-size:48px}.section-hero h1{font-size:26px}.hero-add{font-size:0;width:46px;height:46px;padding:0}.hero-add:after{content:'+';font-size:26px}.filter-row{padding:14px;gap:8px}.filter{padding:12px 4px;font-size:20px}.visual-grid,.content-grid{grid-template-columns:1fr 1fr}.folder-grid{padding:10px 14px 24px}.content-heading{padding:20px 16px 10px}.tool-grid{grid-template-columns:1fr}.utility-page{padding:24px 18px;border-radius:22px}.mobile-bottom-nav{height:72px}.mobile-nav-item span{font-size:24px}.add-main span{width:52px;height:52px;font-size:34px}.content-preview{height:160px}}
 @media(max-width:520px){.brand-words .script-logo{font-size:17px}.brand-words strong{font-size:19px}.family-cover{height:46vh;min-height:330px}.cover-content h1{font-size:48px}.family-space-grid{grid-template-columns:1fr 1fr}.family-space-card{min-height:185px}.family-space-card p{display:none}.round-arrow{width:38px;height:38px;font-size:22px}.filter span{font-size:11px}.visual-grid,.content-grid{grid-template-columns:1fr}.section-hero p{font-size:13px}.top-family-avatar{width:46px;height:46px}.top-profile{width:42px;height:42px}}
 
-/* ==== Full-card custom image (includes icon + wording + frames) ==== */
-.family-space-card{position:relative;overflow:hidden;isolation:isolate}
-.card-default-content{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:space-between;height:100%;min-height:280px;padding:26px;transition:opacity .2s ease}
-.card-full-custom{
-  position:absolute;inset:0;z-index:1;
-  width:100%;height:100%;
-  object-fit:contain;
-  object-position:center;
-  background:#fff;
-  border-radius:28px;display:block;
-  padding:0;
-}
-.family-space-card.has-custom .card-full-custom{
-  object-fit:fill;
-}
 
-.card-full-custom.hidden{display:none!important}
-.family-space-card.has-custom .card-default-content{opacity:0;pointer-events:none}
-.family-space-card.has-custom{padding:0}
-.card-camera-btn{
-  position:absolute;top:12px;right:12px;z-index:10;
-  width:36px;height:36px;border-radius:50%;border:0;
-  background:rgba(255,255,255,.96);backdrop-filter:blur(8px);
-  box-shadow:0 4px 16px rgba(0,0,0,.18);
-  font-size:16px;display:grid;place-items:center;
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.card-camera-btn:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,0,0,.22)}
-@media(max-width:900px){
-  .card-default-content{min-height:210px;padding:18px}
-  .card-camera-btn{width:30px;height:30px;font-size:13px}
-}
+/* ===== v6 FINAL: compact one-page, whole photo fit, no FM, no activity ===== */
+.topbar{height:72px!important;padding:12px 20px!important;background:rgba(255,255,255,.96)!important;backdrop-filter:blur(10px);border-bottom:1px solid #eef2f7}
+.brand-button{gap:10px!important}
+.top-family-avatar{display:none!important}
+.brand-words .script-logo{font-size:20px!important}
+.brand-words strong{font-size:18px!important;line-height:1.1!important}
+.brand-words small{margin-top:2px!important;font-size:12px!important;display:block!important}
+.top-profile{width:36px!important;height:36px!important;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+#notificationBtn{display:none!important}
 
-/* ==== FINAL FIX: whole photo fits ==== */
-.family-space-card.has-custom{padding:0!important;overflow:hidden}
+.family-cover{height:34vh!important;min-height:200px!important;max-height:320px!important;border-radius:20px!important;margin-bottom:12px!important}
+.cover-content{left:5%!important;top:12%!important;right:5%}
+.cover-script{font-size:22px!important}
+.cover-content h1{font-size:clamp(32px,5vw,56px)!important;margin:2px 0 6px!important;line-height:.95!important}
+.cover-content p{font-size:13px!important;line-height:1.3!important;margin-top:4px!important}
+.camera-fab{width:36px!important;height:36px!important;right:12px!important;bottom:12px!important;font-size:14px!important}
+
+.family-space-grid{gap:10px!important;margin:10px 0 0!important}
+.family-space-card{border-radius:18px!important;min-height:0!important;position:relative;overflow:hidden;isolation:isolate}
+.card-default-content{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:space-between;height:100%;min-height:132px!important;padding:14px!important;transition:opacity .2s ease}
+.card-art{font-size:32px!important}
+.family-space-card h3{font-size:15px!important;margin:4px 0 2px!important}
+.family-space-card p{font-size:11px!important;line-height:1.3!important;max-width:100%!important;display:block!important}
+.round-arrow{right:10px!important;bottom:10px!important;width:28px!important;height:28px!important;font-size:16px!important}
+
+/* Full custom image - WHOLE PHOTO FITS, NO CROP */
 .card-full-custom{
-  position:absolute!important;inset:0!important;
+  position:absolute!important;inset:0!important;z-index:1!important;
   width:100%!important;height:100%!important;
   object-fit:contain!important;
   object-position:center center!important;
-  background:#ffffff!important;
-  border-radius:28px!important;
+  background:#fff!important;
+  border-radius:18px!important;
+  display:block!important;
+}
+.card-full-custom.hidden{display:none!important}
+.family-space-card.has-custom{padding:0!important;background:#fff!important}
+.family-space-card.has-custom .card-default-content{opacity:0!important;pointer-events:none!important}
+.card-camera-btn{position:absolute;top:8px;right:8px;z-index:20;width:26px;height:26px;border-radius:50%;border:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);box-shadow:0 4px 16px rgba(0,0,0,.18);font-size:11px;display:grid;place-items:center}
+
+.mobile-bottom-nav{height:58px!important;width:min(460px,calc(100% - 16px))!important;bottom:8px!important;border-radius:20px!important;grid-template-columns:repeat(4,1fr)!important;align-items:center!important;padding:0 4px!important}
+.mobile-nav-item{gap:1px!important}
+.mobile-nav-item span{font-size:20px!important}
+.mobile-nav-item small{font-size:10px!important;margin-top:1px!important}
+.add-main span{width:44px!important;height:44px!important;font-size:24px!important;margin-top:-8px!important;box-shadow:0 4px 12px rgba(22,112,248,.35)!important;line-height:1!important;display:grid!important;place-items:center!important}
+.add-main{transform:translateY(-2px)}
+.main{width:min(1500px,calc(100% - 16px))!important;padding-bottom:70px}
+.app{padding-bottom:0!important}
+@media(max-width:900px){
+  .topbar{height:60px!important;padding:8px 14px!important}
+  .family-cover{height:26vh!important;min-height:160px!important;max-height:220px!important;border-radius:16px!important}
+  .cover-script{font-size:18px!important}
+  .cover-content h1{font-size:36px!important}
+  .cover-content p{font-size:12px!important}
+  .family-space-grid{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .card-default-content{min-height:118px!important;padding:10px!important}
+  .card-art{font-size:28px!important}
+  .family-space-card h3{font-size:13px!important}
+  .family-space-card p{font-size:10px!important}
+  .mobile-bottom-nav{height:54px!important}
+  .add-main span{width:40px!important;height:40px!important;margin-top:-6px!important;font-size:22px!important}
 }
