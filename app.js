@@ -101,7 +101,7 @@ async function loadProfile(){
 }
 async function handleSession(session){
   currentUser=session?.user||null;
-  if(!currentUser){currentProfile=null;showView("authView");return}
+  if(!currentUser){ hideLoader();currentProfile=null;showView("authView");return}
   await loadProfile();
 }
 client.auth.getSession().then(({data})=>handleSession(data.session));
