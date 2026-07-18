@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v11d-1784358872&x=v11d-1784358872" />
+  <link rel="stylesheet" href="styles.css?v=v13-1784359392&x=v13-1784359392" />
 </head>
 <body>
 <div id="toast"></div>
@@ -20,7 +20,7 @@
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:#f7f9fc;display:grid;place-items:center;font-family:Inter,sans-serif">
   <div style="text-align:center"><div style="font-family:Pacifico,cursive;font-size:28px">Family <span style="color:#ef4444">♥</span></div><div style="font-weight:800;color:#1670f8;margin-top:4px">Memories</div><div style="margin-top:16px;width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#1670f8;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block"></div></div>
 </div>
-<script>setTimeout(()=>{const l=document.getElementById("appLoader"); if(l){l.style.opacity="0"; setTimeout(()=>l.remove(),300);}},800);</script>
+<script>setTimeout(()=>{const l=document.getElementById("appLoader"); if(l){l.style.opacity="0"; setTimeout(()=>l.remove(),300);}},2500);</script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <section id="authView" class="auth-shell"><div class="auth-card">
@@ -142,5 +142,23 @@
 <dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" placeholder="Folder name" maxlength="100" required><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button class="primary">Create</button></div></form></dialog>
 <dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
 <dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v11d-1784358872&x=v11d-1784358872"></script><script src="app.js?v=v11d-1784358872&x=v11d-1784358872"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v13-1784359392&x=v13-1784359392"></script><script src="app.js?v=v13-1784359392&x=v13-1784359392"></script>
+<nav class="mobile-nav">
+  <button class="mobile-nav-item active" data-page="home">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 3L3 12h2v8h5v-5h4v5h5v-8h2L12 3z"/></svg></span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="mobile-nav-item" data-page="back" onclick="history.back()">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 4l-8 8 8 8 1.4-1.4-5.2-5.2H20v-2H7.8l5.2-5.2L12 4z"/></svg></span>
+    <span class="nav-label">Back</span>
+  </button>
+  <button class="mobile-nav-item add-main" data-action="add-memory">
+    <span class="nav-ico add-plus"><svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z"/></svg></span>
+    <span class="nav-label">Add</span>
+  </button>
+  <button class="mobile-nav-item" data-page="profile">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+    <span class="nav-label">Profile</span>
+  </button>
+</nav>
 </body></html>
