@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v10b-1784356797" />
+  <link rel="stylesheet" href="styles.css?v=v11-1784357477&x=v11-1784357477" />
 </head>
 <body>
 <div id="toast"></div>
@@ -20,7 +20,7 @@
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:#f7f9fc;display:grid;place-items:center;font-family:Inter,sans-serif">
   <div style="text-align:center"><div style="font-family:Pacifico,cursive;font-size:28px">Family <span style="color:#ef4444">♥</span></div><div style="font-weight:800;color:#1670f8;margin-top:4px">Memories</div><div style="margin-top:16px;width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#1670f8;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block"></div></div>
 </div>
-<script>setTimeout(()=>{const l=document.getElementById("appLoader"); if(l){l.style.opacity="0"; setTimeout(()=>l.remove(),300);}},2500);</script>
+<script>setTimeout(()=>{const l=document.getElementById("appLoader"); if(l){l.style.opacity="0"; setTimeout(()=>l.remove(),200);}},800);</script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <section id="authView" class="auth-shell"><div class="auth-card">
@@ -142,5 +142,5 @@
 <dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" placeholder="Folder name" maxlength="100" required><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button class="primary">Create</button></div></form></dialog>
 <dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
 <dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v10b-1784356797"></script><script src="app.js?v=v10b-1784356797"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v11-1784357477&x=v11-1784357477"></script><script src="app.js?v=v11-1784357477&x=v11-1784357477"></script>
 </body></html>

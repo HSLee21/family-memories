@@ -446,6 +446,22 @@ function setCardImageDOM(card, src){
   }
 }
 async function loadCardImages(){
+  const tasks = HOME_CARDS.map(async (card)=>{
+    let src = null;
+    const local = localStorage.getItem(cardLocalKey(card));
+    if(local){ setCardImageDOM(card, local); }
+    if(currentUser){
+      try{
+        const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
+        if(data?.signedUrl) src = data.signedUrl;
+      }catch{}
+    }
+    if(src) setCardImageDOM(card, src);
+  });
+  await Promise.allSettled(tasks);
+}
+async function loadCardImages_old_UNUSED(){
+
   for(const card of HOME_CARDS){
     let src = null;
     if(currentUser){
