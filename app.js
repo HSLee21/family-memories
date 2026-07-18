@@ -378,7 +378,6 @@ async function loadProfilePhoto(){
   }else{
     img.classList.add("hidden");
     fallback.classList.remove("hidden");
-        fallback.textContent = "👤";
   }
 }
 
@@ -428,11 +427,10 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
 
 
 
-// ==== Full-card custom images (camera per card) ====
+// ==== Full-card custom images v7 + Back button + Profile fix ====
 const HOME_CARDS = ["memories","trips","celebrations","study"];
 const cardLocalKey = (c) => `family-memories:card-full:${c}`;
 const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;
-
 function setCardImageDOM(card, src){
   const cardEl = document.querySelector(`.family-space-card.${card}-card`);
   const fullImg = document.querySelector(`[data-card-full="${card}"]`);
@@ -447,7 +445,6 @@ function setCardImageDOM(card, src){
     cardEl.classList.remove("has-custom");
   }
 }
-
 async function loadCardImages(){
   for(const card of HOME_CARDS){
     let src = null;
@@ -464,9 +461,7 @@ async function loadCardImages(){
     if(src) setCardImageDOM(card, src);
   }
 }
-
 function initCardCameraButtons(){
-  // Navigate when card clicked, except camera btn
   document.querySelectorAll(".family-space-card[data-go]").forEach(el=>{
     el.addEventListener("click",(e)=>{
       if(e.target.closest(".card-camera-btn")) return;
@@ -487,8 +482,6 @@ function initCardCameraButtons(){
       const file = e.target.files?.[0];
       if(!file) return;
       if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
-      if(file.size > 10*1024*1024) return toast("Image too large (max 10MB).");
-      // immediate preview
       const reader = new FileReader();
       reader.onload = () => {
         const dataUrl = reader.result;
@@ -496,29 +489,22 @@ function initCardCameraButtons(){
         try{ localStorage.setItem(cardLocalKey(card), dataUrl); }catch{}
       };
       reader.readAsDataURL(file);
-      // upload to supabase if logged in
       if(currentUser){
         try{
           const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
           if(error) toast("Saved locally. Cloud error: "+error.message);
-          else {
-            toast("Card image updated.");
-            // reload signed url
-            try{
-              const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
-              if(data?.signedUrl) setCardImageDOM(card, data.signedUrl);
-            }catch{}
-          }
+          else { toast("Card image updated."); const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card),86400); if(data?.signedUrl) setCardImageDOM(card,data.signedUrl); }
         }catch(err){ toast(err.message); }
-      }else{
-        toast("Card image saved locally.");
       }
-      e.target.value = "";
+      e.target.value="";
     });
   });
 }
-
-document.addEventListener("DOMContentLoaded", initCardCameraButtons);
+document.addEventListener("DOMContentLoaded", ()=>{
+  initCardCameraButtons();
+  const backBtn=document.getElementById("bottomBackBtn");
+  if(backBtn) backBtn.addEventListener("click", ()=>{ if(activePage!=="home") navigate("home"); });
+});
 
 
 // Scientific calculator
@@ -593,42 +579,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   setTimeout(syncTopProfile, 500);
   setTimeout(syncTopProfile, 1500);
-});
-
-
-
-// Back button logic + profile photo fix
-document.addEventListener("DOMContentLoaded", () => {
-  const backBtn = document.getElementById("bottomBackBtn");
-  if(backBtn){
-    backBtn.addEventListener("click", () => {
-      if(activePage && activePage !== "home"){
-        navigate("home");
-      } else {
-        if(window.history.length > 1) history.back();
-      }
-    });
-  }
-  // Keep bottom nav active state correct
-  const origNav = navigate;
-  window.navigate = function(page){
-    activePage = page;
-    // call original
-    pages.forEach(p=>document.getElementById(p+"Page")?.classList.toggle("hidden",p!==page));
-    document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-    document.querySelectorAll(".mobile-nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-    const titles = {home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",search:"Search",profile:"Profile",admin:"Family Admin"};
-    const pt = document.getElementById("pageTitle");
-    if(pt) pt.textContent = titles[page] || "Home";
-    document.querySelector(".sidebar")?.classList.remove("open");
-    if(sectionType[page]) { currentFolder=null; loadFolders(page); }
-    if(page==="admin") loadMembers();
-    if(page==="home") loadHomeExperience();
-    if(page==="profile") loadProfilePage();
-    // Back button visibility
-    const bb = document.getElementById("bottomBackBtn");
-    if(bb){ bb.style.opacity = page==="home" ? "0.5" : "1"; }
-  };
 });
 
 

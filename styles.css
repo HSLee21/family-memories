@@ -9,206 +9,86 @@ dialog{border:0;border-radius:24px;padding:0;box-shadow:var(--shadow);width:min(
 @media(max-width:900px){.topbar{height:88px;padding:12px 18px}.top-family-avatar{width:54px;height:54px}.brand-words .script-logo{font-size:20px}.brand-words strong{font-size:22px}.brand-words small{display:none}.top-actions .icon-btn{display:none}.top-profile{width:48px;height:48px}.main{width:calc(100% - 20px)}.family-cover{height:52vh;min-height:380px;border-radius:24px}.cover-content{left:7%;top:12%}.cover-script{font-size:30px}.cover-content h1{font-size:58px}.cover-content p{font-size:18px}.family-space-grid{grid-template-columns:1fr 1fr;gap:12px}.family-space-card{min-height:210px;padding:18px}.card-art{font-size:44px}.family-space-card h3{font-size:19px}.family-space-card p{font-size:13px}.section-hero{padding:22px;gap:14px}.section-hero .hero-art{font-size:48px}.section-hero h1{font-size:26px}.hero-add{font-size:0;width:46px;height:46px;padding:0}.hero-add:after{content:'+';font-size:26px}.filter-row{padding:14px;gap:8px}.filter{padding:12px 4px;font-size:20px}.visual-grid,.content-grid{grid-template-columns:1fr 1fr}.folder-grid{padding:10px 14px 24px}.content-heading{padding:20px 16px 10px}.tool-grid{grid-template-columns:1fr}.utility-page{padding:24px 18px;border-radius:22px}.mobile-bottom-nav{height:72px}.mobile-nav-item span{font-size:24px}.add-main span{width:52px;height:52px;font-size:34px}.content-preview{height:160px}}
 @media(max-width:520px){.brand-words .script-logo{font-size:17px}.brand-words strong{font-size:19px}.family-cover{height:46vh;min-height:330px}.cover-content h1{font-size:48px}.family-space-grid{grid-template-columns:1fr 1fr}.family-space-card{min-height:185px}.family-space-card p{display:none}.round-arrow{width:38px;height:38px;font-size:22px}.filter span{font-size:11px}.visual-grid,.content-grid{grid-template-columns:1fr}.section-hero p{font-size:13px}.top-family-avatar{width:46px;height:46px}.top-profile{width:42px;height:42px}}
 
-/* ==== Full-card custom image (includes icon + wording + frames) ==== */
-.family-space-card{position:relative;overflow:hidden;isolation:isolate}
-.card-default-content{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:space-between;height:100%;min-height:280px;padding:26px;transition:opacity .2s ease}
-.card-full-custom{
-  position:absolute;inset:0;z-index:1;
-  width:100%;height:100%;object-fit:cover;
-  border-radius:28px;display:block;
-  background:#fff;
-}
-.card-full-custom.hidden{display:none!important}
-.family-space-card.has-custom .card-default-content{opacity:0;pointer-events:none}
-.family-space-card.has-custom{padding:0}
-.card-camera-btn{
-  position:absolute;top:12px;right:12px;z-index:10;
-  width:36px;height:36px;border-radius:50%;border:0;
-  background:rgba(255,255,255,.96);backdrop-filter:blur(8px);
-  box-shadow:0 4px 16px rgba(0,0,0,.18);
-  font-size:16px;display:grid;place-items:center;
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.card-camera-btn:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,0,0,.22)}
-@media(max-width:900px){
-  .card-default-content{min-height:210px;padding:18px}
-  .card-camera-btn{width:30px;height:30px;font-size:13px}
-}
 
-
-/* ===== V6 FINAL - iPhone One Page, All Issues Fixed ===== */
-*{ -webkit-tap-highlight-color: transparent }
-body{background:#f7f9fc}
-.app{min-height:100vh!important;padding-bottom:0!important;overflow:hidden}
-.main{width:100%!important;max-width:480px!important;margin:0 auto!important;padding:0 10px 0!important;height:calc(100vh - 108px);overflow:hidden;display:flex;flex-direction:column}
-
-/* Topbar - compact, no overlap */
-.topbar{
-  height:56px!important;min-height:56px!important;
-  padding:8px 14px!important;
-  background:#ffffff!important;
-  border-bottom:1px solid #eef2f7!important;
-  position:sticky!important;top:0;z-index:20;
-  display:flex!important;align-items:center!important;justify-content:space-between!important;
-}
-.brand-button{gap:0!important;align-items:flex-start!important}
-.brand-words{display:flex!important;flex-direction:column!important;line-height:1!important}
-.brand-words .script-logo{font-size:18px!important;font-weight:700!important}
-.brand-words .script-logo b{color:#ef4444}
-.brand-words strong{font-size:15px!important;color:#1670f8!important;margin-top:1px}
-.brand-words small{font-size:10px!important;color:#667085!important;margin-top:2px!important;display:block!important}
+/* ===== V7 FINAL v7-1784354058 - All iPhone fixes + cache buster ===== */
+/* Fix Family touching Memories */
+.topbar{height:62px!important;min-height:62px!important;padding:10px 14px!important;background:#ffffff!important;border-bottom:1px solid #eef2f7!important;position:sticky!important;top:0;z-index:20;display:flex!important;align-items:center!important;justify-content:space-between!important}
+.brand-button{gap:0!important;padding:0!important;border:0!important;background:none!important;text-align:left!important}
+.brand-words{display:flex!important;flex-direction:column!important;line-height:1!important;gap:1px!important}
+.brand-words .script-logo{font-family:Pacifico,cursive!important;font-size:20px!important;line-height:1.1!important;display:block!important;margin-bottom:2px!important}
+.brand-words .script-logo b{color:#ef4444!important}
+.brand-words strong{font-size:15px!important;color:#1670f8!important;line-height:1.1!important;display:block!important;margin-top:0!important}
+.brand-words small{font-size:10.5px!important;color:#6b7280!important;line-height:1!important;margin-top:3px!important;display:block!important}
+.top-family-avatar{display:none!important}
 .top-actions{display:flex!important;align-items:center!important}
-.top-profile{
-  width:34px!important;height:34px!important;
-  border-radius:50%!important;
-  background:#f0f4f8!important;
-  border:2px solid #fff!important;
-  box-shadow:0 2px 8px rgba(0,0,0,.1)!important;
-  font-size:16px!important;overflow:hidden
-}
-.top-profile img{width:100%;height:100%;object-fit:cover}
+.top-profile{width:36px!important;height:36px!important;border-radius:50%!important;background:#eef4ff!important;border:2px solid #fff!important;box-shadow:0 2px 8px rgba(0,0,0,.12)!important;display:grid!important;place-items:center!important;font-size:18px!important;overflow:hidden!important}
 #notificationBtn{display:none!important}
 
-/* Hero - shorter, text in sky, not blocking tree */
-.family-cover{
-  height:22vh!important;min-height:160px!important;max-height:210px!important;
-  border-radius:16px!important;
-  margin:6px 0 8px!important;
-  flex-shrink:0;
-}
-.cover-image{filter:brightness(0.92)}
-.cover-content{
-  left:14px!important;top:12px!important;right:auto!important;bottom:auto!important;
-  max-width:70%!important;
-  text-shadow:0 1px 8px rgba(0,0,0,.35)!important;
-}
-.cover-script{font-size:16px!important;display:block!important;margin-bottom:1px}
-.cover-content h1{
-  font-size:28px!important;line-height:0.95!important;
-  margin:0 0 4px!important;letter-spacing:-0.5px
-}
-.cover-content p{
-  font-size:10px!important;line-height:1.25!important;
-  margin:0!important;opacity:.92;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
-}
-.camera-fab{
-  width:30px!important;height:30px!important;
-  left:10px!important;right:auto!important;bottom:10px!important;
-  background:rgba(255,255,255,.88)!important;
-  backdrop-filter:blur(8px)!important;
-  border-radius:50%!important;
-  font-size:12px!important;
-  box-shadow:0 2px 8px rgba(0,0,0,.15)!important;
-  display:grid!important;place-items:center!important;
-}
+.app{min-height:100dvh!important;padding-bottom:0!important;overflow:hidden!important;background:#f6f8fb!important}
+.main{width:100%!important;max-width:480px!important;margin:0 auto!important;padding:0 10px!important;display:flex!important;flex-direction:column!important;min-height:calc(100dvh - 118px)!important}
 
-/* 4 Cards grid - compact, fit one screen */
-.family-space-grid{
-  display:grid!important;grid-template-columns:1fr 1fr!important;
-  gap:8px!important;margin:0!important;
-  flex:1;align-content:start
-}
-.family-space-card{
-  border-radius:14px!important;
-  min-height:0!important;
-  padding:0!important;
-  position:relative!important;overflow:hidden!important;
-  background:#fff!important;
-  box-shadow:0 2px 10px rgba(0,0,0,.06)!important;
-  border:1px solid rgba(0,0,0,.04)!important;
-}
-.card-default-content{
-  min-height:108px!important;
-  padding:8px 8px 28px 8px!important;
-  display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:2px!important
-}
-.card-art{font-size:28px!important;line-height:1!important;margin-bottom:2px}
-.family-space-card h3{font-size:12px!important;margin:2px 0 1px!important;line-height:1.1!important}
-.family-space-card p{font-size:9px!important;line-height:1.25!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
-.round-arrow{
-  width:22px!important;height:22px!important;
-  right:6px!important;bottom:6px!important;
-  font-size:12px!important;
-}
+/* Hero - text at sky, not touching trees, smaller Memories */
+.family-cover{height:23vh!important;min-height:150px!important;max-height:200px!important;border-radius:16px!important;margin:8px 0 8px!important;flex-shrink:0!important;position:relative!important;overflow:hidden!important}
+.cover-image{position:absolute!important;inset:0!important;background-size:cover!important;background-position:center 35%!important;filter:brightness(0.95)!important}
+.cover-content{position:absolute!important;left:14px!important;top:10px!important;right:80px!important;max-width:58%!important;text-shadow:0 1px 6px rgba(0,0,0,.35)!important;z-index:2}
+.cover-script{font-family:Pacifico,cursive!important;font-size:14px!important;line-height:1!important;margin:0 0 2px!important;display:block!important;color:#fff!important}
+.cover-content h1{font-size:24px!important;line-height:0.9!important;margin:0 0 4px!important;font-weight:800!important;letter-spacing:-0.5px!important;color:#fff!important}
+.cover-content p{font-size:9px!important;line-height:1.2!important;margin:0!important;color:rgba(255,255,255,.92)!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+.camera-fab{width:28px!important;height:28px!important;left:10px!important;right:auto!important;bottom:8px!important;background:rgba(255,255,255,.9)!important;backdrop-filter:blur(8px)!important;border-radius:50%!important;font-size:11px!important;box-shadow:0 2px 8px rgba(0,0,0,.15)!important;display:grid!important;place-items:center!important;z-index:3!important}
 
-/* Full custom uploaded image - WHOLE PHOTO, no crop */
-.card-full-custom{
-  position:absolute!important;inset:0!important;
-  width:100%!important;height:100%!important;
-  object-fit:contain!important;
-  object-position:center center!important;
-  background:#ffffff!important;
-  border-radius:14px!important;
-  z-index:1!important;
-}
+/* Cards grid - shorter, centered, no large bottom gap */
+.family-space-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin:0!important;flex:1!important;align-content:start!important}
+.family-space-card{border-radius:14px!important;min-height:0!important;padding:0!important;position:relative!important;overflow:hidden!important;background:#fff!important;box-shadow:0 2px 8px rgba(0,0,0,.06)!important;border:1px solid rgba(0,0,0,.04)!important}
+.card-default-content{min-height:104px!important;padding:8px 8px 26px 8px!important;display:flex!important;flex-direction:column!important;gap:2px!important}
+.card-art{font-size:26px!important;line-height:1!important;margin:0 0 2px!important}
+.family-space-card h3{font-size:11.5px!important;margin:1px 0!important;line-height:1.1!important}
+.family-space-card p{font-size:8.5px!important;line-height:1.2!important;-webkit-line-clamp:2!important;display:-webkit-box!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+.round-arrow{width:20px!important;height:20px!important;right:6px!important;bottom:6px!important;font-size:11px!important}
+
+.card-full-custom{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;background:#fff!important;border-radius:14px!important;z-index:1!important}
+.card-full-custom.hidden{display:none!important}
 .family-space-card.has-custom .card-default-content{opacity:0!important;pointer-events:none!important}
-.family-space-card.has-custom{background:#fff!important}
-.card-camera-btn{
-  width:22px!important;height:22px!important;
-  top:6px!important;right:6px!important;
-  background:rgba(255,255,255,.92)!important;
-  backdrop-filter:blur(6px)!important;
-  border-radius:50%!important;
-  box-shadow:0 2px 6px rgba(0,0,0,.12)!important;
-  font-size:10px!important;
-  z-index:10!important;
-  display:grid!important;place-items:center!important;
-}
+.card-camera-btn{width:20px!important;height:20px!important;top:6px!important;right:6px!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(6px)!important;border-radius:50%!important;box-shadow:0 2px 6px rgba(0,0,0,.12)!important;font-size:9px!important;z-index:10!important;display:grid!important;place-items:center!important}
 
-/* Bottom Nav - compact, centered, no empty space, icons equal */
+/* Bottom nav - all blue, centered plus, no large empty bottom */
 .mobile-bottom-nav{
-  height:56px!important;
+  height:60px!important;
   width:100%!important;max-width:480px!important;
   left:50%!important;transform:translateX(-50%)!important;
   bottom:0!important;
-  border-radius:16px 16px 0 0!important;
-  border:1px solid #e8edf4!important;
-  border-bottom:0!important;
-  background:rgba(255,255,255,.98)!important;
-  backdrop-filter:blur(12px)!important;
-  box-shadow:0 -4px 20px rgba(0,0,0,.06)!important;
-  display:grid!important;
-  grid-template-columns:repeat(4,1fr)!important;
-  align-items:center!important;
-  padding:4px 0 env(safe-area-inset-bottom)!important;
-  position:fixed!important;
+  border-radius:18px 18px 0 0!important;
+  background:#ffffff!important;
+  border:1px solid #e8edf4!important;border-bottom:0!important;
+  box-shadow:0 -2px 16px rgba(0,0,0,.06)!important;
+  display:grid!important;grid-template-columns:repeat(4,1fr)!important;
+  align-items:center!important;justify-items:center!important;
+  padding:6px 0 calc(6px + env(safe-area-inset-bottom))!important;
+  position:fixed!important;z-index:100!important;
 }
 .mobile-nav-item{
   border:0!important;background:transparent!important;
   display:flex!important;flex-direction:column!important;
   align-items:center!important;justify-content:center!important;
-  gap:2px!important;
-  color:#667085!important;
-  padding:4px 0!important;
-  height:100%!important;
+  gap:2px!important;color:#1670f8!important;
+  padding:2px 8px!important;height:auto!important;
+  font-weight:600!important;
 }
-.mobile-nav-item.active{color:#1670f8!important}
-.mobile-nav-item .nav-ico{font-size:18px!important;line-height:1!important}
-.mobile-nav-item small{font-size:10px!important;font-weight:500!important}
-.add-main{position:relative!important;transform:none!important}
+.mobile-nav-item .nav-ico{font-size:18px!important;line-height:1!important;display:block!important}
+.mobile-nav-item small{font-size:10px!important;font-weight:600!important;color:#1670f8!important}
+.mobile-nav-item.active .nav-ico, .mobile-nav-item.active small{color:#1670f8!important}
+.add-main{position:relative!important;transform:none!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:2px!important}
 .add-main .add-plus{
-  width:42px!important;height:42px!important;
+  width:46px!important;height:46px!important;
   border-radius:50%!important;
   background:#1670f8!important;color:#fff!important;
   display:grid!important;place-items:center!important;
-  font-size:22px!important;font-weight:300!important;
+  font-size:24px!important;font-weight:400!important;
   line-height:1!important;
-  box-shadow:0 4px 12px rgba(22,112,248,.35)!important;
-  margin:0 auto!important;
+  box-shadow:0 4px 14px rgba(22,112,248,.4)!important;
+  margin:0!important;
 }
-.add-main small{margin-top:2px!important;color:#1670f8!important}
+.add-main small{color:#1670f8!important;margin-top:1px!important}
 
-/* Hide desktop sidebar spacing on mobile */
-@media(max-width:900px){
-  .main{height:calc(100dvh - 112px)!important}
-  .family-cover{height:24vh!important;min-height:150px!important}
-}
-@media(min-height:800px){
-  .family-cover{height:26vh!important;min-height:180px!important}
-  .card-default-content{min-height:124px!important}
-}
-
-/* Remove scroll for homepage only */
-#homePage{overflow:hidden!important;height:100%!important;display:flex;flex-direction:column}
+/* Remove scroll, center content */
+#homePage{flex:1!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
 #homePage.hidden{display:none!important}
