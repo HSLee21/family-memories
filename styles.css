@@ -173,4 +173,27 @@ dialog{border:0;border-radius:24px;padding:0;box-shadow:var(--shadow);width:min(
 .mobile-nav-item .home-ico{font-size:30px!important}
 .add-main .add-plus{width:22px!important;height:22px!important;font-size:14px!important}
 
-/* v12-1784358136 Plus 22 Home 30 */ .add-main .add-plus{width:22px!important;height:22px!important} .mobile-nav-item .home-ico{font-size:30px!important}
+
+/* === V11D UI FIX v11d-1784358872 === */
+/* Nav: standardize blue, align text */
+.mobile-nav{ display:flex!important; justify-content:space-around!important; align-items:flex-end!important; padding:6px 0 8px!important; background:white!important; border-top:1px solid #e5e7eb!important; }
+.mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:flex-end!important; gap:2px!important; background:none!important; border:none!important; min-width:60px!important; color:#1670f8!important; font-weight:600!important; line-height:1!important; }
+.mobile-nav-item .nav-ico{ display:flex!important; align-items:center!important; justify-content:center!important; width:28px!important; height:28px!important; color:#1670f8!important; }
+.mobile-nav-item .nav-label{ font-size:13px!important; line-height:1.1!important; margin-top:2px!important; color:#1670f8!important; font-weight:700!important; }
+.mobile-nav-item.add-main .nav-ico.add-plus{ width:36px!important; height:36px!important; border-radius:50%!important; background:#1670f8!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 2px 8px rgba(22,112,248,0.35)!important; }
+.mobile-nav-item.active .nav-ico,.mobile-nav-item.active .nav-label{ color:#1670f8!important; }
+
+/* Cards: fix photo out of frame */
+.home-cards{ display:grid!important; grid-template-columns:1fr 1fr!important; gap:12px!important; padding:12px!important; }
+.home-card{ position:relative!important; border-radius:16px!important; overflow:hidden!important; height:150px!important; display:flex!important; flex-direction:column!important; }
+.home-card .card-bg{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important; object-fit:cover!important; object-position:center!important; }
+.home-card-content{ position:relative!important; z-index:1!important; padding:12px!important; display:flex!important; flex-direction:column!important; justify-content:flex-end!important; height:100%!important; }
+
+/* Camera button centered */
+.card-camera-btn{ position:absolute!important; top:8px!important; right:8px!important; width:28px!important; height:28px!important; border-radius:50%!important; background:white!important; border:none!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 1px 4px rgba(0,0,0,0.15)!important; z-index:2!important; }
+.card-camera-btn svg{ display:block!important; margin:auto!important; }
+
+/* Plus and home colors */
+.add-main .add-plus{ width:22px!important; height:22px!important; } /* keep your requested 22px for content plus, but nav plus is 36 */
+.family-cover{ height:32vh!important; min-height:200px!important; max-height:260px!important; }
+#appLoader{ transition:opacity 0.15s!important; }

@@ -1,4 +1,3 @@
-console.log("APP.JS v12-1784358136 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session only for the current browser tab/session.
@@ -492,7 +491,8 @@ function initCardCameraButtons(){
       reader.readAsDataURL(file);
       if(currentUser){
         try{
-          const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
+          const {error} = const toUpload = await compressImage(file);
+          await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), toUpload, {upsert:true, contentType:file.type});
           if(error) toast("Saved locally. Cloud error: "+error.message);
           else { toast("Card image updated."); const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card),86400); if(data?.signedUrl) setCardImageDOM(card,data.signedUrl); }
         }catch(err){ toast(err.message); }
@@ -506,6 +506,25 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const backBtn=document.getElementById("bottomBackBtn");
   if(backBtn) backBtn.addEventListener("click", ()=>{ if(activePage!=="home") navigate("home"); });
 });
+
+
+
+async function compressImage(file, maxW=900, quality=0.75){
+  try{
+    if(!file.type.startsWith("image/")) return file;
+    if(file.size < 300*1024) return file;
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxW / bitmap.width);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width * scale;
+    canvas.height = bitmap.height * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise(r=>canvas.toBlob(r,'image/jpeg',quality));
+    if(!blob || blob.size >= file.size) return file;
+    return new File([blob], file.name.replace(/\..+$/, '.jpg'), {type:'image/jpeg'});
+  }catch{ return file; }
+}
 
 
 // Scientific calculator
