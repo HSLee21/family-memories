@@ -4,29 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
-  <title>Family Memories v6-onepage-2026-07-18</title>
-  <!-- VERSION v6-onepage-2026-07-18 - FM removed, activity removed, cards fit whole photo, one-page -->
+  <title>Family Memories</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v6-onepage-2026-07-18" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <div id="toast"></div>
 <section id="authView" class="auth-shell"><div class="auth-card">
-  <div class="auth-brand"><div class="brand-photo"><span>FM</span></div><div><div class="script-logo">Family <b>♥</b></div><h1>Memories</h1></div></div>
+  <div class="auth-brand"><div class="brand-photo"><span>👤</span></div><div><div class="script-logo">Family <b>♥</b></div><h1>Memories</h1></div></div>
   <p class="muted">A private place for memories, family moments and learning.</p>
   <div class="tabs"><button class="tab active" data-auth-tab="signin">Sign in</button><button class="tab" data-auth-tab="signup">Create account</button></div>
   <form id="signInForm" class="stack"><input id="signInEmail" type="email" placeholder="Email address" required><input id="signInPassword" type="password" placeholder="Password" minlength="6" required><button id="forgotPasswordBtn" class="text-link" type="button">Forgot password?</button><button class="primary" type="submit">Sign in</button></form>
   <form id="forgotPasswordForm" class="stack hidden"><h3>Reset your password</h3><input id="resetEmail" type="email" placeholder="Email address" required><button class="primary">Send reset link</button><button id="backToSignInBtn" class="secondary" type="button">Back to sign in</button></form>
   <form id="newPasswordForm" class="stack hidden"><h3>Set a new password</h3><input id="newPassword" type="password" placeholder="New password" minlength="6" required><input id="confirmNewPassword" type="password" placeholder="Confirm new password" minlength="6" required><button class="primary">Update password</button></form>
   <form id="signUpForm" class="stack hidden"><input id="signUpName" placeholder="Your name" required><input id="signUpEmail" type="email" placeholder="Email address" required><input id="signUpPassword" type="password" placeholder="Password (minimum 6 characters)" minlength="6" required><button class="primary">Create account</button><p class="small muted">After email verification, a family admin may need to approve your account.</p></form>
-  <button class="profile-photo-button hidden" id="profilePhotoBtn" type="button"><img id="profilePhotoImage" class="hidden" alt="Profile"><span id="profilePhotoFallback">FM</span></button><input id="profilePhotoInput" type="file" accept="image/*" hidden>
+  <button class="profile-photo-button hidden" id="profilePhotoBtn" type="button"><img id="profilePhotoImage" class="hidden" alt="Profile"><span id="profilePhotoFallback">👤</span></button><input id="profilePhotoInput" type="file" accept="image/*" hidden>
 </div></section>
 <section id="pendingView" class="center-screen hidden"><div class="message-card"><div class="big-icon">⏳</div><h2>Approval pending</h2><p>Your email is verified. A family administrator needs to approve your account before you can enter.</p><button id="pendingSignOut" class="secondary">Sign out</button></div></section>
 
 <div id="appView" class="app hidden">
-  <header class="topbar">
+    <header class="topbar">
     <button class="brand-button" data-page="home"><div class="brand-words"><span class="script-logo">Family <b>♥</b></span><strong>Memories</strong><small>Our private family space</small></div></button>
     <div class="top-actions"><button id="topProfilePhotoBtn" class="top-profile"><img id="topProfilePhotoImage" class="hidden" alt="Profile"><span id="topProfilePhotoFallback">👤</span></button></div>
   </header>
@@ -41,7 +40,7 @@
       <div class="family-space-grid">
         <div class="family-space-card memories-card" data-go="memories">
           <img class="card-full-custom hidden" data-card-full="memories" alt="" />
-          <button class="card-camera-btn" data-card="memories" type="button" title="Change card image">📷</button>
+          <button class="card-camera-btn" data-card="memories" type="button" title="Change card image" aria-label="Change image">📷</button>
           <div class="card-default-content">
             <div class="card-art">🖼️💗</div>
             <div><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
@@ -50,7 +49,7 @@
         </div>
         <div class="family-space-card trips-card" data-go="trips">
           <img class="card-full-custom hidden" data-card-full="trips" alt="" />
-          <button class="card-camera-btn" data-card="trips" type="button">📷</button>
+          <button class="card-camera-btn" data-card="trips" type="button" title="Change card image">📷</button>
           <div class="card-default-content">
             <div class="card-art">🧳📷</div>
             <div><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
@@ -108,15 +107,20 @@
     </section>
 
     <section id="searchPage" class="page hidden utility-page"><h1>Search</h1><p class="muted">Find albums, trips, celebrations and study materials.</p><div class="search-box">🔍 <input id="globalSearch" placeholder="Search your family space..."></div><div id="searchResults" class="search-results"><div class="empty">Start typing to search.</div></div></section>
-    <section id="profilePage" class="page hidden utility-page"><div class="profile-panel"><button id="profileEditPhoto" class="profile-large"><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p id="profileDisplayEmail" class="muted"></p><div class="profile-menu"><button id="familyAdminShortcut" class="hidden">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
+    <section id="profilePage" class="page hidden utility-page"><div class="profile-panel"><button id="profileEditPhoto" class="profile-large"><span id="profileLargeFallback">👤</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p id="profileDisplayEmail" class="muted"></p><div class="profile-menu"><button id="familyAdminShortcut" class="hidden">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
     <section id="adminPage" class="page hidden utility-page"><div class="content-heading"><div><h1>Family Admin</h1><p class="muted">Approve family members who may access the app.</p></div></div><div id="membersList" class="member-list"></div></section>
   </main>
 
-  <nav class="mobile-bottom-nav" aria-label="Main navigation"><button class="mobile-nav-item active" data-page="home"><span>⌂</span><small>Home</small></button><button class="mobile-nav-item" data-page="search"><span>⌕</span><small>Search</small></button><button class="mobile-nav-item add-main" id="quickAddBtn"><span>+</span><small>Add</small></button><button class="mobile-nav-item" data-page="profile"><span>👤</span><small>Profile</small></button></nav>
+    <nav class="mobile-bottom-nav" aria-label="Main navigation">
+    <button class="mobile-nav-item active" data-page="home"><span class="nav-ico">⌂</span><small>Home</small></button>
+    <button class="mobile-nav-item" id="bottomBackBtn"><span class="nav-ico">←</span><small>Back</small></button>
+    <button class="mobile-nav-item add-main" id="quickAddBtn"><span class="add-plus">+</span><small>Add</small></button>
+    <button class="mobile-nav-item" data-page="profile"><span class="nav-ico">👤</span><small>Profile</small></button>
+  </nav>
 </div>
 
 <dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" placeholder="Folder name" maxlength="100" required><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button class="primary">Create</button></div></form></dialog>
 <dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
 <dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v6-onepage-2026-07-18"></script><script src="app.js?v=v6-onepage-2026-07-18"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js"></script>
 </body></html>
