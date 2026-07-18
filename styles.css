@@ -175,34 +175,37 @@ dialog{border:0;border-radius:24px;padding:0;box-shadow:var(--shadow);width:min(
 
 /* v12-1784358136 Plus 22 Home 30 */ .add-main .add-plus{width:22px!important;height:22px!important} .mobile-nav-item .home-ico{font-size:30px!important}
 
-/* === V14 FIX double plus + cards + camera v14-1784359798 === */
-.mobile-nav{ display:flex!important; justify-content:space-around!important; align-items:flex-end!important; padding:8px 0 max(8px, env(safe-area-inset-bottom))!important; background:#fff!important; border-top:1px solid #e5e7eb!important; position:fixed!important; bottom:0!important; left:0!important; right:0!important; z-index:1000!important; height:64px!important; box-sizing:border-box!important; }
-.mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:3px!important; background:none!important; border:none!important; flex:1!important; color:#1670f8!important; padding:0!important; margin:0!important; line-height:1!important; }
-.mobile-nav-item .nav-ico{ display:flex!important; align-items:center!important; justify-content:center!important; width:26px!important; height:26px!important; color:#1670f8!important; }
-.mobile-nav-item .nav-label{ font-size:11px!important; font-weight:700!important; color:#1670f8!important; margin-top:1px!important; }
-.mobile-nav-item.add-main{ position:relative!important; top:-6px!important; }
-.mobile-nav-item.add-main .nav-ico.add-plus{ width:48px!important; height:48px!important; border-radius:50%!important; background:#1670f8!important; box-shadow:0 4px 14px rgba(22,112,248,0.45)!important; display:flex!important; align-items:center!important; justify-content:center!important; }
-
-/* Hide any extra floating add buttons */
-.fab, .floating-add, #fabAdd, button.fab{ display:none!important; }
-
-/* Cards fix - prevent cut */
-.home-section, #homeView{ padding-bottom:80px!important; }
+/* === V13 from V12-debug v13-1784359392 === */
+.mobile-nav{ display:flex!important; justify-content:space-around!important; align-items:flex-end!important; padding:6px 0 calc(8px + env(safe-area-inset-bottom))!important; background:#fff!important; border-top:1px solid #e5e7eb!important; position:fixed!important; bottom:0!important; left:0!important; right:0!important; z-index:100!important; }
+.mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:flex-end!important; gap:3px!important; background:none!important; border:none!important; min-width:60px!important; color:#1670f8!important; cursor:pointer!important; }
+.mobile-nav-item .nav-ico{ display:flex!important; align-items:center!important; justify-content:center!important; width:28px!important; height:28px!important; color:#1670f8!important; }
+.mobile-nav-item .nav-label{ font-size:12.5px!important; line-height:1!important; margin:0!important; color:#1670f8!important; font-weight:700!important; }
+.mobile-nav-item.add-main .nav-ico.add-plus{ width:42px!important; height:42px!important; border-radius:50%!important; background:#1670f8!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 4px 12px rgba(22,112,248,0.4)!important; }
+/* Cards overflow */
 .home-cards{ display:grid!important; grid-template-columns:1fr 1fr!important; gap:12px!important; padding:12px!important; }
-.home-card{ position:relative!important; border-radius:20px!important; overflow:hidden!important; height:160px!important; background:#fff!important; display:flex!important; flex-direction:column!important; }
-.home-card .card-illustration{ width:100%!important; height:90px!important; object-fit:contain!important; object-position:center top!important; padding-top:8px!important; }
-.home-card .card-bg{ width:100%!important; height:90px!important; object-fit:contain!important; }
-.home-card-content{ position:relative!important; z-index:1!important; padding:8px 12px 12px!important; flex:1!important; display:flex!important; flex-direction:column!important; justify-content:flex-start!important; }
-.home-card-content h3{ font-size:16px!important; margin:0 0 4px!important; line-height:1.2!important; white-space:nowrap!important; overflow:visible!important; }
-.home-card-content p{ font-size:11.5px!important; line-height:1.3!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
-
+.home-card{ position:relative!important; border-radius:18px!important; overflow:hidden!important; height:156px!important; isolation:isolate!important; }
+.home-card .card-bg, .home-card img.card-bg{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important; object-fit:cover!important; object-position:center!important; }
+.home-card-content{ position:relative!important; z-index:1!important; padding:12px!important; height:100%!important; display:flex!important; flex-direction:column!important; justify-content:flex-end!important; }
 /* Camera centered */
-.card-camera-btn{ position:absolute!important; top:8px!important; right:8px!important; width:28px!important; height:28px!important; border-radius:50%!important; background:rgba(255,255,255,0.96)!important; border:none!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 2px 6px rgba(0,0,0,0.15)!important; z-index:2!important; padding:0!important; }
-.card-camera-btn svg, .card-camera-btn img{ margin:0 auto!important; display:block!important; }
+.card-camera-btn, button.card-camera-btn{ position:absolute!important; top:8px!important; right:8px!important; width:28px!important; height:28px!important; border-radius:50%!important; background:rgba(255,255,255,0.95)!important; border:none!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 1px 6px rgba(0,0,0,0.18)!important; z-index:2!important; padding:0!important; }
+.card-camera-btn svg{ display:block!important; margin:0 auto!important; }
+/* Keep your sizes: Plus 22 for add memory sheet, hero taller */
+.family-cover{ height:32vh!important; min-height:200px!important; max-height:260px!important; }
+#appLoader{ transition:opacity 0.2s!important; }
 
-/* Family cover taller */
-.family-cover, .hero-cover{ height:36vh!important; min-height:220px!important; max-height:300px!important; }
 
-/* Remove extra blue circle */
-#appView > button, body > button.add-plus{ display:none!important; }
-.mobile-nav-item.add-main .nav-ico.add-plus svg{ width:22px!important; height:22px!important; }
+/* === V14 PERFECT ALIGNMENT v14-1784360610 === */
+.mobile-nav{ display:flex!important; justify-content:space-around!important; align-items:stretch!important; height:64px!important; padding:0 0 env(safe-area-inset-bottom)!important; background:#fff!important; border-top:1px solid #e5e7eb!important; position:fixed!important; bottom:0!important; left:0!important; right:0!important; z-index:999!important; }
+.mobile-nav-item{ flex:1!important; display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:4px!important; border:none!important; background:none!important; color:#1670f8!important; padding:6px 0 4px!important; margin:0!important; }
+.mobile-nav-item .nav-ico{ width:100%!important; height:28px!important; display:flex!important; align-items:center!important; justify-content:center!important; color:#1670f8!important; line-height:0!important; }
+.mobile-nav-item .nav-label{ height:14px!important; line-height:14px!important; font-size:12px!important; font-weight:700!important; color:#1670f8!important; margin:0!important; padding:0!important; display:block!important; text-align:center!important; }
+.mobile-nav-item.add-main .nav-ico{ height:28px!important; }
+.mobile-nav-item.add-main .add-plus{ width:36px!important; height:36px!important; background:#1670f8!important; border-radius:50%!important; display:flex!important; align-items:center!important; justify-content:center!important; box-shadow:0 3px 10px rgba(22,112,248,0.35)!important; }
+/* Prevent Safari shift */
+.mobile-nav-item svg{ display:block!important; }
+/* Cards fix keep from v13 */
+.home-cards{ display:grid!important; grid-template-columns:1fr 1fr!important; gap:12px!important; padding:12px!important; padding-bottom:80px!important; }
+.home-card{ position:relative!important; border-radius:18px!important; overflow:hidden!important; height:156px!important; }
+.home-card .card-bg{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important; object-fit:cover!important; }
+.card-camera-btn{ position:absolute!important; top:8px!important; right:8px!important; width:28px!important; height:28px!important; border-radius:50%!important; background:#fff!important; display:flex!important; align-items:center!important; justify-content:center!important; }
+.family-cover{ height:32vh!important; min-height:200px!important; max-height:260px!important; }

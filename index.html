@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v14-1784359798&x=v14-1784359798" />
+  <link rel="stylesheet" href="styles.css?v=v14-1784360610&x=v14-1784360610" />
 </head>
 <body>
 <div id="toast"></div>
@@ -142,5 +142,11 @@
 <dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" placeholder="Folder name" maxlength="100" required><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button class="primary">Create</button></div></form></dialog>
 <dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
 <dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v14-1784359798&x=v14-1784359798"></script><script src="app.js?v=v14-1784359798&x=v14-1784359798"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v14-1784360610&x=v14-1784360610"></script><script src="app.js?v=v14-1784360610&x=v14-1784360610"></script>
+<nav class="mobile-nav">
+  <button class="mobile-nav-item active" data-page="home"><span class="nav-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 3.5L4 11.5V20h6v-5h4v5h6v-8.5L12 3.5z"/></svg></span><span class="nav-label">Home</span></button>
+  <button class="mobile-nav-item" data-page="back" onclick="history.back()"><span class="nav-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/></svg></span><span class="nav-label">Back</span></button>
+  <button class="mobile-nav-item add-main" data-action="add-memory"><span class="nav-ico"><span class="add-plus"><svg viewBox="0 0 24 24" width="22" height="22" fill="white"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z"/></svg></span></span><span class="nav-label">Add</span></button>
+  <button class="mobile-nav-item" data-page="profile"><span class="nav-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg></span><span class="nav-label">Profile</span></button>
+</nav>
 </body></html>
