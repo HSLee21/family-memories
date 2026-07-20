@@ -19,6 +19,9 @@
 .app,.main{overflow-x:hidden}
 .family-space-grid,.family-space-card{min-width:0}
 .family-space-card h3,.family-space-card p{overflow-wrap:break-word;word-break:break-word}
+html{width:100%;max-width:100vw}
+body{width:100%;max-width:100vw;overflow-x:clip}
+#appView{max-width:100vw;overflow-x:clip}
 
 /* Bottom nav buttons - had zero styling outside the mobile block, rendered as plain default buttons */
 html,body{overflow-x:hidden}
@@ -169,11 +172,11 @@ html,body{overflow-x:hidden}
 
 /* V17 CLEAN v17-1784511659 */
 .mobile-nav{ display:flex!important; justify-content:space-around!important; align-items:flex-end!important; height:66px!important; padding:6px 0 6px!important; background:#fff!important; border-top:1px solid #e5e7eb!important; position:fixed!important; bottom:0!important; left:0!important; right:0!important; z-index:999!important; }
-.mobile-nav-item{ flex:1!important; display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:flex-end!important; gap:4px!important; background:none!important; border:none!important; padding:0 0 2px!important; margin:0!important; min-height:50px!important; }
+.mobile-nav-item{ flex:1!important; display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:4px!important; background:none!important; border:none!important; padding:0!important; margin:0!important; min-height:50px!important; }
 .mobile-nav-item .nav-ico{ width:24px!important; height:24px!important; display:flex!important; align-items:center!important; justify-content:center!important; flex:none!important; color:#1670f8!important; }
 .mobile-nav-item .nav-label{ font-size:11px!important; font-weight:700!important; color:#1670f8!important; line-height:11px!important; margin:0!important; height:11px!important; }
 /* Plus - smaller, aligned baseline */
-.mobile-nav-item.add-main{ justify-content:flex-end!important; }
+.mobile-nav-item.add-main{ justify-content:center!important; }
 .mobile-nav-item.add-main .nav-ico{ width:32px!important; height:32px!important; margin-bottom:1px!important; }
 .mobile-nav-item.add-main .add-plus{ width:32px!important; height:32px!important; min-width:32px!important; min-height:32px!important; max-width:32px!important; max-height:32px!important; background:#1670f8!important; color:#fff!important; border-radius:50%!important; display:flex!important; align-items:center!important; justify-content:center!important; font-size:20px!important; line-height:1!important; font-weight:300!important; }
 #authView:not(.hidden) ~ #mobileNav, #pendingView:not(.hidden) ~ #mobileNav, body:has(#authView:not(.hidden)) #mobileNav{ display:none!important; }
@@ -195,5 +198,5 @@ html,body{overflow-x:hidden}
 .mobile-nav-item.add-main .add-plus svg{ width:100%!important; height:100%!important; }
 
 /* Lift bottom nav up a bit instead of sitting flush against the screen edge */
-.mobile-bottom-nav{ bottom:calc(10px + env(safe-area-inset-bottom))!important; border-radius:18px!important; border-bottom:1px solid #e8edf4!important; }
+.mobile-bottom-nav{ bottom:calc(16px + env(safe-area-inset-bottom))!important; border-radius:20px!important; border-bottom:1px solid #e8edf4!important; }
 }
