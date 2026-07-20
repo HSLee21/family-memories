@@ -15,15 +15,20 @@
 .card-full-custom.hidden{display:none!important}
 .family-space-card.has-custom .card-default-content{opacity:0;pointer-events:none}
 
+/* Prevent grid items from forcing the layout wider than the viewport (classic CSS Grid gotcha - items default to min-width:auto) */
+.app,.main{overflow-x:hidden}
+.family-space-grid,.family-space-card{min-width:0}
+.family-space-card h3,.family-space-card p{overflow-wrap:break-word;word-break:break-word}
+
 /* Bottom nav buttons - had zero styling outside the mobile block, rendered as plain default buttons */
 html,body{overflow-x:hidden}
 .mobile-bottom-nav{grid-template-columns:repeat(4,1fr);justify-items:center}
 .mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:0;padding:8px 0;margin:0;color:#1670f8;width:100%;height:100%}
-.mobile-nav-item .nav-ico{width:24px;height:24px;line-height:1;display:flex;align-items:center;justify-content:center;color:#1670f8}
+.mobile-nav-item .nav-ico{width:26px;height:26px;line-height:1;display:flex;align-items:center;justify-content:center;color:#1670f8}
 .mobile-nav-item .nav-ico svg{width:100%;height:100%;display:block}
 .mobile-nav-item small{font-size:12px;font-weight:700;color:#1670f8;line-height:1}
 .mobile-nav-item.add-main{justify-content:center}
-.mobile-nav-item.add-main .add-plus{width:30px;height:30px;border-radius:50%;background:#1670f8;color:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:5px;padding:7px;box-sizing:border-box}
+.mobile-nav-item.add-main .add-plus{width:26px;height:26px;border-radius:50%;background:#1670f8;color:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:5px;padding:6px;box-sizing:border-box}
 .mobile-nav-item.add-main .add-plus svg{width:100%;height:100%;display:block}
 
 /* ===== Mobile app-shell design (phone widths only) ===== */
