@@ -143,4 +143,14 @@
 <dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
 <dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v17-1784511659?v=v17-1784511659"></script><script src="app.js?v=v17-1784511659?v=v17-1784511659"></script>
+<script>
+(function(){
+  function resetScroll(){ window.scrollTo(0,window.scrollY); document.documentElement.scrollLeft=0; document.body.scrollLeft=0; }
+  if(history.scrollRestoration) history.scrollRestoration='manual';
+  resetScroll();
+  document.addEventListener('DOMContentLoaded', resetScroll);
+  window.addEventListener('load', resetScroll);
+  [0,50,150,300,600,1200].forEach(function(t){ setTimeout(resetScroll, t); });
+})();
+</script>
 </body></html>
