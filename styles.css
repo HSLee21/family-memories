@@ -193,4 +193,7 @@ html,body{overflow-x:hidden}
 /* Final override - previous rules above conflicted (38px/22px/32px all !important), this wins as it's last */
 .mobile-nav-item.add-main .add-plus{ width:24px!important; height:24px!important; min-width:24px!important; min-height:24px!important; max-width:24px!important; max-height:24px!important; padding:5px!important; box-sizing:border-box!important; }
 .mobile-nav-item.add-main .add-plus svg{ width:100%!important; height:100%!important; }
+
+/* Lift bottom nav up a bit instead of sitting flush against the screen edge */
+.mobile-bottom-nav{ bottom:calc(10px + env(safe-area-inset-bottom))!important; border-radius:18px!important; border-bottom:1px solid #e8edf4!important; }
 }
