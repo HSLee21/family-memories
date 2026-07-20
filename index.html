@@ -7,17 +7,18 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <!-- v9-1784355995 -->
   <title>Family Memories</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=v17-1784511659?v=v17-1784511659" />
 </head>
 <body>
 <div id="toast"></div>
 
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:#f7f9fc;display:grid;place-items:center;font-family:Inter,sans-serif">
-  <div style="text-align:center"><div style="font-family:Pacifico,cursive;font-size:28px">Family <span style="color:#ef4444">♥</span></div><div style="font-weight:800;color:#1670f8;margin-top:4px">Memories</div></div>
+  <div style="text-align:center"><div style="font-family:Pacifico,cursive;font-size:28px">Family <span style="color:#ef4444">♥</span></div><div style="font-weight:800;color:#1670f8;margin-top:4px">Memories</div><div style="margin-top:16px;width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#1670f8;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block"></div></div>
 </div>
 <script>setTimeout(()=>{const l=document.getElementById("appLoader"); if(l){l.style.opacity="0"; setTimeout(()=>l.remove(),300);}},2500);</script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
@@ -26,14 +27,13 @@
   <div class="auth-brand"><div class="brand-photo"><span>FM</span></div><div><div class="script-logo">Family <b>♥</b></div><h1>Memories</h1></div></div>
   <p class="muted">A private place for memories, family moments and learning.</p>
   <div class="tabs"><button class="tab active" data-auth-tab="signin">Sign in</button><button class="tab" data-auth-tab="signup">Create account</button></div>
-  <form id="signInForm" class="stack"><input id="signInEmail" type="email" placeholder="Email address" required><input id="signInPassword" type="password" placeholder="Password" minlength="6" required><button class="primary">Sign in</button><button type="button" class="link-button" id="forgotPasswordBtn">Forgot password?</button></form>
-  <form id="forgotPasswordForm" class="stack hidden"><h3>Reset your password</h3><input id="resetEmail" type="email" placeholder="Email address" required><button class="primary">Send reset link</button><button type="button" class="link-button" id="backToSignInBtn">Back to sign in</button></form>
-  <form id="newPasswordForm" class="stack hidden"><h3>Set a new password</h3><input id="newPassword" type="password" placeholder="New password" minlength="6" required><input id="confirmNewPassword" type="password" placeholder="Confirm password" minlength="6" required><button class="primary">Update password</button></form>
-  <form id="signUpForm" class="stack hidden"><input id="signUpName" placeholder="Your name" required><input id="signUpEmail" type="email" placeholder="Email address" required><input id="signUpPassword" type="password" placeholder="Password (minimum 6 characters)" minlength="6" required><button class="primary">Create account</button></form>
+  <form id="signInForm" class="stack"><input id="signInEmail" type="email" placeholder="Email address" required><input id="signInPassword" type="password" placeholder="Password" minlength="6" required><button id="forgotPasswordBtn" class="text-link" type="button">Forgot password?</button><button class="primary" type="submit">Sign in</button></form>
+  <form id="forgotPasswordForm" class="stack hidden"><h3>Reset your password</h3><input id="resetEmail" type="email" placeholder="Email address" required><button class="primary">Send reset link</button><button id="backToSignInBtn" class="secondary" type="button">Back to sign in</button></form>
+  <form id="newPasswordForm" class="stack hidden"><h3>Set a new password</h3><input id="newPassword" type="password" placeholder="New password" minlength="6" required><input id="confirmNewPassword" type="password" placeholder="Confirm new password" minlength="6" required><button class="primary">Update password</button></form>
+  <form id="signUpForm" class="stack hidden"><input id="signUpName" placeholder="Your name" required><input id="signUpEmail" type="email" placeholder="Email address" required><input id="signUpPassword" type="password" placeholder="Password (minimum 6 characters)" minlength="6" required><button class="primary">Create account</button><p class="small muted">After email verification, a family admin may need to approve your account.</p></form>
   <button class="profile-photo-button hidden" id="profilePhotoBtn" type="button"><img id="profilePhotoImage" class="hidden" alt="Profile"><span id="profilePhotoFallback">FM</span></button><input id="profilePhotoInput" type="file" accept="image/*" hidden>
 </div></section>
-
-<section id="pendingView" class="center-screen hidden"><div class="message-card"><div class="big-icon">⏳</div><h2>Approval pending</h2><p>Your email is verified. A family administrator needs to approve your account for access.</p><button class="primary" id="pendingSignOut">Sign out</button></div></section>
+<section id="pendingView" class="center-screen hidden"><div class="message-card"><div class="big-icon">⏳</div><h2>Approval pending</h2><p>Your email is verified. A family administrator needs to approve your account before you can enter.</p><button id="pendingSignOut" class="secondary">Sign out</button></div></section>
 
 <div id="appView" class="app hidden">
     <header class="topbar">
@@ -48,15 +48,15 @@
       <button id="topProfilePhotoBtn" class="top-profile"><img id="topProfilePhotoImage" class="hidden" alt="Profile"><span id="topProfilePhotoFallback">👤</span></button>
     </div>
   </header>
-
+  <!-- v9-1784355995 -->
   <button id="mobileMenu" class="hidden" type="button">☰</button>
-  <aside class="sidebar hidden"><nav id="nav"><button class="nav-item" data-page="home">Home</button><button class="nav-item" data-page="memories">Our Memories</button><button class="nav-item" data-page="trips">Family Trips</button><button class="nav-item" data-page="celebrations">Celebrations</button><button class="nav-item" data-page="study">Study Hub</button><button class="nav-item" data-page="search">Search</button><button class="nav-item" data-page="profile">Profile</button><button class="nav-item" id="adminNav" data-page="admin">Family Admin</button></nav></aside>
+  <aside class="sidebar hidden"><nav id="nav"><button class="nav-item" data-page="home">Home</button><button class="nav-item" data-page="memories">Our Memories</button><button class="nav-item" data-page="trips">Family Trips</button><button class="nav-item" data-page="celebrations">Celebrations</button><button class="nav-item" data-page="study">Study Hub</button><button id="adminNav" class="nav-item hidden" data-page="admin">Family Admin</button></nav><button id="signOutBtn" class="nav-item signout">Sign out</button></aside>
 
   <main class="main">
     <header class="legacy-header hidden"><h2 id="pageTitle">Home</h2><p id="welcomeText"></p><div id="userBadge"></div></header>
 
     <section id="homePage" class="page">
-      <div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage"></div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place to keep our precious moments, journeys, celebrations and knowledge</p></div><button class="camera-fab" id="changeCoverBtn" type="button">📷</button><input id="coverFileInput" type="file" accept="image/*" hidden></div>
+      <div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage"></div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br>journeys and milestones.</p></div><button id="changeCoverBtn" class="camera-fab hidden" type="button" title="Change cover photo">📷</button><input id="coverFileInput" type="file" accept="image/*" hidden></div>
       <div class="family-space-grid">
         <div class="family-space-card memories-card" data-go="memories">
           <img class="card-full-custom hidden" data-card-full="memories" alt="" />
@@ -102,52 +102,45 @@
     </section>
 
     <section id="memoriesPage" class="page hidden section-theme memories-theme">
-      <div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div><button class="hero-add primary open-folder" data-section="memories">+ New Album</button></div>
-      <div class="filter-row"><button class="filter active">📁<span>Albums</span></button><button class="filter">▣<span>Timeline</span></button><button class="filter">👥<span>People</span></button></div>
-      <div class="content-heading"><h2>Albums</h2><button class="link-button open-folder" data-section="memories">+ New Album</button></div><div id="memoriesFolders" class="folder-grid visual-grid"></div><div id="memoriesBrowser" class="browser-view hidden"></div>
+      <div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div><button class="hero-add open-folder" data-section="memories">+ New Album</button></div>
+      <div class="filter-row"><button class="filter active">📁<span>Albums</span></button><button class="filter">▣<span>Timeline</span></button><button class="filter">👥<span>People</span></button><button class="filter">📍<span>Places</span></button></div>
+      <div class="content-heading"><h2>Albums</h2><button class="link-button open-folder" data-section="memories">+ New Album</button></div><div id="memoriesFolders" class="folder-grid visual-grid"></div><div id="memoriesBrowser" class="folder-browser hidden"></div>
     </section>
 
     <section id="tripsPage" class="page hidden section-theme trips-theme">
-      <div class="section-hero"><div class="hero-art">🧳📷</div><div><h1>Family Trips</h1><p>Adventures, holidays and places we explored together.</p></div><button class="hero-add primary open-folder" data-section="trips">+ New Trip</button></div>
-      <div class="filter-row"><button class="filter active">🌐<span>All Trips</span></button><button class="filter">🗓️<span>Upcoming</span></button><button class="filter">✓<span>Complete</span></button></div>
-      <div class="content-heading"><h2>Your Trips</h2><button class="link-button open-folder" data-section="trips">+ New Trip</button></div><div id="tripsFolders" class="folder-grid visual-grid"></div><div id="tripsBrowser" class="browser-view hidden"></div>
+      <div class="section-hero"><div class="hero-art">🧳📷</div><div><h1>Family Trips</h1><p>Adventures, holidays and places we explored together.</p></div><button class="hero-add open-folder" data-section="trips">+ New Trip</button></div>
+      <div class="filter-row"><button class="filter active">🌐<span>All Trips</span></button><button class="filter">🗓️<span>Upcoming</span></button><button class="filter">✓<span>Completed</span></button><button class="filter">♡<span>Wishlist</span></button></div>
+      <div class="content-heading"><h2>Your Trips</h2><button class="link-button open-folder" data-section="trips">+ New Trip</button></div><div id="tripsFolders" class="folder-grid visual-grid"></div><div id="tripsBrowser" class="folder-browser hidden"></div>
     </section>
 
     <section id="celebrationsPage" class="page hidden section-theme celebrations-theme">
-      <div class="section-hero"><div class="hero-art">🎈🎉</div><div><h1>Celebrations</h1><p>Birthdays, anniversaries and meaningful milestones.</p></div><button class="hero-add primary open-folder" data-section="celebrations">+ New</button></div>
-      <div class="filter-row"><button class="filter active">🗓️<span>All</span></button><button class="filter">🎂<span>Birthdays</span></button><button class="filter">♡<span>Anniversaries</span></button></div>
-      <div class="content-heading"><h2>Celebrations</h2><button class="link-button open-folder" data-section="celebrations">+ New</button></div><div id="celebrationsFolders" class="folder-grid visual-grid"></div><div id="celebrationsBrowser" class="browser-view hidden"></div>
+      <div class="section-hero"><div class="hero-art">🎈🎉</div><div><h1>Celebrations</h1><p>Birthdays, anniversaries and meaningful milestones.</p></div><button class="hero-add open-folder" data-section="celebrations">+ New Celebration</button></div>
+      <div class="filter-row"><button class="filter active">🗓️<span>All</span></button><button class="filter">🎂<span>Birthdays</span></button><button class="filter">♡<span>Anniversaries</span></button><button class="filter">🎁<span>Other</span></button></div>
+      <div class="content-heading"><h2>Celebrations</h2><button class="link-button open-folder" data-section="celebrations">+ New</button></div><div id="celebrationsFolders" class="folder-grid visual-grid"></div><div id="celebrationsBrowser" class="folder-browser hidden"></div>
     </section>
 
     <section id="studyPage" class="page hidden section-theme study-theme">
-      <div class="section-hero"><div class="hero-art">📚🌱</div><div><h1>Study Hub</h1><p>Learning materials and useful family study tools.</p></div><button class="hero-add primary open-folder" data-section="study">+ New Folder</button></div>
-      <div class="filter-row"><button class="filter active">📁<span>All Materials</span></button><button class="filter">📄<span>Documents</span></button><button class="filter">📖<span>Books</span></button></div>
-      <div class="content-heading"><h2>Quick Access</h2><button class="link-button open-folder" data-section="study">+ New Folder</button></div><div id="studyFolders" class="folder-grid list-grid"></div><div id="studyBrowser" class="browser-view hidden"></div>
-      <details class="study-tools"><summary>Study Tools</summary><div class="tool-grid"><div class="tool-card"><h3>Scientific Calculator</h3><input id="calcDisplay" class="calc-display" placeholder="Enter expression" /><button id="calcRun" class="primary">Calculate</button><button id="calcClear" class="secondary">Clear</button><div id="calcResult">Result will appear here</div></div><div class="tool-card"><h3>Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="volume">Volume</option><option value="temperature">Temperature</option></select><div style="display:flex;gap:8px"><select id="convertFrom"></select><input id="convertValue" type="number" placeholder="Value" /></div><div style="display:flex;gap:8px"><select id="convertTo"></select><div id="convertResult">Enter a value to convert</div></div></div></div></details>
+      <div class="section-hero"><div class="hero-art">📚🌱</div><div><h1>Study Hub</h1><p>Learning materials and useful family study tools.</p></div><button class="hero-add open-folder" data-section="study">+ New Folder</button></div>
+      <div class="filter-row"><button class="filter active">📁<span>All Materials</span></button><button class="filter">📄<span>Documents</span></button><button class="filter">📖<span>Books</span></button><button class="filter">🔗<span>Links</span></button></div>
+      <div class="content-heading"><h2>Quick Access</h2><button class="link-button open-folder" data-section="study">+ New Folder</button></div><div id="studyFolders" class="folder-grid list-grid"></div><div id="studyBrowser" class="folder-browser hidden"></div>
+      <details class="study-tools"><summary>Study Tools</summary><div class="tool-grid"><div class="tool-card"><h3>Scientific Calculator</h3><input id="calcDisplay" class="calc-display" placeholder="e.g. sin(30) + sqrt(16)"><div class="calc-actions"><button id="calcRun" class="primary">Calculate</button><button id="calcClear" class="secondary">Clear</button></div><div id="calcResult" class="result-box">Result will appear here</div></div><div class="tool-card"><h3>Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="temperature">Temperature</option><option value="volume">Volume</option></select><div class="converter-row"><input id="convertValue" type="number" value="1" step="any"><select id="convertFrom"></select><span>→</span><select id="convertTo"></select></div><div id="convertResult" class="result-box"></div></div></div></details>
     </section>
 
-    <section id="searchPage" class="page hidden utility-page"><h1>Search</h1><p class="muted">Find albums, trips, celebrations and study materials.</p><div class="search-box">🔍 <input id="globalSearch" type="text" placeholder="Search folders…" /></div><div id="searchResults" class="content-grid"></div></section>
-
-    <section id="profilePage" class="page hidden utility-page"><div class="profile-panel"><button id="profileEditPhoto" class="profile-large"><span id="profileLargeFallback">FM</span><small>📷</small></button><input id="profilePhotoInput2" type="file" accept="image/*" hidden><div><h2 id="profileDisplayName">Family Member</h2><p class="muted" id="profileDisplayEmail">user@example.com</p></div><div class="profile-actions"><button class="primary" id="profileEditPhoto">Edit Photo</button><button class="secondary" id="familyAdminShortcut" class="hidden">Family Admin</button><button class="secondary" id="changePasswordShortcut">Change Password</button><button class="secondary" id="settingsShortcut">Settings</button><button class="secondary" id="profileSignOut">Sign Out</button></div></div></section>
-
-    <section id="adminPage" class="page hidden utility-page"><div class="content-heading"><div><h1>Family Admin</h1><p class="muted">Approve family members who may access the app.</p></div></div><div id="membersList" class="members-list"></div></section>
+    <section id="searchPage" class="page hidden utility-page"><h1>Search</h1><p class="muted">Find albums, trips, celebrations and study materials.</p><div class="search-box">🔍 <input id="globalSearch" placeholder="Search your family space..."></div><div id="searchResults" class="search-results"><div class="empty">Start typing to search.</div></div></section>
+    <section id="profilePage" class="page hidden utility-page"><div class="profile-panel"><button id="profileEditPhoto" class="profile-large"><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p id="profileDisplayEmail" class="muted"></p><div class="profile-menu"><button id="familyAdminShortcut" class="hidden">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
+    <section id="adminPage" class="page hidden utility-page"><div class="content-heading"><div><h1>Family Admin</h1><p class="muted">Approve family members who may access the app.</p></div></div><div id="membersList" class="member-list"></div></section>
   </main>
 
     <nav class="mobile-bottom-nav" aria-label="Main navigation">
-    <button class="mobile-nav-item active" data-page="home"><span class="nav-ico home-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2 2.5 11H5v9h5.5v-6h3V20H19v-9h2.5L12 3.2z"/></svg></span></button>
-    <button class="mobile-nav-item" id="bottomBackBtn"><span class="nav-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 5 3.5 12 11 19v-4.3c5.4.1 9 1.7 11.5 5.3-.7-6.2-4-11.2-11.5-11v-4z"/></svg></span></button>
-    <button class="mobile-nav-item add-main" id="quickAddBtn"><span class="add-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg></span></button>
-    <button class="mobile-nav-item" data-page="profile"><span class="nav-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg></span></button>
+    <button class="mobile-nav-item active" data-page="home"><span class="nav-ico home-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2 2.5 11H5v9h5.5v-6h3V20H19v-9h2.5L12 3.2z"/></svg></span><small>Home</small></button>
+    <button class="mobile-nav-item" id="bottomBackBtn"><span class="nav-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 5 3.5 12 11 19v-4.3c5.4.1 9 1.7 11.5 5.3-.7-6.2-4-11.2-11.5-12V5z"/></svg></span><small>Back</small></button>
+    <button class="mobile-nav-item add-main" id="quickAddBtn"><span class="add-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><small>Add</small></button>
+    <button class="mobile-nav-item" data-page="profile"><span class="nav-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg></span><small>Profile</small></button>
   </nav>
 </div>
 
-<dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" type="text" placeholder="Folder name" required /><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div style="display:flex;gap:8px"><button class="primary" type="submit">Create Folder</button><button type="button" class="secondary" id="cancelFolderDialog">Cancel</button></div></form></dialog>
-
-<dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" type="text" placeholder="Title (optional)" /><textarea id="itemDescription" placeholder="Description (optional)"></textarea><input id="itemDate" type="date" /><input id="itemFile" type="file" /><div style="display:flex;gap:8px"><button class="primary" type="submit">Save</button><button type="button" class="secondary" id="cancelDialog">Cancel</button></div></form></dialog>
-
-<dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div style="display:flex;flex-direction:column;gap:8px"><button class="primary" data-quick-page="memories">📷 Add to Memories</button><button class="primary" data-quick-page="trips">🧳 Add to Trips</button><button class="primary" data-quick-page="celebrations">🎉 Add to Celebrations</button><button class="primary" data-quick-page="study">📚 Add Study Material</button></div></div></dialog>
-
-<script>function hideLoader(){const l=document.getElementById("appLoader");if(l)l.remove()}</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js"></script>
-</body>
-</html>
+<dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" placeholder="Folder name" maxlength="100" required><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button class="primary">Create</button></div></form></dialog>
+<dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
+<dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v17-1784511659?v=v17-1784511659"></script><script src="app.js?v=v17-1784511659?v=v17-1784511659"></script>
+</body></html>
