@@ -200,4 +200,20 @@ html,body{overflow-x:hidden}
 /* Lift bottom nav up a bit instead of sitting flush against the screen edge */
 .mobile-bottom-nav{ bottom:calc(16px + env(safe-area-inset-bottom))!important; border-radius:20px!important; border-bottom:1px solid #e8edf4!important; }
 .family-space-grid{ margin-bottom:14px!important; }
+
+/* ===== FINAL: robust full-screen home layout, replaces fixed-pixel height math =====
+   Old approach hardcoded topbar=56px and main=calc(100dvh - 56px), which breaks
+   as soon as the topbar needs extra height for the status bar in standalone/PWA mode.
+   This uses flexbox so the layout adapts automatically instead of needing exact pixels. */
+html,body{ height:100%!important; }
+.app{ height:100dvh!important; height:100svh!important; min-height:0!important; display:flex!important; flex-direction:column!important; padding-bottom:0!important; }
+.topbar{ height:auto!important; min-height:52px!important; flex:0 0 auto!important; padding-top:calc(8px + env(safe-area-inset-top))!important; padding-bottom:8px!important; }
+.main{ flex:1 1 auto!important; min-height:0!important; display:flex!important; flex-direction:column!important; overflow-y:auto!important; padding-bottom:calc(78px + env(safe-area-inset-bottom))!important; }
+#homePage{ flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; justify-content:center!important; gap:8px!important; }
+#homePage .family-cover{ flex:1 1 auto!important; min-height:120px!important; max-height:34vh!important; }
+#homePage .family-space-grid{ flex:0 1 auto!important; }
+
+/* Keep the emoji card art strictly inside its box - some color-emoji glyphs render
+   taller than their font-size suggests, which was causing the "bleeding out of frame" look */
+.card-art{ overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
 }
