@@ -198,8 +198,8 @@ html,body{overflow-x:hidden}
 .mobile-nav-item.add-main .add-plus svg{ width:100%!important; height:100%!important; }
 
 /* Lift bottom nav up a bit instead of sitting flush against the screen edge */
-.mobile-bottom-nav{ bottom:calc(16px + env(safe-area-inset-bottom))!important; border-radius:20px!important; border-bottom:1px solid #e8edf4!important; }
-.family-space-grid{ margin-bottom:14px!important; }
+.mobile-bottom-nav{ bottom:calc(8px + env(safe-area-inset-bottom))!important; border-radius:20px!important; border-bottom:1px solid #e8edf4!important; }
+.family-space-grid{ margin-bottom:0!important; }
 
 /* ===== FINAL: robust full-screen home layout, replaces fixed-pixel height math =====
    Old approach hardcoded topbar=56px and main=calc(100dvh - 56px), which breaks
@@ -208,9 +208,9 @@ html,body{overflow-x:hidden}
 html,body{ height:100%!important; }
 .app{ height:100dvh!important; height:100svh!important; min-height:0!important; display:flex!important; flex-direction:column!important; padding-bottom:0!important; }
 .topbar{ height:auto!important; min-height:52px!important; flex:0 0 auto!important; padding-top:calc(8px + env(safe-area-inset-top))!important; padding-bottom:8px!important; }
-.main{ flex:1 1 auto!important; min-height:0!important; display:flex!important; flex-direction:column!important; overflow-y:auto!important; padding-bottom:calc(78px + env(safe-area-inset-bottom))!important; }
-#homePage{ flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; justify-content:center!important; gap:8px!important; }
-#homePage .family-cover{ flex:1 1 auto!important; min-height:120px!important; max-height:34vh!important; }
+.main{ flex:1 1 auto!important; min-height:0!important; display:flex!important; flex-direction:column!important; overflow-y:auto!important; padding-bottom:calc(64px + env(safe-area-inset-bottom))!important; }
+#homePage{ flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; justify-content:flex-start!important; gap:8px!important; }
+#homePage .family-cover{ flex:0 0 auto!important; height:calc(100dvh - 404px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important; min-height:120px!important; max-height:50vh!important; }
 #homePage .family-space-grid{ flex:0 1 auto!important; }
 
 /* Keep the emoji card art strictly inside its box - some color-emoji glyphs render
