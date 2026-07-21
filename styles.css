@@ -199,4 +199,5 @@ html,body{overflow-x:hidden}
 
 /* Lift bottom nav up a bit instead of sitting flush against the screen edge */
 .mobile-bottom-nav{ bottom:calc(16px + env(safe-area-inset-bottom))!important; border-radius:20px!important; border-bottom:1px solid #e8edf4!important; }
+.family-space-grid{ margin-bottom:14px!important; }
 }
