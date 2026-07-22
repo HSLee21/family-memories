@@ -409,8 +409,28 @@ async function loadHomeExperience(){
 async function loadFamilyCover(){
   const cover=$("coverImage");
   if(!cover) return;
-  const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(coverStoragePath(),3600);
-  cover.style.backgroundImage=`url("${data?.signedUrl||DEFAULT_FAMILY_COVER}")`;
+
+  const cacheKey="cover_signed_url_cache";
+  let cached=null;
+  try{ cached=JSON.parse(localStorage.getItem(cacheKey)||"null"); }catch(e){ cached=null; }
+
+  // Show cached photo immediately (no flash of the default placeholder, no wait)
+  if(cached && cached.url && cached.expires>Date.now()){
+    cover.style.backgroundImage=`url("${cached.url}")`;
+  }
+
+  // Refresh in the background if the cache is missing/near expiry, so it's ready next time too
+  const needsRefresh=!cached || cached.expires<Date.now()+300000; // refresh if <5min left
+  if(needsRefresh){
+    const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(coverStoragePath(),3600);
+    const url=data?.signedUrl||DEFAULT_FAMILY_COVER;
+    cover.style.backgroundImage=`url("${url}")`;
+    if(data?.signedUrl){
+      try{
+        localStorage.setItem(cacheKey, JSON.stringify({url, expires: Date.now()+3600*1000}));
+      }catch(e){ /* localStorage full or unavailable - ignore, just skip caching */ }
+    }
+  }
 }
 
 if($("changeCoverBtn")) $("changeCoverBtn").onclick=()=>$("coverFileInput").click();
@@ -420,6 +440,7 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
   if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
   const {error}=await client.storage.from(cfg.STORAGE_BUCKET).upload(coverStoragePath(),file,{upsert:true,contentType:file.type});
   if(error) return toast(error.message);
+  try{ localStorage.removeItem("cover_signed_url_cache"); }catch(e){}
   toast("Family cover updated.");
   await loadFamilyCover();
   await loadProfilePhoto();
