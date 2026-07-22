@@ -50,7 +50,10 @@ $("forgotPasswordBtn").onclick=()=>{
   $("resetEmail").value=$("signInEmail").value.trim();
   showAuthForm("forgot");
 };
-$("backToSignInBtn").onclick=()=>showAuthForm("signin");
+$("backToSignInBtn").onclick=()=>{
+  if(currentUser){ showView("appView"); navigate("profile"); }
+  else showAuthForm("signin");
+};
 
 $("signInForm").onsubmit=async e=>{
   e.preventDefault();
@@ -99,6 +102,10 @@ async function loadProfile(){
   $("userBadge").textContent=`${initials(data.name)}  ${data.name||currentUser.email}`;
   $("adminNav").classList.toggle("hidden",data.role!=="admin");
   navigate("home");
+}
+function hideLoader(){
+  const l=document.getElementById("appLoader");
+  if(l){ l.style.opacity="0"; setTimeout(()=>l.remove(),300); }
 }
 async function handleSession(session){
   currentUser=session?.user||null;
@@ -619,6 +626,14 @@ function loadProfilePage(){
   $("profileLargeFallback").textContent=initials(currentProfile.name||currentUser.email);
   $("familyAdminShortcut").classList.toggle("hidden",currentProfile.role!=="admin");
 }
+
+document.querySelectorAll("[data-study-tab]").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll("[data-study-tab]").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  const showTools = btn.dataset.studyTab==="tools";
+  $("studyMaterialsPanel").classList.toggle("hidden", showTools);
+  $("studyToolsPanel").classList.toggle("hidden", !showTools);
+});
 
 if($("quickAddBtn")) $("quickAddBtn").onclick=()=>$("quickAddDialog").showModal();
 if($("closeQuickAdd")) $("closeQuickAdd").onclick=()=>$("quickAddDialog").close();

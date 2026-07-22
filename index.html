@@ -111,28 +111,30 @@
     </section>
 
     <section id="memoriesPage" class="page hidden section-theme memories-theme">
-      <div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div><button class="hero-add open-folder" data-section="memories">+ New Album</button></div>
-      <div class="filter-row"><button class="filter active">📁<span>Albums</span></button><button class="filter">▣<span>Timeline</span></button><button class="filter">👥<span>People</span></button><button class="filter">📍<span>Places</span></button></div>
+      <div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div></div>
       <div class="content-heading"><h2>Albums</h2><button class="link-button open-folder" data-section="memories">+ New Album</button></div><div id="memoriesFolders" class="folder-grid visual-grid"></div><div id="memoriesBrowser" class="folder-browser hidden"></div>
     </section>
 
     <section id="tripsPage" class="page hidden section-theme trips-theme">
-      <div class="section-hero"><div class="hero-art">🧳📷</div><div><h1>Family Trips</h1><p>Adventures, holidays and places we explored together.</p></div><button class="hero-add open-folder" data-section="trips">+ New Trip</button></div>
-      <div class="filter-row"><button class="filter active">🌐<span>All Trips</span></button><button class="filter">🗓️<span>Upcoming</span></button><button class="filter">✓<span>Completed</span></button><button class="filter">♡<span>Wishlist</span></button></div>
+      <div class="section-hero"><div class="hero-art">🧳📷</div><div><h1>Family Trips</h1><p>Adventures, holidays and places we explored together.</p></div></div>
       <div class="content-heading"><h2>Your Trips</h2><button class="link-button open-folder" data-section="trips">+ New Trip</button></div><div id="tripsFolders" class="folder-grid visual-grid"></div><div id="tripsBrowser" class="folder-browser hidden"></div>
     </section>
 
     <section id="celebrationsPage" class="page hidden section-theme celebrations-theme">
-      <div class="section-hero"><div class="hero-art">🎈🎉</div><div><h1>Celebrations</h1><p>Birthdays, anniversaries and meaningful milestones.</p></div><button class="hero-add open-folder" data-section="celebrations">+ New Celebration</button></div>
-      <div class="filter-row"><button class="filter active">🗓️<span>All</span></button><button class="filter">🎂<span>Birthdays</span></button><button class="filter">♡<span>Anniversaries</span></button><button class="filter">🎁<span>Other</span></button></div>
+      <div class="section-hero"><div class="hero-art">🎈🎉</div><div><h1>Celebrations</h1><p>Birthdays, anniversaries and meaningful milestones.</p></div></div>
       <div class="content-heading"><h2>Celebrations</h2><button class="link-button open-folder" data-section="celebrations">+ New</button></div><div id="celebrationsFolders" class="folder-grid visual-grid"></div><div id="celebrationsBrowser" class="folder-browser hidden"></div>
     </section>
 
     <section id="studyPage" class="page hidden section-theme study-theme">
-      <div class="section-hero"><div class="hero-art">📚🌱</div><div><h1>Study Hub</h1><p>Learning materials and useful family study tools.</p></div><button class="hero-add open-folder" data-section="study">+ New Folder</button></div>
-      <div class="filter-row"><button class="filter active">📁<span>All Materials</span></button><button class="filter">📄<span>Documents</span></button><button class="filter">📖<span>Books</span></button><button class="filter">🔗<span>Links</span></button></div>
-      <div class="content-heading"><h2>Quick Access</h2><button class="link-button open-folder" data-section="study">+ New Folder</button></div><div id="studyFolders" class="folder-grid list-grid"></div><div id="studyBrowser" class="folder-browser hidden"></div>
-      <details class="study-tools"><summary>Study Tools</summary><div class="tool-grid"><div class="tool-card"><h3>Scientific Calculator</h3><input id="calcDisplay" class="calc-display" placeholder="e.g. sin(30) + sqrt(16)"><div class="calc-actions"><button id="calcRun" class="primary">Calculate</button><button id="calcClear" class="secondary">Clear</button></div><div id="calcResult" class="result-box">Result will appear here</div></div><div class="tool-card"><h3>Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="temperature">Temperature</option><option value="volume">Volume</option></select><div class="converter-row"><input id="convertValue" type="number" value="1" step="any"><select id="convertFrom"></select><span>→</span><select id="convertTo"></select></div><div id="convertResult" class="result-box"></div></div></div></details>
+      <div class="section-hero"><div class="hero-art">📚🌱</div><div><h1>Study Hub</h1><p>Learning materials and useful family study tools.</p></div></div>
+      <div class="filter-row"><button class="filter active" data-study-tab="materials">📁<span>Study Materials</span></button><button class="filter" data-study-tab="tools">🧮<span>Study Tools</span></button></div>
+      <div id="studyMaterialsPanel">
+        <div class="content-heading"><h2>Quick Access</h2><button class="link-button open-folder" data-section="study">+ New Folder</button></div><div id="studyFolders" class="folder-grid list-grid"></div><div id="studyBrowser" class="folder-browser hidden"></div>
+      </div>
+      <div id="studyToolsPanel" class="hidden">
+        <div class="content-heading"><h2>Study Tools</h2><button class="link-button open-folder" data-section="study">+ Upload document</button></div>
+        <div class="tool-grid"><div class="tool-card"><h3>Scientific Calculator</h3><input id="calcDisplay" class="calc-display" placeholder="e.g. sin(30) + sqrt(16)"><div class="calc-actions"><button id="calcRun" class="primary">Calculate</button><button id="calcClear" class="secondary">Clear</button></div><div id="calcResult" class="result-box">Result will appear here</div></div><div class="tool-card"><h3>Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="temperature">Temperature</option><option value="volume">Volume</option></select><div class="converter-row"><input id="convertValue" type="number" value="1" step="any"><select id="convertFrom"></select><span>→</span><select id="convertTo"></select></div><div id="convertResult" class="result-box"></div></div></div>
+      </div>
     </section>
 
     <section id="searchPage" class="page hidden utility-page"><h1>Search</h1><p class="muted">Find albums, trips, celebrations and study materials.</p><div class="search-box">🔍 <input id="globalSearch" placeholder="Search your family space..."></div><div id="searchResults" class="search-results"><div class="empty">Start typing to search.</div></div></section>
