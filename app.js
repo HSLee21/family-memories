@@ -129,6 +129,9 @@ const folderTarget = {memories:"memoriesFolders",trips:"tripsFolders",celebratio
 const browserTarget = {memories:"memoriesBrowser",trips:"tripsBrowser",celebrations:"celebrationsBrowser",study:"studyBrowser"};
 let currentFolderSection = null;
 let currentFolder = null;
+let editingFolderId = null;
+let folderOptionsSection = null;
+let folderOptionsTarget = null;
 
 function navigate(page){
   pages.forEach(p=>$(p+"Page").classList.toggle("hidden",p!==page));
@@ -147,25 +150,51 @@ if($("mobileMenu")) $("mobileMenu").onclick=()=>document.querySelector(".sidebar
 
 document.querySelectorAll(".open-folder").forEach(b=>b.onclick=()=>{
   currentFolderSection=b.dataset.section;
+  editingFolderId=null;
   $("folderForm").reset();
   $("folderDialogTitle").textContent="New Folder";
+  $("folderFormSubmitBtn").textContent="Create";
   $("folderDialog").showModal();
 });
 $("closeFolderDialog").onclick=$("cancelFolderDialog").onclick=()=>$("folderDialog").close();
 
 $("folderForm").onsubmit=async e=>{
   e.preventDefault();
-  const payload={
-    name:$("folderName").value.trim(),
-    description:$("folderDescription").value.trim()||null,
-    section:currentFolderSection,
-    created_by:currentUser.id
-  };
+  const name=$("folderName").value.trim();
+  const description=$("folderDescription").value.trim()||null;
+
+  if(editingFolderId){
+    const {error}=await client.from("folders").update({name,description,updated_at:new Date().toISOString()}).eq("id",editingFolderId);
+    if(error) return toast(error.message);
+    $("folderDialog").close();
+    toast("Folder renamed.");
+    loadFolders(folderOptionsSection||currentFolderSection);
+    return;
+  }
+
+  const payload={name,description,section:currentFolderSection,created_by:currentUser.id};
   const {error}=await client.from("folders").insert(payload);
   if(error) return toast(error.message);
   $("folderDialog").close();
   toast("Folder created.");
   loadFolders(currentFolderSection);
+};
+
+$("closeFolderOptions").onclick=()=>$("folderOptionsDialog").close();
+$("folderOptionsRename").onclick=()=>{
+  $("folderOptionsDialog").close();
+  editingFolderId=folderOptionsTarget.id;
+  $("folderName").value=folderOptionsTarget.name;
+  $("folderDescription").value=folderOptionsTarget.description||"";
+  $("folderDialogTitle").textContent="Rename Folder";
+  $("folderFormSubmitBtn").textContent="Save";
+  $("folderDialog").showModal();
+};
+$("folderOptionsDelete").onclick=async()=>{
+  if(!confirm(`Delete "${folderOptionsTarget.name}"? Files/items will remain but will no longer be inside this folder.`)) return;
+  const {error}=await client.from("folders").delete().eq("id",folderOptionsTarget.id);
+  $("folderOptionsDialog").close();
+  if(error) toast(error.message); else {toast("Folder deleted.");loadFolders(folderOptionsSection)}
 };
 
 async function loadFolders(section){
@@ -194,18 +223,10 @@ async function loadFolders(section){
 }
 
 async function folderActions(section,folder){
-  const action=prompt(`Folder: ${folder.name}\nType R to rename or D to delete.`);
-  if(!action) return;
-  if(action.toLowerCase()==="r"){
-    const name=prompt("New folder name:",folder.name);
-    if(!name?.trim()) return;
-    const {error}=await client.from("folders").update({name:name.trim(),updated_at:new Date().toISOString()}).eq("id",folder.id);
-    if(error) toast(error.message); else {toast("Folder renamed.");loadFolders(section)}
-  } else if(action.toLowerCase()==="d"){
-    if(!confirm(`Delete "${folder.name}"? Files/items will remain but will no longer be inside this folder.`)) return;
-    const {error}=await client.from("folders").delete().eq("id",folder.id);
-    if(error) toast(error.message); else {toast("Folder deleted.");loadFolders(section)}
-  }
+  folderOptionsSection=section;
+  folderOptionsTarget=folder;
+  $("folderOptionsTitle").textContent=folder.name;
+  $("folderOptionsDialog").showModal();
 }
 
 async function openFolder(section,folder){
