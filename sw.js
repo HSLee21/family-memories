@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v1";
+const CACHE_NAME = "family-memories-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -26,7 +26,11 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Network-first for navigation/API calls, cache-first for the static app shell
+// IMPORTANT: network-first for the app shell (index.html/styles.css/app.js).
+// These files change often during active development - if served cache-first,
+// updates never show up because the service worker itself only re-installs
+// when sw.js's own bytes change, which doesn't happen just from editing
+// index.html/styles.css. Cache is now only an offline fallback.
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
@@ -36,7 +40,13 @@ self.addEventListener("fetch", (event) => {
 
   if (isAppShellFile) {
     event.respondWith(
-      caches.match(req).then((cached) => cached || fetch(req))
+      fetch(req)
+        .then((res) => {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+          return res;
+        })
+        .catch(() => caches.match(req))
     );
   } else {
     event.respondWith(

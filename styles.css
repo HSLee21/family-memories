@@ -208,7 +208,9 @@ html,body{overflow-x:hidden}
 html,body{ height:100%!important; }
 .app{ height:100dvh!important; height:100svh!important; min-height:0!important; display:flex!important; flex-direction:column!important; padding-bottom:0!important; }
 .topbar{ height:auto!important; min-height:52px!important; flex:0 0 auto!important; padding-top:calc(8px + env(safe-area-inset-top))!important; padding-bottom:8px!important; }
-.main{ flex:1 1 auto!important; min-height:0!important; display:flex!important; flex-direction:column!important; justify-content:safe center!important; overflow-y:auto!important; padding-bottom:calc(56px + env(safe-area-inset-bottom))!important; }
+.main{ flex:1 1 auto!important; min-height:0!important; display:flex!important; flex-direction:column!important; overflow-y:auto!important; padding-bottom:calc(56px + env(safe-area-inset-bottom))!important; }
+.main>.page{ flex-shrink:0!important; }
+.utility-page{ margin-top:auto!important; margin-bottom:auto!important; }
 #homePage{ flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; justify-content:flex-start!important; gap:8px!important; }
 #homePage .family-cover{ flex:0 0 auto!important; height:calc(100dvh - 396px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important; min-height:120px!important; max-height:50vh!important; }
 #homePage .family-space-grid{ flex:0 1 auto!important; }
