@@ -341,9 +341,22 @@ async function loadFolderItems(type,folderId,target){
       <div class="meta">${item.event_date||new Date(item.created_at).toLocaleDateString()}</div>
       <h3>${escapeHtml(item.title||"Untitled")}</h3>
       ${item.description?`<p>${escapeHtml(item.description)}</p>`:""}
+      <button class="secondary delete-item" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}">Delete</button>
     </article>`;
   }).join("");
   document.querySelectorAll(`#${target} [data-file]`).forEach(el=>el.onclick=()=>openPrivateFile(decodeURIComponent(el.dataset.file)));
+  document.querySelectorAll(`#${target} .delete-item`).forEach(el=>el.onclick=async()=>{
+    if(!confirm("Delete this item? This cannot be undone.")) return;
+    const id=el.dataset.id;
+    const filePath=el.dataset.filePath?decodeURIComponent(el.dataset.filePath):null;
+    const {error}=await client.from(table).delete().eq("id",id);
+    if(error){ toast(error.message); return; }
+    if(filePath){
+      await client.storage.from(cfg.STORAGE_BUCKET).remove([filePath]);
+    }
+    toast("Deleted.");
+    loadFolderItems(type,folderId,target);
+  });
 }
 async function openPrivateFile(path){
   const {data,error}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(path,60);
