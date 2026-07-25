@@ -372,6 +372,7 @@ async function loadFolderItems(type,folderId,target){
     </article>`;
   }).join("");
   document.querySelectorAll(`#${target} [data-file]`).forEach(el=>el.onclick=()=>openPrivateFile(decodeURIComponent(el.dataset.file)));
+  document.querySelectorAll(`#${target} video.content-preview`).forEach(el=>attachVideoPoster(el,el.currentSrc||el.src));
   document.querySelectorAll(`#${target} .delete-item`).forEach(el=>el.onclick=async()=>{
     if(!confirm("Delete this item? This cannot be undone.")) return;
     const id=el.dataset.id;
@@ -384,6 +385,30 @@ async function loadFolderItems(type,folderId,target){
     toast("Deleted.");
     loadFolderItems(type,folderId,target);
   });
+}
+// Videos hosted in storage have no poster image, so mobile browsers show a
+// blank box until the user taps play. Grab the first frame ourselves on a
+// hidden probe video and use it as the poster so the preview looks like a
+// real thumbnail. Fails silently (no poster, same as before) if the storage
+// CORS policy blocks canvas reads.
+function attachVideoPoster(videoEl,src){
+  try{
+    const probe=document.createElement("video");
+    probe.crossOrigin="anonymous";
+    probe.preload="metadata";
+    probe.muted=true;
+    probe.playsInline=true;
+    probe.src=src;
+    probe.addEventListener("loadeddata",()=>{
+      try{
+        const canvas=document.createElement("canvas");
+        canvas.width=probe.videoWidth||320;
+        canvas.height=probe.videoHeight||320;
+        canvas.getContext("2d").drawImage(probe,0,0,canvas.width,canvas.height);
+        videoEl.poster=canvas.toDataURL("image/jpeg",0.7);
+      }catch(e){ /* tainted canvas / decode failure - leave without poster */ }
+    },{once:true});
+  }catch(e){ /* ignore - not critical */ }
 }
 async function openPrivateFile(path){
   const {data,error}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(path,60);
@@ -683,7 +708,25 @@ if($("profileEditPhoto")) $("profileEditPhoto").onclick=()=>$("profilePhotoInput
 if($("profileSignOut")) $("profileSignOut").onclick=signOut;
 if($("familyAdminShortcut")) $("familyAdminShortcut").onclick=()=>navigate("admin");
 if($("changePasswordShortcut")) $("changePasswordShortcut").onclick=()=>{showView("authView");showAuthForm("forgot");};
-if($("settingsShortcut")) $("settingsShortcut").onclick=()=>toast("Settings will be added here next.");
+if($("settingsShortcut")) $("settingsShortcut").onclick=()=>{
+  $("settingsDisplayName").value = currentProfile?.name || "";
+  $("settingsDialog").showModal();
+};
+if($("closeSettingsDialog")) $("closeSettingsDialog").onclick=()=>$("settingsDialog").close();
+if($("cancelSettingsDialog")) $("cancelSettingsDialog").onclick=()=>$("settingsDialog").close();
+if($("settingsForm")) $("settingsForm").onsubmit=async e=>{
+  e.preventDefault();
+  const name=$("settingsDisplayName").value.trim();
+  if(!name) return toast("Please enter a name.");
+  const {error}=await client.from("profiles").update({name}).eq("id",currentUser.id);
+  if(error) return toast(error.message);
+  currentProfile.name=name;
+  $("welcomeText").textContent=`Welcome, ${name}`;
+  $("userBadge").textContent=`${initials(name)}  ${name}`;
+  if($("profileDisplayName")) $("profileDisplayName").textContent=name;
+  toast("Settings saved.");
+  $("settingsDialog").close();
+};
 if($("notificationBtn")) $("notificationBtn").onclick=()=>toast("Activity notifications will appear here.");
 
 if($("globalSearch")) $("globalSearch").addEventListener("input",async e=>{
