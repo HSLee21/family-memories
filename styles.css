@@ -212,8 +212,16 @@ html,body{ height:100%!important; }
 .main>.page{ flex-shrink:0!important; }
 .utility-page{ margin-top:auto!important; margin-bottom:auto!important; }
 #homePage{ flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; justify-content:flex-start!important; gap:8px!important; }
-#homePage .family-cover{ flex:0 0 auto!important; height:calc(100dvh - 396px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important; min-height:120px!important; max-height:50vh!important; }
-#homePage .family-space-grid{ flex:0 1 auto!important; }
+/* The cover is the flexible element (grows/shrinks with leftover space, clamped
+   between min/max). The card grid is flex:0 0 auto so it always renders at its
+   natural, intrinsic size - it can never get squeezed down or pushed off-screen
+   by a stale magic-number height calc on the cover above it. If the two still
+   don't fit the viewport (small phone, big font settings, etc.), .main's
+   overflow-y:auto lets the page scroll instead of clipping content under the
+   fixed nav bar. */
+#homePage .family-cover{ flex:1 1 auto!important; height:auto!important; min-height:120px!important; max-height:50vh!important; }
+#homePage .family-space-grid{ flex:0 0 auto!important; }
+.app{ overflow:visible!important; }
 
 /* Keep the emoji card art strictly inside its box - some color-emoji glyphs render
    taller than their font-size suggests, which was causing the "bleeding out of frame" look */

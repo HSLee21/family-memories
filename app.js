@@ -355,10 +355,13 @@ async function loadFolderItems(type,folderId,target){
   $(target).innerHTML=items.map(item=>{
     const ext=(item.file_path||"").split(".").pop().toLowerCase();
     const isImage=["jpg","jpeg","png","gif","webp","bmp","svg","avif"].includes(ext);
+    const isVideo=isVideoPath(item.file_path);
     const media=item.file_path&&item.signedUrl
       ? isImage
         ? `<img class="content-preview" src="${item.signedUrl}" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
-        : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
+        : isVideo
+          ? `<video class="content-preview" controls playsinline preload="metadata" src="${item.signedUrl}"></video>`
+          : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
       : "";
     return `<article class="content-card">
       ${media}
