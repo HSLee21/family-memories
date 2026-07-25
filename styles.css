@@ -299,3 +299,35 @@ html,body{ height:100%!important; }
     bottom:0!important;
   }
 }
+
+
+
+/* ===== Gallery spacing fix ===== */
+@media (max-width:900px){
+
+  #mediaHubPage.page,
+  #mediaHubPage.page:not(.hidden){
+      padding-bottom:0 !important;
+      margin-bottom:0 !important;
+      gap:6px !important;
+  }
+
+  .main > #mediaHubPage.page{
+      padding-bottom:0 !important;
+  }
+
+  #mediaHubPage .media-hub-grid{
+      margin-bottom:0 !important;
+      padding-bottom:0 !important;
+      gap:12px !important;
+  }
+
+  #mediaHubPage .media-hub-card.wide{
+      padding:20px !important;
+      margin-bottom:0 !important;
+  }
+
+  .mobile-bottom-nav{
+      bottom:0 !important;
+  }
+}
