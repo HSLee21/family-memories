@@ -446,7 +446,7 @@ async function loadHomeExperience(){
   if(changeBtn) changeBtn.classList.toggle("hidden",currentProfile?.role!=="admin");
   await loadFamilyCover();
   await loadProfilePhoto();
-  await loadCardImages();
+  // Homepage cards reverted to original emoji illustrations (no auto cover photo)
 }
 
 
@@ -728,7 +728,7 @@ function showSlide(i){
 }
 function startSlideshowTimer(){
   clearInterval(slideshowTimer);
-  slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },5000);
+  slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },3000);
 }
 function closeSlideshow(){
   clearInterval(slideshowTimer);
@@ -798,15 +798,21 @@ $("videoPlayerBack").onclick=()=>{
 
 /* ---- Navigation wiring for the hub ---- */
 const SECTION_META = {
-  memory:{title:"Our Memories",art:"🖼️💗"},
-  trip:{title:"Family Trips",art:"🧳📷"},
-  celebration:{title:"Celebrations",art:"🎈🎉"}
+  memory:{title:"Our Memories",art:"🖼️💗",cls:"hub-blue"},
+  trip:{title:"Family Trips",art:"🧳📷",cls:"hub-pink"},
+  celebration:{title:"Celebrations",art:"🎈🎉",cls:"hub-purple"}
 };
 document.querySelectorAll("[data-hub-section]").forEach(btn=>btn.onclick=()=>{
   currentMediaSection = btn.dataset.hubSection;
   const meta = SECTION_META[currentMediaSection];
   $("mediaSectionTitle").textContent = meta.title;
   $("mediaSectionArt").textContent = meta.art;
+  ["hub-blue","hub-pink","hub-purple"].forEach(c=>{
+    $("mediaSectionPhotosBtn").classList.remove(c);
+    $("mediaSectionVideosBtn").classList.remove(c);
+  });
+  $("mediaSectionPhotosBtn").classList.add(meta.cls);
+  $("mediaSectionVideosBtn").classList.add(meta.cls);
   navigate("mediaSection");
 });
 document.querySelectorAll("[data-hub-action]").forEach(btn=>btn.onclick=()=>{
