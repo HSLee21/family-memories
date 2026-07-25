@@ -360,7 +360,7 @@ async function loadFolderItems(type,folderId,target){
       ? isImage
         ? `<img class="content-preview" src="${item.signedUrl}" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
         : isVideo
-          ? `<video class="content-preview" controls playsinline preload="metadata" src="${item.signedUrl}"></video>`
+          ? `<div class="video-wrap"><video class="content-preview" controls playsinline preload="metadata" src="${item.signedUrl}"></video><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
           : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
       : "";
     return `<article class="content-card">
@@ -373,6 +373,16 @@ async function loadFolderItems(type,folderId,target){
   }).join("");
   document.querySelectorAll(`#${target} [data-file]`).forEach(el=>el.onclick=()=>openPrivateFile(decodeURIComponent(el.dataset.file)));
   document.querySelectorAll(`#${target} video.content-preview`).forEach(el=>attachVideoPoster(el,el.currentSrc||el.src));
+  document.querySelectorAll(`#${target} .video-fs-btn`).forEach(btn=>{
+    btn.onclick=(e)=>{
+      e.stopPropagation();
+      const video=btn.previousElementSibling;
+      if(!video) return;
+      if(video.webkitEnterFullscreen) video.webkitEnterFullscreen(); // iOS Safari
+      else if(video.requestFullscreen) video.requestFullscreen();
+      else if(video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+    };
+  });
   document.querySelectorAll(`#${target} .delete-item`).forEach(el=>el.onclick=async()=>{
     if(!confirm("Delete this item? This cannot be undone.")) return;
     const id=el.dataset.id;
