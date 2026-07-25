@@ -235,7 +235,7 @@ html,body{ height:100%!important; }
 /* Gallery hub is a fixed 6-button menu (not a variable-length list), so - like
    Home - it fits on one screen with no scroll. Hero and cards are sized down
    to guarantee 3 rows of cards clear the fixed nav. */
-#mediaHubPage.page:not(.hidden){ padding-bottom:0!important; margin-bottom:25px!important; flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; gap:8px!important; }
+#mediaHubPage.page:not(.hidden){ padding-bottom:0!important; margin-bottom:8px!important; flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; gap:8px!important; }
 #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; padding:14px 16px!important; gap:12px!important; }
 #mediaHubPage .section-hero .hero-art{ font-size:34px!important; }
 #mediaHubPage .section-hero h1{ font-size:21px!important; margin:0 0 2px!important; }
