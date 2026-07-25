@@ -52,6 +52,7 @@ html,body{overflow-x:hidden}
 
 .app{min-height:100dvh!important;min-height:100svh!important;padding-bottom:0!important;overflow:hidden!important;background:#f6f8fb!important;display:flex!important;flex-direction:column!important}
 .main{width:100%!important;max-width:480px!important;margin:0 auto!important;padding:0 10px!important;display:flex!important;flex-direction:column!important;flex:1!important;justify-content:center!important;min-height:calc(100dvh - 122px)!important}
+.main:has(#mediaHubPage.page:not(.hidden)){min-height:0!important;justify-content:flex-start!important}
 
 /* Hero - text at top sky, smaller */
 .family-cover{height:22vh!important;min-height:145px!important;max-height:195px!important;border-radius:16px!important;margin:8px 0!important;flex-shrink:0!important;position:relative!important;overflow:hidden!important}
@@ -235,7 +236,7 @@ html,body{ height:100%!important; }
 /* Gallery hub is a fixed 6-button menu (not a variable-length list), so - like
    Home - it fits on one screen with no scroll. Hero and cards are sized down
    to guarantee 3 rows of cards clear the fixed nav. */
-#mediaHubPage.page:not(.hidden){ padding-bottom:0!important; margin-bottom:8px!important; flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; gap:8px!important; }
+#mediaHubPage.page:not(.hidden){ padding-bottom:0!important; margin-bottom:8px!important; flex:0 0 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; gap:8px!important; }
 #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; padding:14px 16px!important; gap:12px!important; }
 #mediaHubPage .section-hero .hero-art{ font-size:34px!important; }
 #mediaHubPage .section-hero h1{ font-size:21px!important; margin:0 0 2px!important; }
