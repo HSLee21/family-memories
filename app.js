@@ -30,7 +30,7 @@ let currentUser = null, currentProfile = null, currentAddType = "memory";
 
 const $ = id => document.getElementById(id);
 const views = ["authView","pendingView","appView"];
-const pages = ["home","memories","trips","celebrations","study","search","profile","admin"];
+const pages = ["home","memories","trips","celebrations","study","mediaHub","mediaSection","search","profile","admin"];
 const tableMap = {memory:"memories",trip:"trips",celebration:"celebrations",study:"study_materials"};
 
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
@@ -137,7 +137,7 @@ function navigate(page){
   pages.forEach(p=>$(p+"Page").classList.toggle("hidden",p!==page));
   document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   document.querySelectorAll(".mobile-nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
+  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Memories",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
   if(page==="admin") loadMembers();
@@ -411,15 +411,18 @@ const profileStoragePath = () => `${currentUser.id}/profile/profile-photo`;
 async function loadProfilePhoto(){
   if(!currentUser) return;
   const img=$("profilePhotoImage"), fallback=$("profilePhotoFallback");
-  if(!img || !fallback) return;
+  const largeImg=$("profileLargePhoto"), largeFallback=$("profileLargeFallback");
   const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(profileStoragePath(),3600);
   if(data?.signedUrl){
-    img.src=data.signedUrl;
-    img.classList.remove("hidden");
-    fallback.classList.add("hidden");
+    if(img){ img.src=data.signedUrl; img.classList.remove("hidden"); }
+    if(fallback) fallback.classList.add("hidden");
+    if(largeImg){ largeImg.src=data.signedUrl; largeImg.classList.remove("hidden"); }
+    if(largeFallback) largeFallback.classList.add("hidden");
   }else{
-    img.classList.add("hidden");
-    fallback.classList.remove("hidden");
+    if(img) img.classList.add("hidden");
+    if(fallback) fallback.classList.remove("hidden");
+    if(largeImg) largeImg.classList.add("hidden");
+    if(largeFallback) largeFallback.classList.remove("hidden");
   }
 }
 
@@ -490,10 +493,9 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
 
 
 
-// v8 - camera top-right, centered, back button
+// Homepage cards now auto-show the latest photo from each category - no manual upload
 const HOME_CARDS = ["memories","trips","celebrations","study"];
-const cardLocalKey = (c) => `family-memories:card-full:${c}`;
-const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;
+const HOME_CARD_TYPE = {memories:"memory",trips:"trip",celebrations:"celebration",study:"study"};
 function setCardImageDOM(card, src){
   const cardEl = document.querySelector(`.family-space-card.${card}-card`);
   const fullImg = document.querySelector(`[data-card-full="${card}"]`);
@@ -509,62 +511,25 @@ function setCardImageDOM(card, src){
   }
 }
 async function loadCardImages(){
+  if(!currentUser) return;
   for(const card of HOME_CARDS){
-    let src = null;
-    if(currentUser){
-      try{
-        const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
-        if(data?.signedUrl) src = data.signedUrl;
-      }catch{}
-    }
-    if(!src){
-      const local = localStorage.getItem(cardLocalKey(card));
-      if(local) src = local;
-    }
-    if(src) setCardImageDOM(card, src);
+    try{
+      const type = HOME_CARD_TYPE[card];
+      const items = await fetchMediaItems([type]);
+      const photoItem = items.find(i=>!isVideoPath(i.file_path));
+      if(!photoItem){ setCardImageDOM(card,null); continue; }
+      const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(photoItem.file_path,86400);
+      setCardImageDOM(card, data?.signedUrl||null);
+    }catch{ setCardImageDOM(card,null); }
   }
 }
-function initCardCameraButtons(){
+function initHomeCardNavigation(){
   document.querySelectorAll(".family-space-card[data-go]").forEach(el=>{
-    el.addEventListener("click",(e)=>{
-      if(e.target.closest(".card-camera-btn")) return;
-      navigate(el.dataset.go);
-    });
-  });
-  document.querySelectorAll(".card-camera-btn").forEach(btn=>{
-    btn.addEventListener("click",(e)=>{
-      e.stopPropagation();
-      const card = btn.dataset.card;
-      document.getElementById(`cardFile-${card}`)?.click();
-    });
-  });
-  HOME_CARDS.forEach(card=>{
-    const input = document.getElementById(`cardFile-${card}`);
-    if(!input) return;
-    input.addEventListener("change", async (e)=>{
-      const file = e.target.files?.[0];
-      if(!file) return;
-      if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result;
-        setCardImageDOM(card, dataUrl);
-        try{ localStorage.setItem(cardLocalKey(card), dataUrl); }catch{}
-      };
-      reader.readAsDataURL(file);
-      if(currentUser){
-        try{
-          const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
-          if(error) toast("Saved locally. Cloud error: "+error.message);
-          else { toast("Card image updated."); const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card),86400); if(data?.signedUrl) setCardImageDOM(card,data.signedUrl); }
-        }catch(err){ toast(err.message); }
-      }
-      e.target.value="";
-    });
+    el.addEventListener("click",()=>navigate(el.dataset.go));
   });
 }
 document.addEventListener("DOMContentLoaded", ()=>{
-  initCardCameraButtons();
+  initHomeCardNavigation();
   const backBtn=document.getElementById("bottomBackBtn");
   if(backBtn) backBtn.addEventListener("click", ()=>{ if(activePage!=="home") navigate("home"); });
 });
@@ -659,6 +624,7 @@ function loadProfilePage(){
   $("profileDisplayEmail").textContent=currentProfile.email||currentUser.email||"";
   $("profileLargeFallback").textContent=initials(currentProfile.name||currentUser.email);
   $("familyAdminShortcut").classList.toggle("hidden",currentProfile.role!=="admin");
+  loadProfilePhoto();
 }
 
 document.querySelectorAll("[data-study-tab]").forEach(btn=>btn.onclick=()=>{
@@ -669,14 +635,6 @@ document.querySelectorAll("[data-study-tab]").forEach(btn=>btn.onclick=()=>{
   $("studyToolsPanel").classList.toggle("hidden", !showTools);
 });
 
-if($("quickAddBtn")) $("quickAddBtn").onclick=()=>$("quickAddDialog").showModal();
-if($("closeQuickAdd")) $("closeQuickAdd").onclick=()=>$("quickAddDialog").close();
-document.querySelectorAll("[data-quick-page]").forEach(btn=>btn.onclick=()=>{
-  const page=btn.dataset.quickPage;
-  $("quickAddDialog").close();
-  navigate(page);
-  setTimeout(()=>document.querySelector(`.open-folder[data-section="${page}"]`)?.click(),100);
-});
 if($("profileEditPhoto")) $("profileEditPhoto").onclick=()=>$("profilePhotoInput").click();
 if($("profileSignOut")) $("profileSignOut").onclick=signOut;
 if($("familyAdminShortcut")) $("familyAdminShortcut").onclick=()=>navigate("admin");
@@ -694,4 +652,167 @@ if($("globalSearch")) $("globalSearch").addEventListener("input",async e=>{
   if(!data?.length){out.innerHTML='<div class="empty">No matching folders found.</div>';return;}
   out.innerHTML=data.map(f=>`<article class="folder-card search-hit" data-search-section="${f.section}" data-search-id="${f.id}"><div class="folder-icon">📁</div><div class="folder-info"><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.section)} · ${escapeHtml(f.description||"")}</p></div></article>`).join("");
   out.querySelectorAll(".search-hit").forEach(card=>card.onclick=()=>navigate(card.dataset.searchSection));
+});
+
+/* ===================== Memories Hub: aggregated photo slideshow + video gallery ===================== */
+
+const VIDEO_EXTENSIONS = ["mp4","mov","m4v","webm","avi","mkv","3gp"];
+function isVideoPath(path){
+  if(!path) return false;
+  const ext = path.split(".").pop().toLowerCase();
+  return VIDEO_EXTENSIONS.includes(ext);
+}
+
+// Fetch every item (with a file attached) across one or more section types, newest first.
+// Optionally scoped to a single folder id (used for homepage auto-cover selection).
+async function fetchMediaItems(types, folderId){
+  let all = [];
+  for(const type of types){
+    const table = tableMap[type];
+    if(!table) continue;
+    let query = client.from(table).select("*").not("file_path","is",null).order("created_at",{ascending:false});
+    if(folderId) query = query.eq("folder_id",folderId);
+    const {data,error} = await query;
+    if(error) continue;
+    if(data) all = all.concat(data.map(d=>({...d,_type:type})));
+  }
+  all.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  return all;
+}
+
+async function signMediaItems(items){
+  return Promise.all(items.map(async item=>{
+    const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
+    return {...item, signedUrl: data?.signedUrl||null};
+  }));
+}
+
+const MEDIA_TYPES_ALL = ["memory","trip","celebration"];
+let currentMediaSection = null; // 'memory' | 'trip' | 'celebration' | null
+
+/* ---- Photo slideshow ---- */
+let slideshowPhotos = [];
+let slideshowIndex = 0;
+let slideshowTimer = null;
+let slideshowPlaying = true;
+
+async function openSlideshow(types){
+  $("slideshowOverlay").classList.remove("hidden");
+  $("slideshowEmpty").classList.add("hidden");
+  $("slideshowImage").classList.add("hidden");
+  $("slideshowCounter").textContent="Loading…";
+  const items = await fetchMediaItems(types);
+  const photoItems = items.filter(i=>!isVideoPath(i.file_path));
+  const signed = await signMediaItems(photoItems);
+  slideshowPhotos = signed.filter(i=>i.signedUrl);
+  slideshowIndex = 0;
+  slideshowPlaying = true;
+  if(!slideshowPhotos.length){
+    $("slideshowEmpty").classList.remove("hidden");
+    $("slideshowCounter").textContent="";
+    return;
+  }
+  showSlide(0);
+  startSlideshowTimer();
+}
+
+function showSlide(i){
+  if(!slideshowPhotos.length) return;
+  slideshowIndex = (i+slideshowPhotos.length)%slideshowPhotos.length;
+  const img = $("slideshowImage");
+  img.classList.remove("hidden");
+  img.style.opacity=0;
+  img.src = slideshowPhotos[slideshowIndex].signedUrl;
+  img.onload = ()=>{ img.style.opacity=1; };
+  $("slideshowCounter").textContent = `${slideshowIndex+1} / ${slideshowPhotos.length}`;
+}
+function startSlideshowTimer(){
+  clearInterval(slideshowTimer);
+  slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },5000);
+}
+function closeSlideshow(){
+  clearInterval(slideshowTimer);
+  $("slideshowOverlay").classList.add("hidden");
+  $("slideshowImage").src="";
+}
+$("slideshowClose").onclick=closeSlideshow;
+$("slideshowNext").onclick=()=>showSlide(slideshowIndex+1);
+$("slideshowPrev").onclick=()=>showSlide(slideshowIndex-1);
+$("slideshowPlayPause").onclick=()=>{
+  slideshowPlaying=!slideshowPlaying;
+  $("slideshowPlayPause").innerHTML = slideshowPlaying
+    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
+};
+// Swipe left/right
+(function(){
+  let startX=null;
+  const stage=document.querySelector(".slideshow-stage");
+  stage.addEventListener("touchstart",e=>{ startX=e.touches[0].clientX; },{passive:true});
+  stage.addEventListener("touchend",e=>{
+    if(startX===null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if(Math.abs(dx)>40){ dx<0 ? showSlide(slideshowIndex+1) : showSlide(slideshowIndex-1); }
+    startX=null;
+  });
+})();
+
+/* ---- Video gallery + player ---- */
+async function openVideoGallery(types){
+  $("videoOverlay").classList.remove("hidden");
+  $("videoPlayerWrap").classList.add("hidden");
+  $("videoGalleryList").classList.remove("hidden");
+  $("videoGalleryList").innerHTML='<div class="empty">Loading…</div>';
+  const items = await fetchMediaItems(types);
+  const videoItems = items.filter(i=>isVideoPath(i.file_path));
+  const signed = await signMediaItems(videoItems);
+  const playable = signed.filter(i=>i.signedUrl);
+  if(!playable.length){
+    $("videoGalleryList").innerHTML='<div class="empty">No videos found in this collection yet.</div>';
+    return;
+  }
+  $("videoGalleryList").innerHTML = playable.map((v,i)=>`<button class="video-gallery-item" data-video-index="${i}"><span class="video-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="video-gallery-title">${escapeHtml(v.title||"Untitled video")}</span></button>`).join("");
+  $("videoGalleryList").querySelectorAll("[data-video-index]").forEach(btn=>{
+    btn.onclick=()=>{
+      const v = playable[Number(btn.dataset.videoIndex)];
+      $("videoGalleryList").classList.add("hidden");
+      $("videoPlayerWrap").classList.remove("hidden");
+      const el=$("videoPlayerEl");
+      el.src=v.signedUrl;
+      el.play().catch(()=>{});
+    };
+  });
+}
+function closeVideoOverlay(){
+  $("videoOverlay").classList.add("hidden");
+  const el=$("videoPlayerEl");
+  el.pause(); el.removeAttribute("src"); el.load();
+}
+$("videoOverlayClose").onclick=closeVideoOverlay;
+$("videoPlayerBack").onclick=()=>{
+  const el=$("videoPlayerEl");
+  el.pause();
+  $("videoPlayerWrap").classList.add("hidden");
+  $("videoGalleryList").classList.remove("hidden");
+};
+
+/* ---- Navigation wiring for the hub ---- */
+const SECTION_META = {
+  memory:{title:"Our Memories",art:"🖼️💗"},
+  trip:{title:"Family Trips",art:"🧳📷"},
+  celebration:{title:"Celebrations",art:"🎈🎉"}
+};
+document.querySelectorAll("[data-hub-section]").forEach(btn=>btn.onclick=()=>{
+  currentMediaSection = btn.dataset.hubSection;
+  const meta = SECTION_META[currentMediaSection];
+  $("mediaSectionTitle").textContent = meta.title;
+  $("mediaSectionArt").textContent = meta.art;
+  navigate("mediaSection");
+});
+document.querySelectorAll("[data-hub-action]").forEach(btn=>btn.onclick=()=>{
+  const action = btn.dataset.hubAction;
+  if(action==="all-photos") openSlideshow(MEDIA_TYPES_ALL);
+  else if(action==="all-videos") openVideoGallery(MEDIA_TYPES_ALL);
+  else if(action==="section-photos") openSlideshow([currentMediaSection]);
+  else if(action==="section-videos") openVideoGallery([currentMediaSection]);
 });

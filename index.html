@@ -69,7 +69,6 @@
       <div class="family-space-grid">
         <div class="family-space-card memories-card" data-go="memories">
           <img class="card-full-custom hidden" data-card-full="memories" alt="" />
-          <button class="card-camera-btn" data-card="memories" type="button">📷</button>
           <div class="card-default-content">
             <div class="card-art">🖼️💗</div>
             <div><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
@@ -78,7 +77,6 @@
         </div>
         <div class="family-space-card trips-card" data-go="trips">
           <img class="card-full-custom hidden" data-card-full="trips" alt="" />
-          <button class="card-camera-btn" data-card="trips" type="button">📷</button>
           <div class="card-default-content">
             <div class="card-art">🧳📷</div>
             <div><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
@@ -87,7 +85,6 @@
         </div>
         <div class="family-space-card celebrations-card" data-go="celebrations">
           <img class="card-full-custom hidden" data-card-full="celebrations" alt="" />
-          <button class="card-camera-btn" data-card="celebrations" type="button">📷</button>
           <div class="card-default-content">
             <div class="card-art">🎈🎉</div>
             <div><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
@@ -96,7 +93,6 @@
         </div>
         <div class="family-space-card study-card" data-go="study">
           <img class="card-full-custom hidden" data-card-full="study" alt="" />
-          <button class="card-camera-btn" data-card="study" type="button">📷</button>
           <div class="card-default-content">
             <div class="card-art">📚🌱</div>
             <div><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
@@ -104,10 +100,6 @@
           </div>
         </div>
       </div>
-      <input id="cardFile-memories" type="file" accept="image/*" hidden />
-      <input id="cardFile-trips" type="file" accept="image/*" hidden />
-      <input id="cardFile-celebrations" type="file" accept="image/*" hidden />
-      <input id="cardFile-study" type="file" accept="image/*" hidden />
     </section>
 
     <section id="memoriesPage" class="page hidden section-theme memories-theme">
@@ -137,15 +129,52 @@
       </div>
     </section>
 
+    <section id="mediaHubPage" class="page hidden section-theme media-theme">
+      <div class="section-hero"><div class="hero-art">🎞️✨</div><div><h1>Memories</h1><p>Sit back and enjoy everything you've saved.</p></div></div>
+      <div class="media-hub-grid">
+        <button class="media-hub-card" data-hub-action="all-photos"><span class="media-hub-ico"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="14" height="14" rx="2" opacity=".35"/><rect x="3" y="6" width="14" height="14" rx="2"/><path d="M5 17l3-3.5 2 2 3-4 4 5.5H5z" fill="#fff"/><circle cx="7" cy="10" r="1.3" fill="#fff"/></svg></span><span>Play All Photos</span></button>
+        <button class="media-hub-card" data-hub-action="all-videos"><span class="media-hub-ico"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z" fill="#fff"/></svg></span><span>Watch All Videos</span></button>
+        <button class="media-hub-card" data-hub-section="memory"><span class="media-hub-ico"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" opacity=".18"/><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 16.5 8.6 13.2c-1.3-1.3-1.3-3.2 0-4.4 1.2-1.1 3-.9 4 .3l.4.5.4-.5c1-1.2 2.8-1.4 4-.3 1.3 1.2 1.3 3.1 0 4.4L12 16.5z"/></svg></span><span>Our Memories</span></button>
+        <button class="media-hub-card" data-hub-section="trip"><span class="media-hub-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v6.5l14.5 2.5L2 14.5V21z"/></svg></span><span>Family Trips</span></button>
+        <button class="media-hub-card" data-hub-section="celebration"><span class="media-hub-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.2c.3-.5.4-1 .4-1.5C18.2 4.9 16.8 4 15 4c-1.2 0-2.3.7-3 1.8C11.3 4.7 10.2 4 9 4 7.2 4 5.8 4.9 5.8 6.5c0 .5.1 1 .4 1.5H4a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1zM9 6c.6 0 1.3.6 1.8 1.5H8.5C8.2 7 8.2 6 9 6zm6 0c.8 0 .8 1 .5 1.5h-2.3C13.7 6.6 14.4 6 15 6zM6 12h6v6H6v-6zm12 6h-6v-6h6v6z"/></svg></span><span>Celebrations</span></button>
+      </div>
+    </section>
+
+    <section id="mediaSectionPage" class="page hidden section-theme media-theme">
+      <div class="section-hero"><div class="hero-art" id="mediaSectionArt">🖼️💗</div><div><h1 id="mediaSectionTitle">Our Memories</h1><p>Choose how you'd like to enjoy this collection.</p></div></div>
+      <div class="media-hub-grid two-col">
+        <button class="media-hub-card" data-hub-action="section-photos"><span class="media-hub-ico"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" opacity=".15"/><path d="M5 17l3.5-4.5 2.3 2.6L15 10l4 7H5z"/><circle cx="8" cy="9" r="1.5"/></svg></span><span>Play Photos</span></button>
+        <button class="media-hub-card" data-hub-action="section-videos"><span class="media-hub-ico"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z" fill="#fff"/></svg></span><span>Watch Videos</span></button>
+      </div>
+    </section>
+
+    <div id="slideshowOverlay" class="media-overlay hidden">
+      <div class="slideshow-stage">
+        <img id="slideshowImage" class="slideshow-img" alt="">
+        <div id="slideshowEmpty" class="media-overlay-empty hidden">No photos found in this collection yet.</div>
+      </div>
+      <button id="slideshowClose" class="overlay-btn overlay-close" aria-label="Close">×</button>
+      <button id="slideshowPlayPause" class="overlay-btn overlay-playpause" aria-label="Play or pause"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+      <button id="slideshowPrev" class="overlay-btn overlay-prev" aria-label="Previous">‹</button>
+      <button id="slideshowNext" class="overlay-btn overlay-next" aria-label="Next">›</button>
+      <div id="slideshowCounter" class="slideshow-counter"></div>
+    </div>
+
+    <div id="videoOverlay" class="media-overlay hidden">
+      <div class="video-gallery-head"><h2 id="videoGalleryTitle">Videos</h2><button id="videoOverlayClose" class="overlay-btn overlay-close static" aria-label="Close">×</button></div>
+      <div id="videoGalleryList" class="video-gallery-list"></div>
+      <div id="videoPlayerWrap" class="video-player-wrap hidden"><button id="videoPlayerBack" class="overlay-btn overlay-close static" aria-label="Back to list">‹</button><video id="videoPlayerEl" controls playsinline></video></div>
+    </div>
+
     <section id="searchPage" class="page hidden utility-page"><h1>Search</h1><p class="muted">Find albums, trips, celebrations and study materials.</p><div class="search-box">🔍 <input id="globalSearch" placeholder="Search your family space..."></div><div id="searchResults" class="search-results"><div class="empty">Start typing to search.</div></div></section>
-    <section id="profilePage" class="page hidden utility-page"><div class="profile-panel"><button id="profileEditPhoto" class="profile-large"><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p id="profileDisplayEmail" class="muted"></p><div class="profile-menu"><button id="familyAdminShortcut" class="hidden">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
+    <section id="profilePage" class="page hidden utility-page"><div class="profile-panel"><button id="profileEditPhoto" class="profile-large"><img id="profileLargePhoto" class="hidden" alt="Profile"><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p id="profileDisplayEmail" class="muted"></p><div class="profile-menu"><button id="familyAdminShortcut" class="hidden">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
     <section id="adminPage" class="page hidden utility-page"><div class="content-heading"><div><h1>Family Admin</h1><p class="muted">Approve family members who may access the app.</p></div></div><div id="membersList" class="member-list"></div></section>
   </main>
 
     <nav class="mobile-bottom-nav" aria-label="Main navigation">
     <button class="mobile-nav-item active" data-page="home"><span class="nav-ico home-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2 2.5 11H5v9h5.5v-6h3V20H19v-9h2.5L12 3.2z"/></svg></span><small>Home</small></button>
     <button class="mobile-nav-item" id="bottomBackBtn"><span class="nav-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 5 3.5 12 11 19v-4.3c5.4.1 9 1.7 11.5 5.3-.7-6.2-4-11.2-11.5-12V5z"/></svg></span><small>Back</small></button>
-    <button class="mobile-nav-item add-main" id="quickAddBtn"><span class="add-plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><small>Add</small></button>
+    <button class="mobile-nav-item" data-page="mediaHub"><span class="nav-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M9.5 8v8l7-4-7-4z" fill="#fff"/></svg></span><small>Memories</small></button>
     <button class="mobile-nav-item" data-page="profile"><span class="nav-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg></span><small>Profile</small></button>
   </nav>
 </div>
@@ -153,7 +182,7 @@
 <dialog id="folderDialog"><form id="folderForm" class="dialog-card"><div class="dialog-head"><h2 id="folderDialogTitle">New Folder</h2><button type="button" id="closeFolderDialog" class="icon-btn">×</button></div><input id="folderName" placeholder="Folder name" maxlength="100" required><textarea id="folderDescription" placeholder="Description (optional)"></textarea><div class="dialog-actions"><button type="button" id="cancelFolderDialog" class="secondary">Cancel</button><button id="folderFormSubmitBtn" class="primary">Create</button></div></form></dialog>
 <dialog id="folderOptionsDialog"><div class="dialog-card"><div class="dialog-head"><h2 id="folderOptionsTitle">Folder</h2><button type="button" id="closeFolderOptions" class="icon-btn">×</button></div><div class="folder-options-list"><button type="button" id="folderOptionsRename" class="secondary folder-option-btn">✏️ Rename folder</button><button type="button" id="folderOptionsDelete" class="secondary folder-option-btn danger">🗑️ Delete folder</button></div></div></dialog>
 <dialog id="addDialog"><form id="addForm" class="dialog-card" novalidate><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button type="button" id="closeDialog" class="icon-btn">×</button></div><input id="itemTitle" placeholder="Title (optional)"><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"><label class="file-picker">📎 Choose photo or file<input id="itemFile" type="file" hidden></label><div class="dialog-actions"><button type="button" id="cancelDialog" class="secondary">Cancel</button><button class="primary">Save</button></div></form></dialog>
-<dialog id="quickAddDialog"><div class="dialog-card"><div class="dialog-head"><h2>What would you like to add?</h2><button type="button" id="closeQuickAdd" class="icon-btn">×</button></div><div class="quick-add-grid"><button data-quick-page="memories">🖼️<span>Memory</span></button><button data-quick-page="trips">🧳<span>Trip</span></button><button data-quick-page="celebrations">🎉<span>Celebration</span></button><button data-quick-page="study">📚<span>Study Material</span></button></div></div></dialog>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v17-1784511659?v=v17-1784511659"></script><script src="app.js?v=v17-1784511659?v=v17-1784511659"></script>
 <script>
 (function(){
