@@ -89,7 +89,10 @@ $("newPasswordForm").onsubmit=async e=>{
   history.replaceState({},document.title,window.location.pathname);
   showAuthForm("signin");
 };
-async function signOut(){await client.auth.signOut()}
+async function signOut(){
+  await client.auth.signOut();
+  $("signInForm")?.reset();
+}
 $("signOutBtn").onclick=signOut; $("pendingSignOut").onclick=signOut;
 
 async function loadProfile(){
@@ -446,7 +449,7 @@ async function loadHomeExperience(){
   if(changeBtn) changeBtn.classList.toggle("hidden",currentProfile?.role!=="admin");
   await loadFamilyCover();
   await loadProfilePhoto();
-  // Homepage cards reverted to original emoji illustrations (no auto cover photo)
+  await loadCardImages();
 }
 
 
@@ -493,9 +496,10 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
 
 
 
-// Homepage cards now auto-show the latest photo from each category - no manual upload
+// Homepage cards - manual photo upload via camera button
 const HOME_CARDS = ["memories","trips","celebrations","study"];
-const HOME_CARD_TYPE = {memories:"memory",trips:"trip",celebrations:"celebration",study:"study"};
+const cardLocalKey = (c) => `family-memories:card-full:${c}`;
+const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;
 function setCardImageDOM(card, src){
   const cardEl = document.querySelector(`.family-space-card.${card}-card`);
   const fullImg = document.querySelector(`[data-card-full="${card}"]`);
@@ -511,25 +515,62 @@ function setCardImageDOM(card, src){
   }
 }
 async function loadCardImages(){
-  if(!currentUser) return;
   for(const card of HOME_CARDS){
-    try{
-      const type = HOME_CARD_TYPE[card];
-      const items = await fetchMediaItems([type]);
-      const photoItem = items.find(i=>!isVideoPath(i.file_path));
-      if(!photoItem){ setCardImageDOM(card,null); continue; }
-      const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(photoItem.file_path,86400);
-      setCardImageDOM(card, data?.signedUrl||null);
-    }catch{ setCardImageDOM(card,null); }
+    let src = null;
+    if(currentUser){
+      try{
+        const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
+        if(data?.signedUrl) src = data.signedUrl;
+      }catch{}
+    }
+    if(!src){
+      const local = localStorage.getItem(cardLocalKey(card));
+      if(local) src = local;
+    }
+    if(src) setCardImageDOM(card, src);
   }
 }
-function initHomeCardNavigation(){
+function initCardCameraButtons(){
   document.querySelectorAll(".family-space-card[data-go]").forEach(el=>{
-    el.addEventListener("click",()=>navigate(el.dataset.go));
+    el.addEventListener("click",(e)=>{
+      if(e.target.closest(".card-camera-btn")) return;
+      navigate(el.dataset.go);
+    });
+  });
+  document.querySelectorAll(".card-camera-btn").forEach(btn=>{
+    btn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const card = btn.dataset.card;
+      document.getElementById(`cardFile-${card}`)?.click();
+    });
+  });
+  HOME_CARDS.forEach(card=>{
+    const input = document.getElementById(`cardFile-${card}`);
+    if(!input) return;
+    input.addEventListener("change", async (e)=>{
+      const file = e.target.files?.[0];
+      if(!file) return;
+      if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        setCardImageDOM(card, dataUrl);
+        try{ localStorage.setItem(cardLocalKey(card), dataUrl); }catch{}
+      };
+      reader.readAsDataURL(file);
+      if(currentUser){
+        try{
+          const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
+          if(error) toast("Saved locally. Cloud error: "+error.message);
+          else { toast("Card image updated."); const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card),86400); if(data?.signedUrl) setCardImageDOM(card,data.signedUrl); }
+        }catch(err){ toast(err.message); }
+      }
+      e.target.value="";
+    });
   });
 }
 document.addEventListener("DOMContentLoaded", ()=>{
-  initHomeCardNavigation();
+  initCardCameraButtons();
   const backBtn=document.getElementById("bottomBackBtn");
   if(backBtn) backBtn.addEventListener("click", ()=>{ if(activePage!=="home") navigate("home"); });
 });
