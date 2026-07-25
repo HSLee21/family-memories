@@ -274,3 +274,27 @@ html,body{ height:100%!important; }
 .mobile-nav-item{ padding:5px 0 9px!important; justify-content:center!important; }
 }
 .card-camera-btn,#changeCoverBtn{display:none!important}
+
+
+/* === ChatGPT UI refinements === */
+@media (max-width:900px){
+  body,.app,.main,#homePage{
+    background:#f6f8fb!important;
+  }
+  .section-theme{
+    background:transparent!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+  }
+  #homePage{
+    padding-bottom:68px!important;
+  }
+  .media-hub-grid,
+  .folder-grid{
+    margin-bottom:6px!important;
+    padding-bottom:6px!important;
+  }
+  .mobile-bottom-nav{
+    bottom:0!important;
+  }
+}
