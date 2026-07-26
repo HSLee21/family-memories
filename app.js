@@ -225,21 +225,42 @@ $("folderOptionsDelete").onclick=async()=>{
 };
 
 async function loadFolders(section){
-  const target=folderTarget[section], browser=browserTarget[section];
+  const target=folderTarget[section], browser=browserTarget[section], type=sectionType[section];
   $(browser).classList.add("hidden");
   $(browser).innerHTML="";
   $(target).classList.remove("hidden");
   $(target).innerHTML='<div class="empty">Loading folders…</div>';
   const {data,error}=await client.from("folders").select("*").eq("section",section).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
-  if(!data?.length){$(target).innerHTML='<div class="empty">No folders yet. Create your first folder.</div>';return}
-  $(target).innerHTML=data.map(f=>`<article class="folder-card" data-folder="${f.id}">
+
+  // Items can end up with no folder_id (e.g. after a folder was deleted, or if
+  // they were never filed into an album). Those items are otherwise invisible
+  // in this folder-based browser, so surface them as a pseudo-folder.
+  let orphanCount = 0;
+  const orphanTable = tableMap[type];
+  if(orphanTable){
+    const {count} = await client.from(orphanTable).select("id",{count:"exact",head:true}).is("folder_id",null);
+    orphanCount = count||0;
+  }
+
+  const folderCards = (data||[]).map(f=>`<article class="folder-card" data-folder="${f.id}">
     <div class="folder-icon">📁</div>
     <div class="folder-info"><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.description||"Open folder")}</p></div>
     <button class="folder-menu secondary" data-menu="${f.id}" title="Folder options">•••</button>
   </article>`).join("");
+  const uncategorizedCard = orphanCount>0 ? `<article class="folder-card" data-folder="__uncategorized__">
+    <div class="folder-icon">🗂️</div>
+    <div class="folder-info"><h3>Uncategorized</h3><p>${orphanCount} item${orphanCount===1?"":"s"} not inside any album</p></div>
+  </article>` : "";
+
+  if(!data?.length && !orphanCount){$(target).innerHTML='<div class="empty">No folders yet. Create your first folder.</div>';return}
+  $(target).innerHTML = uncategorizedCard + folderCards;
   document.querySelectorAll(`#${target} [data-folder]`).forEach(card=>card.onclick=e=>{
     if(e.target.closest("[data-menu]")) return;
+    if(card.dataset.folder==="__uncategorized__"){
+      openFolder(section,{id:null,name:"Uncategorized",description:"Items not inside any album"});
+      return;
+    }
     openFolder(section,data.find(f=>f.id===card.dataset.folder));
   });
   document.querySelectorAll(`#${target} [data-menu]`).forEach(btn=>btn.onclick=e=>{
@@ -261,13 +282,15 @@ async function openFolder(section,folder){
   const target=folderTarget[section], browser=browserTarget[section], type=sectionType[section];
   $(target).classList.add("hidden");
   $(browser).classList.remove("hidden");
+  const isUncategorized = !folder.id;
   $(browser).innerHTML=`<div class="folder-toolbar">
     <button class="secondary back-folders">← All folders</button>
     <div><h2>${escapeHtml(folder.name)}</h2><p class="muted">${escapeHtml(folder.description||"")}</p></div>
-    <button class="primary upload-folder">+ Add / Upload</button>
+    ${isUncategorized ? "" : '<button class="primary upload-folder">+ Add / Upload</button>'}
   </div><div id="${browser}Items" class="content-grid"></div>`;
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
-  $(browser).querySelector(".upload-folder").onclick=()=>openAddForFolder(type);
+  const uploadBtn=$(browser).querySelector(".upload-folder");
+  if(uploadBtn) uploadBtn.onclick=()=>openAddForFolder(type);
   loadFolderItems(type,folder.id,browser+"Items");
 }
 
@@ -363,7 +386,9 @@ $("addForm").onsubmit = async e => {
 async function loadFolderItems(type,folderId,target){
   $(target).innerHTML='<div class="empty">Loading…</div>';
   const table=tableMap[type];
-  const {data,error}=await client.from(table).select("*").eq("folder_id",folderId).order("created_at",{ascending:false});
+  let query = client.from(table).select("*");
+  query = folderId ? query.eq("folder_id",folderId) : query.is("folder_id",null);
+  const {data,error} = await query.order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
   if(!data?.length){$(target).innerHTML='<div class="empty">This folder is empty. Add the first item or file.</div>';return}
 
