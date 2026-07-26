@@ -797,7 +797,7 @@ async function openSlideshow(types,label){
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
   $("slideshowImage").classList.add("hidden");
-  $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
+  if($("slideshowTitle")) $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
   $("slideshowCounter").textContent="Loading…";
   const items = await fetchMediaItems(types);
   const photoItems = items.filter(i=>!isVideoPath(i.file_path));
@@ -860,7 +860,7 @@ async function openVideoGallery(types,label){
   $("videoOverlay").classList.remove("hidden");
   $("videoPlayerWrap").classList.add("hidden");
   $("videoGalleryList").classList.remove("hidden");
-  $("videoGalleryTitle").textContent = label || "Videos";
+  if($("videoGalleryTitle")) $("videoGalleryTitle").textContent = label || "Videos";
   $("videoGalleryList").innerHTML='<div class="empty">Loading…</div>';
   const items = await fetchMediaItems(types);
   const videoItems = items.filter(i=>isVideoPath(i.file_path));
@@ -876,7 +876,7 @@ async function openVideoGallery(types,label){
       const v = playable[Number(btn.dataset.videoIndex)];
       $("videoGalleryList").classList.add("hidden");
       $("videoPlayerWrap").classList.remove("hidden");
-      $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"}`;
+      if($("videoPlayerTitle")) $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"}`;
       const el=$("videoPlayerEl");
       el.src=v.signedUrl;
       el.load();
