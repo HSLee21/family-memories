@@ -140,7 +140,7 @@ function navigate(page){
   pages.forEach(p=>$(p+"Page").classList.toggle("hidden",p!==page));
   document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   document.querySelectorAll(".mobile-nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Memories",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
+  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
   if(page==="admin") loadMembers();
@@ -360,7 +360,7 @@ async function loadFolderItems(type,folderId,target){
       ? isImage
         ? `<img class="content-preview" src="${item.signedUrl}" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
         : isVideo
-          ? `<div class="video-wrap"><video class="content-preview" controls playsinline preload="auto" src="${item.signedUrl}"></video><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
+          ? `<div class="video-wrap"><video class="content-preview" controls playsinline preload="metadata" src="${item.signedUrl}"></video><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
           : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
       : "";
     return `<article class="content-card">
@@ -405,7 +405,7 @@ function attachVideoPoster(videoEl,src){
   try{
     const probe=document.createElement("video");
     probe.crossOrigin="anonymous";
-    probe.preload="auto";
+    probe.preload="metadata";
     probe.muted=true;
     probe.playsInline=true;
     probe.src=src;
@@ -416,17 +416,9 @@ function attachVideoPoster(videoEl,src){
         canvas.height=probe.videoHeight||320;
         canvas.getContext("2d").drawImage(probe,0,0,canvas.width,canvas.height);
         videoEl.poster=canvas.toDataURL("image/jpeg",0.7);
-      }catch(e){
-        // Most likely a CORS/"tainted canvas" issue: the storage bucket isn't
-        // sending Access-Control-Allow-Origin for this file, so the browser
-        // won't let us read pixels off it even though it can display them.
-        console.warn("Video poster capture blocked (likely storage CORS config):",e);
-      }
+      }catch(e){ /* tainted canvas / decode failure - leave without poster */ }
     },{once:true});
-    probe.addEventListener("error",(e)=>{
-      console.warn("Video poster probe failed to load the source at all:",src,e);
-    },{once:true});
-  }catch(e){ console.warn("attachVideoPoster failed unexpectedly:",e); }
+  }catch(e){ /* ignore - not critical */ }
 }
 async function openPrivateFile(path){
   const {data,error}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(path,60);

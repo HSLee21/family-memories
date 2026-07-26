@@ -171,6 +171,20 @@ html,body{overflow-x:hidden}
   #mediaHubPage .media-hub-ico{ width:46px!important; height:46px!important; }
   .video-fs-btn{ top:6px!important; right:6px!important; bottom:auto!important; }
 
+  /* ---------- Fullscreen photo/video overlays ---------- */
+  /* Now siblings of <main> in the DOM (not nested inside its scrolling
+     container), so position:fixed reliably covers the full viewport,
+     including the area behind the topbar and bottom nav. */
+  .media-overlay{ padding-bottom:env(safe-area-inset-bottom)!important; }
+  .overlay-playpause{
+    bottom:calc(20px + env(safe-area-inset-bottom))!important;
+    left:auto!important; right:16px!important; transform:none!important;
+    width:46px!important; height:46px!important;
+    background:rgba(0,0,0,.4)!important;
+  }
+  .overlay-prev{ width:40px!important; height:40px!important; background:rgba(0,0,0,.35)!important; }
+  .overlay-next{ width:40px!important; height:40px!important; background:rgba(0,0,0,.35)!important; }
+
   /* ---------- Other pages (Memories/Trips/Celebrations/Study Hub,
      Search/Profile/Admin) — variable-length content, scrolls inside
      .main using the default flex:0 0 auto + the reserved bottom
