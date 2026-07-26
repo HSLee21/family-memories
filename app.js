@@ -973,7 +973,8 @@ async function openSlideshow(types,label){
   lockBodyScroll();
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
-  $("slideshowImage").classList.add("hidden");
+  $("slideA").classList.remove("active");
+$("slideB").classList.remove("active");
   slideshowFallbackLabel = label || "";
   if($("slideshowTitle")) $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
   $("slideshowCounter").textContent="Loading…";
@@ -1006,12 +1007,18 @@ function showSlide(i){
   if(!slideshowPhotos.length) return;
   slideshowIndex = (i+slideshowPhotos.length)%slideshowPhotos.length;
   const photo = slideshowPhotos[slideshowIndex];
-  const img = $("slideshowImage");
-  const token = ++slideshowLoadToken;
-  img.classList.remove("hidden");
-  img.style.opacity=0;
-  img.src = photo.signedUrl;
-  img.onload = ()=>{ if(token===slideshowLoadToken) img.style.opacity=1; };
+  const token=++slideshowLoadToken;
+const current=document.getElementById("slideA").classList.contains("active")?document.getElementById("slideA"):document.getElementById("slideB");
+const next=current.id==="slideA"?document.getElementById("slideB"):document.getElementById("slideA");
+const preload=new Image();
+preload.src=photo.signedUrl;
+preload.onload=async()=>{
+ if(token!==slideshowLoadToken) return;
+ try{ if(preload.decode) await preload.decode(); }catch(e){}
+ next.src=photo.signedUrl;
+ next.classList.add("active");
+ current.classList.remove("active");
+};
   $("slideshowCounter").textContent = `${slideshowIndex+1} / ${slideshowPhotos.length}`;
   if($("slideshowTitle")){
     const label = photo._label || slideshowFallbackLabel;
@@ -1027,7 +1034,10 @@ function closeSlideshow(){
   clearTimeout(slideshowHideTimer);
   $("slideshowOverlay").classList.add("hidden");
   $("slideshowOverlay").classList.remove("hide-controls");
-  $("slideshowImage").src="";
+  document.getElementById("slideA").src="";
+document.getElementById("slideB").src="";
+document.getElementById("slideA").classList.remove("active");
+document.getElementById("slideB").classList.remove("active");
   const music=$("slideshowMusic");
   music.pause(); music.currentTime=0;
   unlockBodyScroll();
@@ -1050,8 +1060,12 @@ $("slideshowDelete").onclick=async()=>{
     clearInterval(slideshowTimer);
     const music=$("slideshowMusic");
     music.pause(); music.currentTime=0;
-    $("slideshowImage").classList.add("hidden");
-    $("slideshowImage").src="";
+    $("slideA").classList.remove("active");
+$("slideB").classList.remove("active");
+    document.getElementById("slideA").src="";
+document.getElementById("slideB").src="";
+document.getElementById("slideA").classList.remove("active");
+document.getElementById("slideB").classList.remove("active");
     $("slideshowEmpty").classList.remove("hidden");
     $("slideshowCounter").textContent="";
     if($("slideshowTitle")) $("slideshowTitle").textContent="";
