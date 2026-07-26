@@ -808,10 +808,20 @@ async function loadSlideshowMusic(){
 }
 function updateMusicBtn(){
   const btn = $("slideshowMusicBtn");
-  if(!btn) return;
-  btn.style.color = "#fff"; // V19.1 Patch 1: always white icon
-  btn.classList.toggle("has-music",slideshowHasMusic);
-  btn.classList.toggle("muted",slideshowHasMusic && $("slideshowMusic").paused);
+  const audio = $("slideshowMusic");
+  if(!btn || !audio) return;
+
+  btn.style.color = "#fff";
+
+  btn.classList.remove("has-music","muted");
+
+  if(!audio.src) return;
+
+  if(audio.paused){
+    btn.classList.add("muted");
+  }else{
+    btn.classList.add("has-music");
+  }
 }
 const musicBtn = $("slideshowMusicBtn");
 
