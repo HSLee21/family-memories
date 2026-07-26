@@ -996,7 +996,6 @@ function showSlide(i) {
 
   const photo = slideshowPhotos[slideshowIndex];
   const img = $("slideshowImage");
-  const expectedSrc = photo.signedUrl;
 
   img.onload = null;
   img.onerror = null;
@@ -1013,22 +1012,29 @@ function showSlide(i) {
   }
 
   img.onload = () => {
-    if (img.currentSrc !== expectedSrc && img.src !== expectedSrc) return;
-
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        img.style.transition = "opacity .4s ease";
+        img.style.transition = "opacity .35s ease";
         img.style.opacity = "1";
       });
     });
   };
 
   img.onerror = () => {
-    console.warn("Slideshow image failed:", expectedSrc);
+    console.warn("Failed to load slideshow image:", photo.signedUrl);
   };
 
-  img.src = expectedSrc;
+  img.src = photo.signedUrl;
+
+  if (img.complete && img.naturalWidth > 0) {
+    requestAnimationFrame(() => {
+      img.style.transition = "opacity .35s ease";
+      img.style.opacity = "1";
+    });
+  }
 }
+
+
 
 let toolbarTimer=null;
 
