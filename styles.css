@@ -154,10 +154,7 @@ html,body{overflow-x:hidden}
   .family-space-card.has-custom .card-default-content{ opacity:0!important; pointer-events:none!important; }
 
   /* ---------- Gallery hub (mediaHub) ---------- */
-  #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; padding:26px 18px!important; gap:16px!important; }
-  #mediaHubPage .section-hero .hero-art{ font-size:48px!important; }
-  #mediaHubPage .section-hero h1{ font-size:30px!important; margin:0 0 4px!important; }
-  #mediaHubPage .section-hero p{ font-size:13px!important; line-height:1.35!important; }
+  #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; }
   #mediaHubPage .media-hub-grid{
     /* the one flexible element on Gallery: rows stretch to absorb
        leftover space instead of leaving a gap below the last row */
