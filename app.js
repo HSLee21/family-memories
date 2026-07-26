@@ -1004,29 +1004,14 @@ async function openSlideshow(types,label){
 let slideshowLoadToken = 0;
 function showSlide(i){
   if(!slideshowPhotos.length) return;
-  slideshowIndex=(i+slideshowPhotos.length)%slideshowPhotos.length;
-  const photo=slideshowPhotos[slideshowIndex];
-  const img=$("slideshowImage");
-  const token=++slideshowLoadToken;
-  const preload=new Image();
-  preload.src=photo.signedUrl;
-  preload.onload=async()=>{
-    if(token!==slideshowLoadToken) return;
-    try{ if(preload.decode) await preload.decode(); }catch(e){}
-    requestAnimationFrame(()=>{
-      if(token!==slideshowLoadToken) return;
-      img.style.opacity=0;
-      img.src=photo.signedUrl;
-      img.classList.remove("hidden");
-      requestAnimationFrame(()=>{img.style.opacity=1;});
-    });
-  };
-  $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
-  if($("slideshowTitle")){
-    const label=photo._label||slideshowFallbackLabel;
-    $("slideshowTitle").textContent=label?`Playing: ${label}`:"";
-  }
-};
+  slideshowIndex = (i+slideshowPhotos.length)%slideshowPhotos.length;
+  const photo = slideshowPhotos[slideshowIndex];
+  const img = $("slideshowImage");
+  const token = ++slideshowLoadToken;
+  img.classList.remove("hidden");
+  img.style.opacity=0;
+  img.src = photo.signedUrl;
+  img.onload = ()=>{ if(token===slideshowLoadToken) img.style.opacity=1; };
   $("slideshowCounter").textContent = `${slideshowIndex+1} / ${slideshowPhotos.length}`;
   if($("slideshowTitle")){
     const label = photo._label || slideshowFallbackLabel;
