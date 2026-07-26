@@ -982,6 +982,7 @@ async function openSlideshow(types,label){
     return;
   }
   showSlide(0);
+  showToolbar();
   startSlideshowTimer();
   slideshowHasMusic = await loadSlideshowMusic();
   if(slideshowHasMusic){ $("slideshowMusic").currentTime=0; $("slideshowMusic").play().catch(()=>{}); }
@@ -990,19 +991,39 @@ async function openSlideshow(types,label){
 
 function showSlide(i){
   if(!slideshowPhotos.length) return;
-  slideshowIndex = (i+slideshowPhotos.length)%slideshowPhotos.length;
-  const photo = slideshowPhotos[slideshowIndex];
-  const img = $("slideshowImage");
+
+  slideshowIndex=(i+slideshowPhotos.length)%slideshowPhotos.length;
+
+  const photo=slideshowPhotos[slideshowIndex];
+  const img=$("slideshowImage");
+
   img.classList.remove("hidden");
   img.style.opacity=0;
-  img.src = photo.signedUrl;
-  img.onload = ()=>{ img.style.opacity=1; };
-  $("slideshowCounter").textContent = `${slideshowIndex+1} / ${slideshowPhotos.length}`;
+  img.src=photo.signedUrl;
+  img.onload=()=>{img.style.opacity=1;};
+
+  $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
+
   if($("slideshowTitle")){
-    const label = photo._label || slideshowFallbackLabel;
-    $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
+    const label=photo._label||slideshowFallbackLabel;
+    $("slideshowTitle").textContent=label||"";
   }
 }
+
+let toolbarTimer=null;
+
+function showToolbar(){
+  const bar=document.querySelector(".slideshow-toolbar");
+  if(!bar) return;
+  bar.classList.remove("hide");
+  clearTimeout(toolbarTimer);
+  toolbarTimer=setTimeout(()=>{
+    bar.classList.add("hide");
+  },3000);
+}
+
+$("slideshowImage").onclick=()=>showToolbar();
+
 function startSlideshowTimer(){
   clearInterval(slideshowTimer);
   slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },5000);
@@ -1013,6 +1034,7 @@ function closeSlideshow(){
   $("slideshowImage").src="";
   const music=$("slideshowMusic");
   music.pause(); music.currentTime=0;
+  clearTimeout(toolbarTimer);
   unlockBodyScroll();
 }
 $("slideshowClose").onclick=closeSlideshow;
@@ -1042,8 +1064,6 @@ $("slideshowDelete").onclick=async()=>{
   }
   showSlide(slideshowIndex);
 };
-$("slideshowNext").onclick=()=>showSlide(slideshowIndex+1);
-$("slideshowPrev").onclick=()=>showSlide(slideshowIndex-1);
 $("slideshowPlayPause").onclick=()=>{
   slideshowPlaying=!slideshowPlaying;
   $("slideshowPlayPause").innerHTML = slideshowPlaying
@@ -1104,6 +1124,7 @@ function closeVideoOverlay(){
   $("videoOverlay").classList.add("hidden");
   const el=$("videoPlayerEl");
   el.pause(); el.removeAttribute("src"); el.load();
+  clearTimeout(toolbarTimer);
   unlockBodyScroll();
 }
 $("videoOverlayClose").onclick=closeVideoOverlay;
