@@ -793,10 +793,11 @@ let slideshowIndex = 0;
 let slideshowTimer = null;
 let slideshowPlaying = true;
 
-async function openSlideshow(types){
+async function openSlideshow(types,label){
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
   $("slideshowImage").classList.add("hidden");
+  $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
   $("slideshowCounter").textContent="Loading…";
   const items = await fetchMediaItems(types);
   const photoItems = items.filter(i=>!isVideoPath(i.file_path));
@@ -855,10 +856,11 @@ $("slideshowPlayPause").onclick=()=>{
 })();
 
 /* ---- Video gallery + player ---- */
-async function openVideoGallery(types){
+async function openVideoGallery(types,label){
   $("videoOverlay").classList.remove("hidden");
   $("videoPlayerWrap").classList.add("hidden");
   $("videoGalleryList").classList.remove("hidden");
+  $("videoGalleryTitle").textContent = label || "Videos";
   $("videoGalleryList").innerHTML='<div class="empty">Loading…</div>';
   const items = await fetchMediaItems(types);
   const videoItems = items.filter(i=>isVideoPath(i.file_path));
@@ -874,9 +876,13 @@ async function openVideoGallery(types){
       const v = playable[Number(btn.dataset.videoIndex)];
       $("videoGalleryList").classList.add("hidden");
       $("videoPlayerWrap").classList.remove("hidden");
+      $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"}`;
       const el=$("videoPlayerEl");
       el.src=v.signedUrl;
-      el.play().catch(()=>{});
+      el.load();
+      const tryPlay=()=>el.play().catch(()=>{});
+      tryPlay();
+      el.addEventListener("loadedmetadata",tryPlay,{once:true});
     };
   });
 }
@@ -914,8 +920,8 @@ document.querySelectorAll("[data-hub-section]").forEach(btn=>btn.onclick=()=>{
 });
 document.querySelectorAll("[data-hub-action]").forEach(btn=>btn.onclick=()=>{
   const action = btn.dataset.hubAction;
-  if(action==="all-photos") openSlideshow(MEDIA_TYPES_ALL);
-  else if(action==="all-videos") openVideoGallery(MEDIA_TYPES_ALL);
-  else if(action==="section-photos") openSlideshow([currentMediaSection]);
-  else if(action==="section-videos") openVideoGallery([currentMediaSection]);
+  if(action==="all-photos") openSlideshow(MEDIA_TYPES_ALL,"All Photos");
+  else if(action==="all-videos") openVideoGallery(MEDIA_TYPES_ALL,"All Videos");
+  else if(action==="section-photos") openSlideshow([currentMediaSection],SECTION_META[currentMediaSection]?.title);
+  else if(action==="section-videos") openVideoGallery([currentMediaSection],SECTION_META[currentMediaSection]?.title);
 });

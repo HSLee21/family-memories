@@ -170,13 +170,14 @@
       <button id="slideshowPlayPause" class="overlay-btn overlay-playpause" aria-label="Play or pause"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
       <button id="slideshowPrev" class="overlay-btn overlay-prev" aria-label="Previous">‹</button>
       <button id="slideshowNext" class="overlay-btn overlay-next" aria-label="Next">›</button>
+      <div id="slideshowTitle" class="slideshow-title"></div>
       <div id="slideshowCounter" class="slideshow-counter"></div>
     </div>
 
     <div id="videoOverlay" class="media-overlay hidden">
       <div class="video-gallery-head"><h2 id="videoGalleryTitle">Videos</h2><button id="videoOverlayClose" class="overlay-btn overlay-close static" aria-label="Close">×</button></div>
       <div id="videoGalleryList" class="video-gallery-list"></div>
-      <div id="videoPlayerWrap" class="video-player-wrap hidden"><button id="videoPlayerBack" class="overlay-btn overlay-close static" aria-label="Back to list">‹</button><video id="videoPlayerEl" controls playsinline></video></div>
+      <div id="videoPlayerWrap" class="video-player-wrap hidden"><button id="videoPlayerBack" class="overlay-btn overlay-close static" aria-label="Back to list">‹</button><div id="videoPlayerTitle" class="video-player-title"></div><video id="videoPlayerEl" controls playsinline autoplay></video></div>
     </div>
 
     <nav class="mobile-bottom-nav" aria-label="Main navigation">
