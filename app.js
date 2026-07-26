@@ -811,16 +811,18 @@ function updateMusicBtn(){
   const audio = $("slideshowMusic");
   if(!btn || !audio) return;
 
-  btn.style.color = "#fff";
-
+  btn.style.color="#fff";
   btn.classList.remove("has-music","muted");
 
-  if(!audio.src) return;
+  if(!audio.src){
+    btn.style.background="rgba(120,120,120,.75)"; // Grey
+    return;
+  }
 
   if(audio.paused){
-    btn.classList.add("muted");
+    btn.style.background="rgba(255,255,255,.25)"; // White (translucent)
   }else{
-    btn.classList.add("has-music");
+    btn.style.background="rgba(80,160,255,.95)"; // Light Blue
   }
 }
 const musicBtn = $("slideshowMusicBtn");
@@ -885,6 +887,14 @@ if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   }
   updateMusicBtn();
 };
+
+
+const slideshowAudio=$("slideshowMusic");
+if(slideshowAudio){
+  slideshowAudio.addEventListener("play",updateMusicBtn);
+  slideshowAudio.addEventListener("pause",updateMusicBtn);
+  slideshowAudio.addEventListener("ended",updateMusicBtn);
+}
 
 async function foldersById(){
   const {data,error} = await client.from("folders").select("id,name");
