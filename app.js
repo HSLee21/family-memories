@@ -29,6 +29,30 @@ if (!sessionStorage.getItem(sessionMigrationKey)) {
 let currentUser = null, currentProfile = null, currentAddType = "memory";
 
 const $ = id => document.getElementById(id);
+
+/* Locks the background page in place while a fullscreen overlay (slideshow/video)
+   is open. Without this, the home page underneath can still scroll/rubber-band
+   on mobile, which is what caused the two views to visibly overlap/bleed
+   into each other. */
+let _scrollLockY = 0;
+function lockBodyScroll(){
+  _scrollLockY = window.scrollY || window.pageYOffset || 0;
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${_scrollLockY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+  document.body.style.overflow = "hidden";
+}
+function unlockBodyScroll(){
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  document.body.style.overflow = "";
+  window.scrollTo(0, _scrollLockY);
+}
 const views = ["authView","pendingView","appView"];
 const pages = ["home","memories","trips","celebrations","study","mediaHub","mediaSection","search","profile","admin"];
 const tableMap = {memory:"memories",trip:"trips",celebration:"celebrations",study:"study_materials"};
@@ -811,18 +835,14 @@ function updateMusicBtn(){
   const audio = $("slideshowMusic");
   if(!btn || !audio) return;
 
-  btn.style.color="#fff";
   btn.classList.remove("has-music","muted");
 
-  if(!audio.src){
-    btn.style.background="rgba(120,120,120,.75)"; // Grey
-    return;
-  }
+  if(!audio.src) return; // grey: no music loaded
 
   if(audio.paused){
-    btn.style.background="rgba(255,255,255,.25)"; // White (translucent)
+    btn.classList.add("muted"); // white: loaded but paused
   }else{
-    btn.style.background="rgba(80,160,255,.95)"; // Light Blue
+    btn.classList.add("has-music"); // blue: playing
   }
 }
 const musicBtn = $("slideshowMusicBtn");
@@ -888,14 +908,6 @@ if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   updateMusicBtn();
 };
 
-
-const slideshowAudio=$("slideshowMusic");
-if(slideshowAudio){
-  slideshowAudio.addEventListener("play",updateMusicBtn);
-  slideshowAudio.addEventListener("pause",updateMusicBtn);
-  slideshowAudio.addEventListener("ended",updateMusicBtn);
-}
-
 async function foldersById(){
   const {data,error} = await client.from("folders").select("id,name");
   const map={};
@@ -904,6 +916,7 @@ async function foldersById(){
 }
 
 async function openSlideshow(types,label){
+  lockBodyScroll();
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
   $("slideshowImage").classList.add("hidden");
@@ -958,6 +971,7 @@ function closeSlideshow(){
   $("slideshowImage").src="";
   const music=$("slideshowMusic");
   music.pause(); music.currentTime=0;
+  unlockBodyScroll();
 }
 $("slideshowClose").onclick=closeSlideshow;
 $("slideshowNext").onclick=()=>showSlide(slideshowIndex+1);
@@ -988,6 +1002,7 @@ $("slideshowPlayPause").onclick=()=>{
 
 /* ---- Video gallery + player ---- */
 async function openVideoGallery(types,label){
+  lockBodyScroll();
   $("videoOverlay").classList.remove("hidden");
   $("videoPlayerWrap").classList.add("hidden");
   $("videoGalleryList").classList.remove("hidden");
@@ -1021,6 +1036,7 @@ function closeVideoOverlay(){
   $("videoOverlay").classList.add("hidden");
   const el=$("videoPlayerEl");
   el.pause(); el.removeAttribute("src"); el.load();
+  unlockBodyScroll();
 }
 $("videoOverlayClose").onclick=closeVideoOverlay;
 $("videoPlayerBack").onclick=()=>{
