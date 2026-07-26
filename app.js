@@ -795,6 +795,8 @@ let slideshowPlaying = true;
 let slideshowFallbackLabel = "";
 const musicStoragePath = () => `${currentUser.id}/app-settings/slideshow-music`;
 let slideshowHasMusic = false;
+let musicLongPressTimer = null;
+let musicLongPressTriggered = false;
 
 async function loadSlideshowMusic(){
   try{
@@ -811,12 +813,53 @@ function updateMusicBtn(){
   btn.classList.toggle("has-music",slideshowHasMusic);
   btn.classList.toggle("muted",slideshowHasMusic && $("slideshowMusic").paused);
 }
-if($("slideshowMusicBtn")) $("slideshowMusicBtn").onclick=()=>{
-  if(!slideshowHasMusic){ $("slideshowMusicInput").click(); return; }
-  const audio = $("slideshowMusic");
-  if(audio.paused){ audio.play().catch(()=>{}); } else { audio.pause(); }
-  updateMusicBtn();
-};
+const musicBtn = $("slideshowMusicBtn");
+
+if(musicBtn){
+
+  musicBtn.addEventListener("pointerdown",()=>{
+
+    musicLongPressTriggered=false;
+
+    musicLongPressTimer=setTimeout(()=>{
+
+      musicLongPressTriggered=true;
+      $("slideshowMusicInput").click();
+
+    },1000);
+
+  });
+
+  function stopMusicLongPress(){
+    clearTimeout(musicLongPressTimer);
+  }
+
+  musicBtn.addEventListener("pointerup",stopMusicLongPress);
+  musicBtn.addEventListener("pointerleave",stopMusicLongPress);
+  musicBtn.addEventListener("pointercancel",stopMusicLongPress);
+
+  musicBtn.addEventListener("click",()=>{
+
+    if(musicLongPressTriggered) return;
+
+    if(!slideshowHasMusic){
+      $("slideshowMusicInput").click();
+      return;
+    }
+
+    const audio=$("slideshowMusic");
+
+    if(audio.paused){
+      audio.play().catch(()=>{});
+    }else{
+      audio.pause();
+    }
+
+    updateMusicBtn();
+
+  });
+
+}
 if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   const file = e.target.files[0];
   e.target.value="";
