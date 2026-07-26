@@ -253,3 +253,43 @@ html,body{overflow-x:hidden}
 }
 
 .card-camera-btn,#changeCoverBtn{display:none!important}
+
+
+/* ===== Step 1 Slideshow Toolbar ===== */
+.slideshow-toolbar{
+position:absolute;
+left:50%;
+bottom:calc(20px + env(safe-area-inset-bottom));
+transform:translateX(-50%);
+display:flex;
+align-items:center;
+gap:12px;
+padding:10px 14px;
+background:rgba(32,32,32,.45);
+backdrop-filter:blur(16px);
+-webkit-backdrop-filter:blur(16px);
+border-radius:999px;
+transition:opacity .3s ease,transform .3s ease;
+z-index:520;
+}
+.slideshow-toolbar.hide{
+opacity:0;
+pointer-events:none;
+transform:translateX(-50%) translateY(12px);
+}
+.slideshow-toolbar .overlay-btn{
+position:static!important;
+transform:none!important;
+margin:0!important;
+left:auto!important;
+right:auto!important;
+top:auto!important;
+bottom:auto!important;
+width:44px;
+height:44px;
+border-radius:50%;
+}
+.overlay-prev,
+.overlay-next{
+display:none!important;
+}
