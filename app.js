@@ -1001,15 +1001,17 @@ async function openSlideshow(types,label){
   updateMusicBtn();
 }
 
+let slideshowLoadToken = 0;
 function showSlide(i){
   if(!slideshowPhotos.length) return;
   slideshowIndex = (i+slideshowPhotos.length)%slideshowPhotos.length;
   const photo = slideshowPhotos[slideshowIndex];
   const img = $("slideshowImage");
+  const token = ++slideshowLoadToken;
   img.classList.remove("hidden");
   img.style.opacity=0;
   img.src = photo.signedUrl;
-  img.onload = ()=>{ img.style.opacity=1; };
+  img.onload = ()=>{ if(token===slideshowLoadToken) img.style.opacity=1; };
   $("slideshowCounter").textContent = `${slideshowIndex+1} / ${slideshowPhotos.length}`;
   if($("slideshowTitle")){
     const label = photo._label || slideshowFallbackLabel;
@@ -1057,8 +1059,8 @@ $("slideshowDelete").onclick=async()=>{
   }
   showSlide(slideshowIndex);
 };
-$("slideshowNext").onclick=()=>showSlide(slideshowIndex+1);
-$("slideshowPrev").onclick=()=>showSlide(slideshowIndex-1);
+$("slideshowNext").onclick=()=>{ showSlide(slideshowIndex+1); startSlideshowTimer(); };
+$("slideshowPrev").onclick=()=>{ showSlide(slideshowIndex-1); startSlideshowTimer(); };
 $("slideshowPlayPause").onclick=()=>{
   slideshowPlaying=!slideshowPlaying;
   $("slideshowPlayPause").innerHTML = slideshowPlaying
@@ -1081,6 +1083,7 @@ $("slideshowPlayPause").onclick=()=>{
     if(Math.abs(dx)>40){
       wasSwipe=true;
       dx<0 ? showSlide(slideshowIndex+1) : showSlide(slideshowIndex-1);
+      startSlideshowTimer();
       showControls();
     }
     startX=null;
