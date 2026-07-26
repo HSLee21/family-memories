@@ -807,6 +807,7 @@ async function loadSlideshowMusic(){
 function updateMusicBtn(){
   const btn = $("slideshowMusicBtn");
   if(!btn) return;
+  btn.style.color = "#fff"; // V19.1 Patch 1: always white icon
   btn.classList.toggle("has-music",slideshowHasMusic);
   btn.classList.toggle("muted",slideshowHasMusic && $("slideshowMusic").paused);
 }
