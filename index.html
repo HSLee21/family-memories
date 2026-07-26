@@ -13,16 +13,16 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Pacifico&amp;display=swap" rel="stylesheet"/>
-<link href="styles.css?v=v20-fix" rel="stylesheet"/>
+<link href="styles.css?v=v20-fix" rel="stylesheet">
 <!-- PWA -->
-<link href="manifest.json" rel="manifest"/>
+<link href="manifest.json" rel="manifest">
 <meta content="#1670f8" name="theme-color"/>
-<link href="icons/icon-192.png" rel="icon"/>
-<link href="icons/apple-touch-icon.png" rel="apple-touch-icon">
+<link href="icons/icon-192.png" rel="icon">
+<link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Memories" name="apple-mobile-web-app-title"/>
-</link></head>
+</link></link></link></head>
 <body>
 <div id="toast"></div>
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:#f7f9fc;display:grid;place-items:center;font-family:Inter,sans-serif">
@@ -99,11 +99,11 @@
 </div>
 </div>
 </div>
-<input accept="image/*" hidden="" id="cardFile-memories" type="file"/>
-<input accept="image/*" hidden="" id="cardFile-trips" type="file"/>
-<input accept="image/*" hidden="" id="cardFile-celebrations" type="file"/>
-<input accept="image/*" hidden="" id="cardFile-study" type="file"/>
-</section>
+<input accept="image/*" hidden="" id="cardFile-memories" type="file">
+<input accept="image/*" hidden="" id="cardFile-trips" type="file">
+<input accept="image/*" hidden="" id="cardFile-celebrations" type="file">
+<input accept="image/*" hidden="" id="cardFile-study" type="file">
+</input></input></input></input></section>
 <section class="page hidden section-theme memories-theme" id="memoriesPage">
 <div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div></div>
 <div class="content-heading"><h2>Albums</h2><button class="link-button open-folder" data-section="memories">+ New Album</button></div><div class="folder-grid visual-grid" id="memoriesFolders"></div><div class="folder-browser hidden" id="memoriesBrowser"></div>
@@ -150,8 +150,7 @@
 </main>
 <div class="media-overlay hidden" id="slideshowOverlay">
 <div class="slideshow-stage">
-<img id="slideshowImage" class="slideshow-image hidden" src="" alt="" draggable="false"/>
-
+<img alt="" class="slideshow-img" id="slideshowImage"/>
 <div class="media-overlay-empty hidden" id="slideshowEmpty">No photos found in this collection yet.</div>
 </div>
 <audio id="slideshowMusic" loop="" playsinline=""></audio>
@@ -160,9 +159,9 @@
 <div class="slideshow-counter" id="slideshowCounter"></div>
 <div class="slideshow-toolbar" id="slideshowToolbar">
 <button aria-label="Previous" class="tb-btn tb-nav" id="slideshowPrev">‹</button>
-<button aria-label="Background music" class="tb-btn" id="slideshowMusicBtn"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></button>
+<button aria-label="Background music" class="tb-btn" id="slideshowMusicBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></button>
 <button aria-label="Play or pause" class="tb-btn" id="slideshowPlayPause"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></button>
-<button aria-label="Delete this photo" class="tb-btn tb-delete" id="slideshowDelete"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
+<button aria-label="Delete this photo" class="tb-btn tb-delete" id="slideshowDelete"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
 <button aria-label="Close" class="tb-btn tb-close" id="slideshowClose">×</button>
 <button aria-label="Next" class="tb-btn tb-nav" id="slideshowNext">›</button>
 </div>
