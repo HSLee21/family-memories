@@ -963,7 +963,7 @@ function showSlide(i){
 }
 function startSlideshowTimer(){
   clearInterval(slideshowTimer);
-  slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },3000);
+  slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },5000);
 }
 function closeSlideshow(){
   clearInterval(slideshowTimer);
