@@ -792,6 +792,7 @@ let slideshowPhotos = [];
 let slideshowIndex = 0;
 let slideshowTimer = null;
 let slideshowPlaying = true;
+let slideshowFallbackLabel = "";
 const musicStoragePath = () => `${currentUser.id}/app-settings/slideshow-music`;
 let slideshowHasMusic = false;
 
@@ -831,16 +832,29 @@ if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   updateMusicBtn();
 };
 
+async function foldersById(){
+  const {data,error} = await client.from("folders").select("id,name");
+  const map={};
+  if(!error && data) data.forEach(f=>{ map[f.id]=f.name; });
+  return map;
+}
+
 async function openSlideshow(types,label){
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
   $("slideshowImage").classList.add("hidden");
+  slideshowFallbackLabel = label || "";
   if($("slideshowTitle")) $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
   $("slideshowCounter").textContent="Loading…";
   const items = await fetchMediaItems(types);
   const photoItems = items.filter(i=>!isVideoPath(i.file_path));
   const signed = await signMediaItems(photoItems);
-  slideshowPhotos = signed.filter(i=>i.signedUrl);
+  const folderNames = await foldersById();
+  slideshowPhotos = signed.filter(i=>i.signedUrl).map(i=>{
+    const sectionTitle = SECTION_META[i._type]?.title || label || "";
+    const folderName = i.folder_id ? folderNames[i.folder_id] : null;
+    return {...i,_label: folderName ? `${sectionTitle} - ${folderName}` : sectionTitle};
+  });
   slideshowIndex = 0;
   slideshowPlaying = true;
   if(!slideshowPhotos.length){
@@ -858,12 +872,17 @@ async function openSlideshow(types,label){
 function showSlide(i){
   if(!slideshowPhotos.length) return;
   slideshowIndex = (i+slideshowPhotos.length)%slideshowPhotos.length;
+  const photo = slideshowPhotos[slideshowIndex];
   const img = $("slideshowImage");
   img.classList.remove("hidden");
   img.style.opacity=0;
-  img.src = slideshowPhotos[slideshowIndex].signedUrl;
+  img.src = photo.signedUrl;
   img.onload = ()=>{ img.style.opacity=1; };
   $("slideshowCounter").textContent = `${slideshowIndex+1} / ${slideshowPhotos.length}`;
+  if($("slideshowTitle")){
+    const label = photo._label || slideshowFallbackLabel;
+    $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
+  }
 }
 function startSlideshowTimer(){
   clearInterval(slideshowTimer);
