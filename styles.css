@@ -102,7 +102,7 @@ html,body{overflow-x:hidden}
     padding:0 8px!important;
     overflow-y:auto!important; -webkit-overflow-scrolling:touch!important;
     /* reserved clearance above the fixed nav for every page */
-    padding-bottom:calc(64px + env(safe-area-inset-bottom))!important;
+    padding-bottom:calc(60px + env(safe-area-inset-bottom))!important;
     background:#f6f8fb!important;
   }
 
@@ -169,6 +169,7 @@ html,body{overflow-x:hidden}
   #mediaHubPage .media-hub-card{ padding:20px 14px!important; border-radius:20px!important; gap:12px!important; font-size:16px!important; min-height:0!important; justify-content:center!important; }
   #mediaHubPage .media-hub-card.wide{ grid-column:1/-1!important; flex-direction:row!important; padding:26px!important; }
   #mediaHubPage .media-hub-ico{ width:46px!important; height:46px!important; }
+  .video-fs-btn{ top:6px!important; right:6px!important; bottom:auto!important; }
 
   /* ---------- Other pages (Memories/Trips/Celebrations/Study Hub,
      Search/Profile/Admin) — variable-length content, scrolls inside
@@ -213,23 +214,3 @@ html,body{overflow-x:hidden}
 }
 
 .card-camera-btn,#changeCoverBtn{display:none!important}
-
-
-/* ===== V21 Layout Fix ===== */
-html,body{min-height:auto!important;height:auto!important;}
-.app{min-height:auto!important;height:auto!important;padding-bottom:82px!important;}
-.main{padding-bottom:0!important;}
-.page{min-height:auto!important;padding-bottom:0!important;margin-bottom:0!important;}
-.family-space-grid{gap:6px!important;margin:6px 0!important;}
-.media-hub-grid{gap:6px!important;padding:6px!important;margin:6px 0!important;}
-.media-hub-card{min-height:145px!important;padding:16px!important;}
-.media-hub-card.wide{min-height:130px!important;}
-.section-theme{margin-bottom:0!important;}
-.mobile-bottom-nav{bottom:max(4px,env(safe-area-inset-bottom))!important;height:72px!important;}
-@media (max-width:900px){
-.family-cover{margin-bottom:6px!important;}
-.family-space-grid{margin-bottom:0!important;}
-.section-hero{min-height:140px!important;margin-bottom:6px!important;}
-.media-hub-grid{margin-bottom:0!important;}
-.page:last-child{padding-bottom:0!important;}
-}
