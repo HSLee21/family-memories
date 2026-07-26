@@ -997,10 +997,25 @@ function showSlide(i){
   const photo=slideshowPhotos[slideshowIndex];
   const img=$("slideshowImage");
 
-  img.classList.remove("hidden");
   img.style.opacity=0;
-  img.src=photo.signedUrl;
-  img.onload=()=>{img.style.opacity=1;};
+  img.classList.remove("hidden");
+
+  // Force Safari to repaint before loading the next image
+  img.onload=null;
+  img.removeAttribute("src");
+  void img.offsetHeight;
+
+  const loader=new Image();
+  loader.decoding="async";
+  loader.onload=()=>{
+    requestAnimationFrame(()=>{
+      img.src=loader.src;
+      requestAnimationFrame(()=>{
+        img.style.opacity=1;
+      });
+    });
+  };
+  loader.src=photo.signedUrl;
 
   $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
 
