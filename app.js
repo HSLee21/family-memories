@@ -859,6 +859,7 @@ let slideshowIndex = 0;
 let slideshowTimer = null;
 let slideshowPlaying = true;
 let slideshowFallbackLabel = "";
+let lastSlideUrl = "";
 const musicStoragePath = () => `${currentUser.id}/app-settings/slideshow-music`;
 let slideshowHasMusic = false;
 let musicLongPressTimer = null;
@@ -993,6 +994,7 @@ async function openSlideshow(types,label){
     $("slideshowCounter").textContent="";
     return;
   }
+  lastSlideUrl = "";
   showSlide(0);
   startSlideshowTimer();
   showControls();
@@ -1004,19 +1006,22 @@ async function openSlideshow(types,label){
 let slideshowLoadToken = 0;
 function showSlide(i){
   if(!slideshowPhotos.length) return;
-  slideshowIndex = (i+slideshowPhotos.length)%slideshowPhotos.length;
-  const photo = slideshowPhotos[slideshowIndex];
-  const img = $("slideshowImage");
-  const token = ++slideshowLoadToken;
+  slideshowIndex=(i+slideshowPhotos.length)%slideshowPhotos.length;
+  const photo=slideshowPhotos[slideshowIndex];
+  const img=$("slideshowImage");
+  const token=++slideshowLoadToken;
+  if(lastSlideUrl===photo.signedUrl){
+    $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
+    if($("slideshowTitle")) $("slideshowTitle").textContent=photo._label||slideshowFallbackLabel||"";
+    return;
+  }
+  lastSlideUrl=photo.signedUrl;
   img.classList.remove("hidden");
   img.style.opacity=0;
-  img.src = photo.signedUrl;
-  img.onload = ()=>{ if(token===slideshowLoadToken) img.style.opacity=1; };
-  $("slideshowCounter").textContent = `${slideshowIndex+1} / ${slideshowPhotos.length}`;
-  if($("slideshowTitle")){
-    const label = photo._label || slideshowFallbackLabel;
-    $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
-  }
+  img.onload=()=>{ if(token===slideshowLoadToken) img.style.opacity=1; };
+  img.src=photo.signedUrl;
+  $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
+  if($("slideshowTitle")) $("slideshowTitle").textContent=photo._label||slideshowFallbackLabel||"";
 }
 function startSlideshowTimer(){
   clearInterval(slideshowTimer);
@@ -1028,6 +1033,7 @@ function closeSlideshow(){
   $("slideshowOverlay").classList.add("hidden");
   $("slideshowOverlay").classList.remove("hide-controls");
   $("slideshowImage").src="";
+  lastSlideUrl="";
   const music=$("slideshowMusic");
   music.pause(); music.currentTime=0;
   unlockBodyScroll();
