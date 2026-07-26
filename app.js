@@ -792,6 +792,44 @@ let slideshowPhotos = [];
 let slideshowIndex = 0;
 let slideshowTimer = null;
 let slideshowPlaying = true;
+const musicStoragePath = () => `${currentUser.id}/app-settings/slideshow-music`;
+let slideshowHasMusic = false;
+
+async function loadSlideshowMusic(){
+  try{
+    const {data,error} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(musicStoragePath(),3600);
+    if(error || !data?.signedUrl) return false;
+    $("slideshowMusic").src = data.signedUrl;
+    return true;
+  }catch(e){ return false; }
+}
+function updateMusicBtn(){
+  const btn = $("slideshowMusicBtn");
+  if(!btn) return;
+  btn.classList.toggle("has-music",slideshowHasMusic);
+  btn.classList.toggle("muted",slideshowHasMusic && $("slideshowMusic").paused);
+}
+if($("slideshowMusicBtn")) $("slideshowMusicBtn").onclick=()=>{
+  if(!slideshowHasMusic){ $("slideshowMusicInput").click(); return; }
+  const audio = $("slideshowMusic");
+  if(audio.paused){ audio.play().catch(()=>{}); } else { audio.pause(); }
+  updateMusicBtn();
+};
+if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
+  const file = e.target.files[0];
+  e.target.value="";
+  if(!file) return;
+  toast("Uploading music…");
+  const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(musicStoragePath(),file,{upsert:true,contentType:file.type});
+  if(error){ toast(error.message); return; }
+  toast("Music added — it'll play during your slideshows.");
+  slideshowHasMusic = await loadSlideshowMusic();
+  if(slideshowHasMusic && !$("slideshowOverlay").classList.contains("hidden")){
+    $("slideshowMusic").currentTime=0;
+    $("slideshowMusic").play().catch(()=>{});
+  }
+  updateMusicBtn();
+};
 
 async function openSlideshow(types,label){
   $("slideshowOverlay").classList.remove("hidden");
@@ -812,6 +850,9 @@ async function openSlideshow(types,label){
   }
   showSlide(0);
   startSlideshowTimer();
+  slideshowHasMusic = await loadSlideshowMusic();
+  if(slideshowHasMusic){ $("slideshowMusic").currentTime=0; $("slideshowMusic").play().catch(()=>{}); }
+  updateMusicBtn();
 }
 
 function showSlide(i){
@@ -832,6 +873,8 @@ function closeSlideshow(){
   clearInterval(slideshowTimer);
   $("slideshowOverlay").classList.add("hidden");
   $("slideshowImage").src="";
+  const music=$("slideshowMusic");
+  music.pause(); music.currentTime=0;
 }
 $("slideshowClose").onclick=closeSlideshow;
 $("slideshowNext").onclick=()=>showSlide(slideshowIndex+1);
@@ -841,6 +884,11 @@ $("slideshowPlayPause").onclick=()=>{
   $("slideshowPlayPause").innerHTML = slideshowPlaying
     ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
     : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
+  if(slideshowHasMusic){
+    const music=$("slideshowMusic");
+    if(slideshowPlaying) music.play().catch(()=>{}); else music.pause();
+    updateMusicBtn();
+  }
 };
 // Swipe left/right
 (function(){

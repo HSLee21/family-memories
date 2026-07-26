@@ -168,6 +168,9 @@
       </div>
       <button id="slideshowClose" class="overlay-btn overlay-close" aria-label="Close">×</button>
       <button id="slideshowPlayPause" class="overlay-btn overlay-playpause" aria-label="Play or pause"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+      <button id="slideshowMusicBtn" class="overlay-btn overlay-music" aria-label="Background music">🎵</button>
+      <audio id="slideshowMusic" loop playsinline></audio>
+      <input type="file" id="slideshowMusicInput" accept="audio/*" hidden>
       <button id="slideshowPrev" class="overlay-btn overlay-prev" aria-label="Previous">‹</button>
       <button id="slideshowNext" class="overlay-btn overlay-next" aria-label="Next">›</button>
       <div id="slideshowTitle" class="slideshow-title"></div>
