@@ -233,15 +233,22 @@ async function loadFolders(section){
   const {data,error}=await client.from("folders").select("*").eq("section",section).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
 
-  // Items can end up with no folder_id (e.g. after a folder was deleted, or if
-  // they were never filed into an album). Those items are otherwise invisible
-  // in this folder-based browser, so surface them as a pseudo-folder.
-  let orphanCount = 0;
+  // Items can end up disconnected from any real folder in two ways:
+  // 1) folder_id is NULL (never filed into an album), or
+  // 2) folder_id still points at a folder row that's since been deleted —
+  //    deleting a folder here only removes the folder row, it does NOT
+  //    clear folder_id on the items that were inside it, so those items
+  //    are left with a "dangling" folder_id that matches nothing.
+  // Either way, they're invisible in the folder browser below, so we
+  // detect both cases and surface them as an "Uncategorized" pseudo-folder.
+  let orphanIds = [];
   const orphanTable = tableMap[type];
+  const validFolderIds = new Set((data||[]).map(f=>f.id));
   if(orphanTable){
-    const {count} = await client.from(orphanTable).select("id",{count:"exact",head:true}).is("folder_id",null);
-    orphanCount = count||0;
+    const {data:itemRows} = await client.from(orphanTable).select("id,folder_id");
+    if(itemRows) orphanIds = itemRows.filter(r=>!r.folder_id || !validFolderIds.has(r.folder_id)).map(r=>r.id);
   }
+  const orphanCount = orphanIds.length;
 
   const folderCards = (data||[]).map(f=>`<article class="folder-card" data-folder="${f.id}">
     <div class="folder-icon">📁</div>
@@ -258,7 +265,7 @@ async function loadFolders(section){
   document.querySelectorAll(`#${target} [data-folder]`).forEach(card=>card.onclick=e=>{
     if(e.target.closest("[data-menu]")) return;
     if(card.dataset.folder==="__uncategorized__"){
-      openFolder(section,{id:null,name:"Uncategorized",description:"Items not inside any album"});
+      openFolder(section,{id:null,name:"Uncategorized",description:"Items not inside any album",_orphanIds:orphanIds});
       return;
     }
     openFolder(section,data.find(f=>f.id===card.dataset.folder));
@@ -291,7 +298,7 @@ async function openFolder(section,folder){
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
   const uploadBtn=$(browser).querySelector(".upload-folder");
   if(uploadBtn) uploadBtn.onclick=()=>openAddForFolder(type);
-  loadFolderItems(type,folder.id,browser+"Items");
+  loadFolderItems(type, isUncategorized ? {ids:folder._orphanIds||[]} : folder.id, browser+"Items");
 }
 
 function openAddForFolder(type){
@@ -383,11 +390,21 @@ $("addForm").onsubmit = async e => {
     toast(err.message || "Could not save item.");
   }
 };
-async function loadFolderItems(type,folderId,target){
+async function loadFolderItems(type,folderIdOrIds,target){
   $(target).innerHTML='<div class="empty">Loading…</div>';
   const table=tableMap[type];
   let query = client.from(table).select("*");
-  query = folderId ? query.eq("folder_id",folderId) : query.is("folder_id",null);
+  if(folderIdOrIds && typeof folderIdOrIds==="object" && Array.isArray(folderIdOrIds.ids)){
+    if(!folderIdOrIds.ids.length){
+      $(target).innerHTML='<div class="empty">Nothing here.</div>';
+      return;
+    }
+    query = query.in("id",folderIdOrIds.ids);
+  } else if(folderIdOrIds){
+    query = query.eq("folder_id",folderIdOrIds);
+  } else {
+    query = query.is("folder_id",null);
+  }
   const {data,error} = await query.order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
   if(!data?.length){$(target).innerHTML='<div class="empty">This folder is empty. Add the first item or file.</div>';return}
@@ -442,7 +459,7 @@ async function loadFolderItems(type,folderId,target){
       await client.storage.from(cfg.STORAGE_BUCKET).remove([filePath]);
     }
     toast("Deleted.");
-    loadFolderItems(type,folderId,target);
+    loadFolderItems(type,folderIdOrIds,target);
   });
 }
 // Videos hosted in storage have no poster image, so mobile browsers show a
@@ -999,6 +1016,32 @@ function closeSlideshow(){
   unlockBodyScroll();
 }
 $("slideshowClose").onclick=closeSlideshow;
+$("slideshowDelete").onclick=async()=>{
+  if(!slideshowPhotos.length) return;
+  const photo = slideshowPhotos[slideshowIndex];
+  if(!confirm(`Delete "${photo.title||"this photo"}"? This cannot be undone.`)) return;
+  const table = tableMap[photo._type];
+  if(!table) return;
+  const {error} = await client.from(table).delete().eq("id",photo.id);
+  if(error){ toast(error.message); return; }
+  if(photo.file_path){
+    await client.storage.from(cfg.STORAGE_BUCKET).remove([photo.file_path]);
+  }
+  slideshowPhotos.splice(slideshowIndex,1);
+  toast("Photo deleted.");
+  if(!slideshowPhotos.length){
+    clearInterval(slideshowTimer);
+    const music=$("slideshowMusic");
+    music.pause(); music.currentTime=0;
+    $("slideshowImage").classList.add("hidden");
+    $("slideshowImage").src="";
+    $("slideshowEmpty").classList.remove("hidden");
+    $("slideshowCounter").textContent="";
+    if($("slideshowTitle")) $("slideshowTitle").textContent="";
+    return;
+  }
+  showSlide(slideshowIndex);
+};
 $("slideshowNext").onclick=()=>showSlide(slideshowIndex+1);
 $("slideshowPrev").onclick=()=>showSlide(slideshowIndex-1);
 $("slideshowPlayPause").onclick=()=>{
