@@ -960,7 +960,9 @@ function toggleControls(){
   if(ov.classList.contains("hide-controls")) showControls();
   else{ ov.classList.add("hide-controls"); clearTimeout(slideshowHideTimer); }
 }
+let slideshowOpenToken = 0;
 async function openSlideshow(types,label){
+  const myToken = ++slideshowOpenToken; // invalidates any earlier in-flight call
   lockBodyScroll();
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
@@ -969,9 +971,12 @@ async function openSlideshow(types,label){
   if($("slideshowTitle")) $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
   $("slideshowCounter").textContent="Loading…";
   const items = await fetchMediaItems(types);
+  if(myToken !== slideshowOpenToken) return; // a newer call has taken over, abandon this one
   const photoItems = items.filter(i=>!isVideoPath(i.file_path));
   const signed = await signMediaItems(photoItems);
+  if(myToken !== slideshowOpenToken) return;
   const folderNames = await foldersById();
+  if(myToken !== slideshowOpenToken) return;
   slideshowPhotos = signed.filter(i=>i.signedUrl).map(i=>{
     const sectionTitle = SECTION_META[i._type]?.title || label || "";
     const folderName = i.folder_id ? folderNames[i.folder_id] : null;
@@ -989,6 +994,7 @@ async function openSlideshow(types,label){
   startSlideshowTimer();
   showControls();
   slideshowHasMusic = await loadSlideshowMusic();
+  if(myToken !== slideshowOpenToken) return;
   if(slideshowHasMusic){ $("slideshowMusic").currentTime=0; $("slideshowMusic").play().catch(()=>{}); }
   updateMusicBtn();
 }
@@ -1018,6 +1024,7 @@ function startSlideshowTimer(){
   slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },5000);
 }
 function closeSlideshow(){
+  slideshowOpenToken++;
   clearInterval(slideshowTimer);
   clearTimeout(slideshowHideTimer);
   $("slideshowOverlay").classList.add("hidden");
