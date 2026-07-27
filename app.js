@@ -630,13 +630,27 @@ function setCardImageDOM(card, src){
     cardEl.classList.remove("has-custom");
   }
 }
+const cardCacheKey = (c) => `card_signed_url_cache:${c}`;
 async function loadCardImages(){
+  // Show last-known-good photo immediately for each card (no waiting, no stale flash)
   for(const card of HOME_CARDS){
+    try{
+      const cached = JSON.parse(localStorage.getItem(cardCacheKey(card))||"null");
+      if(cached && cached.url && cached.expires>Date.now()){
+        setCardImageDOM(card, cached.url);
+      }
+    }catch(e){}
+  }
+  // Fetch all 4 fresh signed URLs in PARALLEL (was sequential, ~4x slower) then update any that changed
+  await Promise.all(HOME_CARDS.map(async (card)=>{
     let src = null;
     if(currentUser){
       try{
         const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
-        if(data?.signedUrl) src = data.signedUrl;
+        if(data?.signedUrl){
+          src = data.signedUrl;
+          try{ localStorage.setItem(cardCacheKey(card), JSON.stringify({url:src, expires:Date.now()+86400*1000})); }catch(e){}
+        }
       }catch{}
     }
     if(!src){
@@ -644,7 +658,7 @@ async function loadCardImages(){
       if(local) src = local;
     }
     if(src) setCardImageDOM(card, src);
-  }
+  }));
 }
 function initCardCameraButtons(){
   document.querySelectorAll(".family-space-card[data-go]").forEach(el=>{
@@ -678,7 +692,14 @@ function initCardCameraButtons(){
         try{
           const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
           if(error) toast("Saved locally. Cloud error: "+error.message);
-          else { toast("Card image updated."); const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card),86400); if(data?.signedUrl) setCardImageDOM(card,data.signedUrl); }
+          else {
+            toast("Card image updated.");
+            const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card),86400);
+            if(data?.signedUrl){
+              setCardImageDOM(card,data.signedUrl);
+              try{ localStorage.setItem(cardCacheKey(card), JSON.stringify({url:data.signedUrl, expires:Date.now()+86400*1000})); }catch(e){}
+            }
+          }
         }catch(err){ toast(err.message); }
       }
       e.target.value="";
