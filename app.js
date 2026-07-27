@@ -426,7 +426,7 @@ async function loadFolderItems(type,folderIdOrIds,target){
       ? isImage
         ? `<img class="content-preview" src="${item.signedUrl}" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
         : isVideo
-          ? `<div class="video-wrap"><video class="content-preview" controls playsinline preload="metadata" src="${item.signedUrl}"></video><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
+          ? `<div class="video-wrap"><video class="content-preview" playsinline muted preload="metadata" src="${item.signedUrl}"></video><button type="button" class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
           : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
       : "";
     return `<article class="content-card">
@@ -439,10 +439,22 @@ async function loadFolderItems(type,folderIdOrIds,target){
   }).join("");
   document.querySelectorAll(`#${target} [data-file]`).forEach(el=>el.onclick=()=>openPrivateFile(decodeURIComponent(el.dataset.file)));
   document.querySelectorAll(`#${target} video.content-preview`).forEach(el=>attachVideoPoster(el,el.currentSrc||el.src));
+  document.querySelectorAll(`#${target} .video-play-btn`).forEach(btn=>{
+    btn.onclick=(e)=>{
+      e.stopPropagation();
+      const video=btn.parentElement.querySelector("video.content-preview");
+      if(!video) return;
+      if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+      else if(video.requestFullscreen) video.requestFullscreen();
+      else if(video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+      video.muted=false;
+      video.play().catch(()=>{});
+    };
+  });
   document.querySelectorAll(`#${target} .video-fs-btn`).forEach(btn=>{
     btn.onclick=(e)=>{
       e.stopPropagation();
-      const video=btn.previousElementSibling;
+      const video=btn.parentElement.querySelector("video.content-preview");
       if(!video) return;
       if(video.webkitEnterFullscreen) video.webkitEnterFullscreen(); // iOS Safari
       else if(video.requestFullscreen) video.requestFullscreen();
