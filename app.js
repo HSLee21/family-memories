@@ -621,9 +621,15 @@ function setCardImageDOM(card, src){
   const fullImg = document.querySelector(`[data-card-full="${card}"]`);
   if(!cardEl || !fullImg) return;
   if(src){
+    fullImg.onload = () => {
+      fullImg.classList.remove("hidden");
+      cardEl.classList.add("has-custom");
+    };
+    fullImg.onerror = () => {
+      fullImg.classList.add("hidden");
+      cardEl.classList.remove("has-custom");
+    };
     fullImg.src = src;
-    fullImg.classList.remove("hidden");
-    cardEl.classList.add("has-custom");
   }else{
     fullImg.removeAttribute("src");
     fullImg.classList.add("hidden");
@@ -878,8 +884,12 @@ async function fetchMediaItems(types, folderId){
 
 async function signMediaItems(items){
   return Promise.all(items.map(async item=>{
-    const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
-    return {...item, signedUrl: data?.signedUrl||null};
+    try{
+      const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
+      return {...item, signedUrl: data?.signedUrl||null};
+    }catch(e){
+      return {...item, signedUrl: null};
+    }
   }));
 }
 
@@ -1000,22 +1010,31 @@ async function openSlideshow(types,label){
   lockBodyScroll();
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
+  $("slideshowEmpty").textContent = "No photos found in this collection yet.";
   $("slideshowImage").classList.add("hidden");
   slideshowFallbackLabel = label || "";
   if($("slideshowTitle")) $("slideshowTitle").textContent = label ? `Playing: ${label}` : "";
   $("slideshowCounter").textContent="Loading…";
-  const items = await fetchMediaItems(types);
-  if(myToken !== slideshowOpenToken) return; // a newer call has taken over, abandon this one
-  const photoItems = items.filter(i=>!isVideoPath(i.file_path));
-  const signed = await signMediaItems(photoItems);
-  if(myToken !== slideshowOpenToken) return;
-  const folderNames = await foldersById();
-  if(myToken !== slideshowOpenToken) return;
-  slideshowPhotos = signed.filter(i=>i.signedUrl).map(i=>{
-    const sectionTitle = SECTION_META[i._type]?.title || label || "";
-    const folderName = i.folder_id ? folderNames[i.folder_id] : null;
-    return {...i,_label: folderName ? `${sectionTitle} - ${folderName}` : sectionTitle};
-  });
+  try{
+    const items = await fetchMediaItems(types);
+    if(myToken !== slideshowOpenToken) return; // a newer call has taken over, abandon this one
+    const photoItems = items.filter(i=>!isVideoPath(i.file_path));
+    const signed = await signMediaItems(photoItems);
+    if(myToken !== slideshowOpenToken) return;
+    const folderNames = await foldersById();
+    if(myToken !== slideshowOpenToken) return;
+    slideshowPhotos = signed.filter(i=>i.signedUrl).map(i=>{
+      const sectionTitle = SECTION_META[i._type]?.title || label || "";
+      const folderName = i.folder_id ? folderNames[i.folder_id] : null;
+      return {...i,_label: folderName ? `${sectionTitle} - ${folderName}` : sectionTitle};
+    });
+  }catch(e){
+    if(myToken !== slideshowOpenToken) return;
+    $("slideshowEmpty").textContent = "Couldn't load photos — check your connection and try again.";
+    $("slideshowEmpty").classList.remove("hidden");
+    $("slideshowCounter").textContent="";
+    return;
+  }
   slideshowIndex = 0;
   slideshowPlaying = true;
   if(!slideshowPhotos.length){
