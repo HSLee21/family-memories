@@ -874,8 +874,6 @@ let slideshowFallbackLabel = "";
 let lastSlideUrl = "";
 const musicStoragePath = () => `${currentUser.id}/app-settings/slideshow-music`;
 let slideshowHasMusic = false;
-let musicLongPressTimer = null;
-let musicLongPressTriggered = false;
 
 async function loadSlideshowMusic(){
   try{
@@ -904,34 +902,7 @@ const musicBtn = $("slideshowMusicBtn");
 
 if(musicBtn){
 
-  let musicPressStart = 0;
-
-  musicBtn.addEventListener("pointerdown",()=>{
-
-    musicLongPressTriggered=false;
-    musicPressStart = Date.now();
-
-  });
-
-  function stopMusicLongPress(e){
-    if(!musicPressStart) return;
-    const held = Date.now() - musicPressStart;
-    musicPressStart = 0;
-    if(held >= 650){
-      musicLongPressTriggered = true;
-      // Must call .click() synchronously inside this real user-gesture event
-      // (iOS Safari blocks it if fired from a setTimeout instead).
-      $("slideshowMusicInput").click();
-    }
-  }
-
-  musicBtn.addEventListener("pointerup",stopMusicLongPress);
-  musicBtn.addEventListener("pointerleave",()=>{ musicPressStart=0; });
-  musicBtn.addEventListener("pointercancel",()=>{ musicPressStart=0; });
-
   musicBtn.addEventListener("click",()=>{
-
-    if(musicLongPressTriggered) return;
 
     if(!slideshowHasMusic){
       $("slideshowMusicInput").click();
@@ -951,6 +922,9 @@ if(musicBtn){
   });
 
 }
+if($("slideshowMusicUploadBtn")) $("slideshowMusicUploadBtn").addEventListener("click",()=>{
+  $("slideshowMusicInput").click();
+});
 if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   const file = e.target.files[0];
   e.target.value="";
