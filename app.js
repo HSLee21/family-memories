@@ -1044,6 +1044,7 @@ async function openSlideshow(types,label){
   }
   lastSlideUrl = "";
   showSlide(0);
+  setPlayPauseIcon();
   startSlideshowTimer();
   showControls();
   slideshowHasMusic = await loadSlideshowMusic(slideshowMusicKey);
@@ -1072,13 +1073,29 @@ function showSlide(i){
   $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
   if($("slideshowTitle")) $("slideshowTitle").textContent=photo._label||slideshowFallbackLabel||"";
 }
-function startSlideshowTimer(){
-  clearInterval(slideshowTimer);
-  slideshowTimer = setInterval(()=>{ if(slideshowPlaying) showSlide(slideshowIndex+1); },5000);
+function setPlayPauseIcon(){
+  $("slideshowPlayPause").innerHTML = slideshowPlaying
+    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
 }
+function startSlideshowTimer(){
+  clearTimeout(slideshowTimer);
+  if(!slideshowPlaying) return;
+  slideshowTimer = setTimeout(()=>{
+    if(slideshowPlaying && !document.hidden) showSlide(slideshowIndex+1);
+    startSlideshowTimer();
+  },5000);
+}
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    clearTimeout(slideshowTimer);
+  }else if(slideshowPlaying && !$("slideshowOverlay").classList.contains("hidden")){
+    startSlideshowTimer(); // resume with a fresh full interval, never a burst of missed ticks
+  }
+});
 function closeSlideshow(){
   slideshowOpenToken++;
-  clearInterval(slideshowTimer);
+  clearTimeout(slideshowTimer);
   clearTimeout(slideshowHideTimer);
   $("slideshowOverlay").classList.add("hidden");
   $("slideshowOverlay").classList.remove("hide-controls");
@@ -1103,7 +1120,7 @@ $("slideshowDelete").onclick=async()=>{
   slideshowPhotos.splice(slideshowIndex,1);
   toast("Photo deleted.");
   if(!slideshowPhotos.length){
-    clearInterval(slideshowTimer);
+    clearTimeout(slideshowTimer);
     const music=$("slideshowMusic");
     music.pause(); music.currentTime=0;
     $("slideshowImage").classList.add("hidden");
@@ -1117,9 +1134,8 @@ $("slideshowDelete").onclick=async()=>{
 };
 $("slideshowPlayPause").onclick=()=>{
   slideshowPlaying=!slideshowPlaying;
-  $("slideshowPlayPause").innerHTML = slideshowPlaying
-    ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
-    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
+  setPlayPauseIcon();
+  if(slideshowPlaying) startSlideshowTimer(); else clearTimeout(slideshowTimer);
   if(slideshowHasMusic){
     const music=$("slideshowMusic");
     if(slideshowPlaying) music.play().catch(()=>{}); else music.pause();
