@@ -1077,8 +1077,6 @@ $("slideshowDelete").onclick=async()=>{
   }
   showSlide(slideshowIndex);
 };
-$("slideshowNext").onclick=()=>{ showSlide(slideshowIndex+1); startSlideshowTimer(); };
-$("slideshowPrev").onclick=()=>{ showSlide(slideshowIndex-1); startSlideshowTimer(); };
 $("slideshowPlayPause").onclick=()=>{
   slideshowPlaying=!slideshowPlaying;
   $("slideshowPlayPause").innerHTML = slideshowPlaying

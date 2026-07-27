@@ -35,7 +35,6 @@ pointer-events:none
 .tb-btn.has-music{opacity:1}
 .slideshow-title,.slideshow-counter{transition:opacity .3s ease}
 #slideshowOverlay.hide-controls .slideshow-toolbar,
-#slideshowOverlay.hide-controls .slideshow-title,
 #slideshowOverlay.hide-controls .slideshow-counter{opacity:0;pointer-events:none}
 #slideshowOverlay.hide-controls .slideshow-toolbar{transform:translateX(-50%) translateY(10px)}
 
