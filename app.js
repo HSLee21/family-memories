@@ -904,26 +904,30 @@ const musicBtn = $("slideshowMusicBtn");
 
 if(musicBtn){
 
+  let musicPressStart = 0;
+
   musicBtn.addEventListener("pointerdown",()=>{
 
     musicLongPressTriggered=false;
-
-    musicLongPressTimer=setTimeout(()=>{
-
-      musicLongPressTriggered=true;
-      $("slideshowMusicInput").click();
-
-    },1000);
+    musicPressStart = Date.now();
 
   });
 
-  function stopMusicLongPress(){
-    clearTimeout(musicLongPressTimer);
+  function stopMusicLongPress(e){
+    if(!musicPressStart) return;
+    const held = Date.now() - musicPressStart;
+    musicPressStart = 0;
+    if(held >= 650){
+      musicLongPressTriggered = true;
+      // Must call .click() synchronously inside this real user-gesture event
+      // (iOS Safari blocks it if fired from a setTimeout instead).
+      $("slideshowMusicInput").click();
+    }
   }
 
   musicBtn.addEventListener("pointerup",stopMusicLongPress);
-  musicBtn.addEventListener("pointerleave",stopMusicLongPress);
-  musicBtn.addEventListener("pointercancel",stopMusicLongPress);
+  musicBtn.addEventListener("pointerleave",()=>{ musicPressStart=0; });
+  musicBtn.addEventListener("pointercancel",()=>{ musicPressStart=0; });
 
   musicBtn.addEventListener("click",()=>{
 
