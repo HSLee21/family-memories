@@ -893,16 +893,28 @@ let slideshowTimer = null;
 let slideshowPlaying = true;
 let slideshowFallbackLabel = "";
 let lastSlideUrl = "";
-const musicStoragePath = () => `${currentUser.id}/app-settings/slideshow-music`;
+const musicStoragePath = (key) => `${currentUser.id}/app-settings/slideshow-music-${key||"all"}`;
+let slideshowMusicKey = "all";
 let slideshowHasMusic = false;
 
-async function loadSlideshowMusic(){
+async function loadSlideshowMusic(key){
+  const audio = $("slideshowMusic");
   try{
-    const {data,error} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(musicStoragePath(),3600);
-    if(error || !data?.signedUrl) return false;
-    $("slideshowMusic").src = data.signedUrl;
+    const {data,error} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(musicStoragePath(key),3600);
+    if(error || !data?.signedUrl){
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+      return false;
+    }
+    audio.src = data.signedUrl;
     return true;
-  }catch(e){ return false; }
+  }catch(e){
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+    return false;
+  }
 }
 function updateMusicBtn(){
   const btn = $("slideshowMusicBtn");
@@ -951,10 +963,10 @@ if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   e.target.value="";
   if(!file) return;
   toast("Uploading music…");
-  const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(musicStoragePath(),file,{upsert:true,contentType:file.type});
+  const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(musicStoragePath(slideshowMusicKey),file,{upsert:true,contentType:file.type});
   if(error){ toast(error.message); return; }
-  toast("Music added — it'll play during your slideshows.");
-  slideshowHasMusic = await loadSlideshowMusic();
+  toast("Music added — it'll play for this collection's slideshows.");
+  slideshowHasMusic = await loadSlideshowMusic(slideshowMusicKey);
   if(slideshowHasMusic && !$("slideshowOverlay").classList.contains("hidden")){
     $("slideshowMusic").currentTime=0;
     $("slideshowMusic").play().catch(()=>{});
@@ -984,6 +996,7 @@ function toggleControls(){
 let slideshowOpenToken = 0;
 async function openSlideshow(types,label){
   const myToken = ++slideshowOpenToken; // invalidates any earlier in-flight call
+  slideshowMusicKey = (types && types.length===1) ? types[0] : "all";
   lockBodyScroll();
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
@@ -1014,7 +1027,7 @@ async function openSlideshow(types,label){
   showSlide(0);
   startSlideshowTimer();
   showControls();
-  slideshowHasMusic = await loadSlideshowMusic();
+  slideshowHasMusic = await loadSlideshowMusic(slideshowMusicKey);
   if(myToken !== slideshowOpenToken) return;
   if(slideshowHasMusic){ $("slideshowMusic").currentTime=0; $("slideshowMusic").play().catch(()=>{}); }
   updateMusicBtn();
