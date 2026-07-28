@@ -1004,7 +1004,15 @@ function toggleControls(){
   else{ ov.classList.add("hide-controls"); clearTimeout(slideshowHideTimer); }
 }
 let slideshowOpenToken = 0;
+let slideshowActiveKey = null;
 async function openSlideshow(types,label){
+  const requestedKey = JSON.stringify(types) + "|" + (label||"");
+  if(slideshowActiveKey === requestedKey && !$("slideshowOverlay").classList.contains("hidden") && slideshowPhotos.length){
+    // Already actively showing this exact section - don't silently re-fetch/rebuild mid-playback
+    showControls();
+    return;
+  }
+  slideshowActiveKey = requestedKey;
   const myToken = ++slideshowOpenToken; // invalidates any earlier in-flight call
   slideshowMusicKey = (types && types.length===1) ? types[0] : "all";
   lockBodyScroll();
@@ -1095,6 +1103,7 @@ document.addEventListener("visibilitychange",()=>{
 });
 function closeSlideshow(){
   slideshowOpenToken++;
+  slideshowActiveKey = null;
   clearTimeout(slideshowTimer);
   clearTimeout(slideshowHideTimer);
   $("slideshowOverlay").classList.add("hidden");
