@@ -334,7 +334,7 @@ $("addForm").onsubmit = async e => {
     // Upload file/photo if selected
     if (files[0]) {
       const safe = files[0].name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${safe}`;
+      file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safe}`;
 
       const { error: uploadError } = await client.storage
         .from(cfg.STORAGE_BUCKET)
@@ -1062,6 +1062,7 @@ async function openSlideshow(types,label){
 }
 
 let slideshowLoadToken = 0;
+let slideshowImageReady = true;
 function showSlide(i){
   if(!slideshowPhotos.length) return;
   slideshowIndex=(i+slideshowPhotos.length)%slideshowPhotos.length;
@@ -1071,12 +1072,15 @@ function showSlide(i){
   if(lastSlideUrl===photo.signedUrl){
     $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
     if($("slideshowTitle")) $("slideshowTitle").textContent=photo._label||slideshowFallbackLabel||"";
+    slideshowImageReady = true;
     return;
   }
   lastSlideUrl=photo.signedUrl;
+  slideshowImageReady = false;
   img.classList.remove("hidden");
   img.style.opacity=0;
-  img.onload=()=>{ if(token===slideshowLoadToken) img.style.opacity=1; };
+  img.onload=()=>{ if(token===slideshowLoadToken){ img.style.opacity=1; slideshowImageReady=true; } };
+  img.onerror=()=>{ if(token===slideshowLoadToken) slideshowImageReady=true; }; // don't get stuck waiting forever on a broken image
   img.src=photo.signedUrl;
   $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
   if($("slideshowTitle")) $("slideshowTitle").textContent=photo._label||slideshowFallbackLabel||"";
@@ -1089,9 +1093,20 @@ function setPlayPauseIcon(){
 function startSlideshowTimer(){
   clearTimeout(slideshowTimer);
   if(!slideshowPlaying) return;
-  slideshowTimer = setTimeout(()=>{
-    if(slideshowPlaying && !document.hidden) showSlide(slideshowIndex+1);
-    startSlideshowTimer();
+  slideshowTimer = setTimeout(function tick(){
+    if(!slideshowPlaying){ return; }
+    if(document.hidden){
+      slideshowTimer = setTimeout(tick,5000);
+      return;
+    }
+    if(!slideshowImageReady){
+      // current photo (e.g. first-time load on a slow connection) hasn't finished loading yet -
+      // recheck shortly instead of racing ahead to the next photo
+      slideshowTimer = setTimeout(tick,300);
+      return;
+    }
+    showSlide(slideshowIndex+1);
+    slideshowTimer = setTimeout(tick,5000);
   },5000);
 }
 document.addEventListener("visibilitychange",()=>{
