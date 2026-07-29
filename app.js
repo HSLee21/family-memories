@@ -394,23 +394,6 @@ $("addForm").onsubmit = async e => {
   }
 };
 
-
-
-const lazyImageObserver=('IntersectionObserver' in window)
-?new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(!entry.isIntersecting) return;
-    const img=entry.target;
-    if(img.dataset.src){
-      img.src=img.dataset.src;
-      img.removeAttribute('data-src');
-    }
-    lazyImageObserver.unobserve(img);
-  });
-},{rootMargin:'250px'})
-:null;
-
-
 const renderChunkSize=24;
 function renderItemsIncrementally(items,target){
   const el=document.getElementById(target);
@@ -463,7 +446,7 @@ const cards=items.map(item=>{
     const isVideo=isVideoPath(item.file_path);
     const media=item.file_path&&item.signedUrl
       ? isImage
-        ? `<img class="content-preview" loading="lazy" decoding="async" data-src="${item.signedUrl}" src="" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
+        ? `<img class="content-preview" src="${item.signedUrl}" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
         : isVideo
           ? `<div class="video-wrap"><video class="content-preview" playsinline muted preload="metadata" src="${item.signedUrl}"></video><button type="button" class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
           : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
@@ -503,11 +486,6 @@ const cards=items.map(item=>{
       else if(video.webkitRequestFullscreen) video.webkitRequestFullscreen();
     };
   });
-  document.querySelectorAll(`#${target} img.content-preview`).forEach(img=>{
-    if(lazyImageObserver) lazyImageObserver.observe(img);
-    else if(img.dataset.src){img.src=img.dataset.src;}
-  });
-
   document.querySelectorAll(`#${target} .delete-item`).forEach(el=>el.onclick=async()=>{
     if(!confirm("Delete this item? This cannot be undone.")) return;
     const id=el.dataset.id;
