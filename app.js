@@ -1154,7 +1154,7 @@ function startSlideshowTimer(){
   slideshowTimer = setTimeout(function tick(){
     if(!slideshowPlaying){ return; }
     if(document.hidden){
-      slideshowTimer = setTimeout(tick,5000);
+      slideshowTimer = setTimeout(tick,4000);
       return;
     }
     if(!slideshowImageReady){
@@ -1164,8 +1164,8 @@ function startSlideshowTimer(){
       return;
     }
     showSlide(slideshowIndex+1);
-    slideshowTimer = setTimeout(tick,5000);
-  },5000);
+    slideshowTimer = setTimeout(tick,4000);
+  },4000);
 }
 document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
