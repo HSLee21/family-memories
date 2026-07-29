@@ -594,6 +594,7 @@ async function loadHomeExperience(){
   await loadFamilyCover();
   await loadProfilePhoto();
   await loadCardImages();
+  setTimeout(()=>warmSlideshowCache(),1000);
 }
 
 
@@ -947,6 +948,18 @@ async function preloadSlideshowImages(items){
 
 const MEDIA_TYPES_ALL = ["memory","trip","celebration"];
 let currentMediaSection = null; // 'memory' | 'trip' | 'celebration' | null
+
+let slideshowPrefetchStarted=false;
+async function warmSlideshowCache(){
+  if(slideshowPrefetchStarted) return;
+  slideshowPrefetchStarted=true;
+  try{
+    const items=await fetchMediaItems(MEDIA_TYPES_ALL);
+    const photos=items.filter(i=>!isVideoPath(i.file_path)).slice(0,60);
+    const signed=await signMediaItems(photos);
+    preloadSlideshowImages(signed.filter(i=>i.signedUrl));
+  }catch(e){}
+}
 
 /* ---- Photo slideshow ---- */
 let slideshowPhotos = [];
