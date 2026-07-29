@@ -1027,9 +1027,10 @@ async function openSlideshow(types,label){
     const items = await fetchMediaItems(types);
     if(myToken !== slideshowOpenToken) return; // a newer call has taken over, abandon this one
     const photoItems = items.filter(i=>!isVideoPath(i.file_path));
-    const signed = await signMediaItems(photoItems);
-    if(myToken !== slideshowOpenToken) return;
-    const folderNames = await foldersById();
+    const [signed, folderNames] = await Promise.all([
+      signMediaItems(photoItems),
+      foldersById()
+    ]);
     if(myToken !== slideshowOpenToken) return;
     slideshowPhotos = signed.filter(i=>i.signedUrl).map(i=>{
       const sectionTitle = SECTION_META[i._type]?.title || label || "";
@@ -1052,6 +1053,13 @@ async function openSlideshow(types,label){
   }
   lastSlideUrl = "";
   showSlide(0);
+
+  // Preload the next few images so later transitions are instant.
+  slideshowPhotos.slice(1,4).forEach(p=>{
+    const preload=new Image();
+    preload.src=p.signedUrl;
+  });
+
   setPlayPauseIcon();
   startSlideshowTimer();
   showControls();
