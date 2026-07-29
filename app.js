@@ -910,15 +910,39 @@ async function fetchMediaItems(types, folderId){
   return all;
 }
 
+const signedUrlCache = new Map();
+
 async function signMediaItems(items){
   return Promise.all(items.map(async item=>{
     try{
+      const cached = signedUrlCache.get(item.file_path);
+      if(cached && cached.expiry > Date.now()){
+        return {...item, signedUrl: cached.url};
+      }
       const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
+      if(data?.signedUrl){
+        signedUrlCache.set(item.file_path,{
+          url:data.signedUrl,
+          expiry:Date.now()+55*60*1000
+        });
+      }
       return {...item, signedUrl: data?.signedUrl||null};
     }catch(e){
       return {...item, signedUrl: null};
     }
   }));
+}
+
+
+async function preloadSlideshowImages(items){
+  const queue = items.slice(0,30);
+  queue.forEach(item=>{
+    if(!item.signedUrl) return;
+    const img=new Image();
+    img.decoding="async";
+    img.loading="eager";
+    img.src=item.signedUrl;
+  });
 }
 
 const MEDIA_TYPES_ALL = ["memory","trip","celebration"];
@@ -1082,18 +1106,33 @@ async function openSlideshow(types,label){
   lastSlideUrl = "";
   showSlide(0);
 
-  // Preload the next few images so later transitions are instant.
+  // Start loading music in parallel.
+  const musicPromise = loadSlideshowMusic(slideshowMusicKey);
+
+  // Wait until the first image is actually visible before starting the timer.
+  while(!slideshowImageReady){
+    await new Promise(r=>setTimeout(r,50));
+    if(myToken !== slideshowOpenToken) return;
+  }
+
   slideshowPhotos.slice(1,4).forEach(p=>{
     const preload=new Image();
     preload.src=p.signedUrl;
   });
 
+  // Continue preloading remaining images in the background.
+  setTimeout(()=>preloadSlideshowImages(slideshowPhotos.slice(4)),0);
+
   setPlayPauseIcon();
   startSlideshowTimer();
   showControls();
-  slideshowHasMusic = await loadSlideshowMusic(slideshowMusicKey);
+
+  slideshowHasMusic = await musicPromise;
   if(myToken !== slideshowOpenToken) return;
-  if(slideshowHasMusic){ $("slideshowMusic").currentTime=0; $("slideshowMusic").play().catch(()=>{}); }
+  if(slideshowHasMusic){
+    $("slideshowMusic").currentTime=0;
+    $("slideshowMusic").play().catch(()=>{});
+  }
   updateMusicBtn();
 }
 
