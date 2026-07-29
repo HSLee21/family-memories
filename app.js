@@ -333,18 +333,19 @@ $("addForm").onsubmit = async e => {
 
     // Upload file/photo if selected
     if (files[0]) {
-      const safe = files[0].name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const uploadFile = await compressImageIfNeeded(files[0]);
+      const safe = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safe}`;
 
       const { error: uploadError } = await client.storage
         .from(cfg.STORAGE_BUCKET)
-        .upload(file_path, files[0]);
+        .upload(file_path, uploadFile);
 
       if (uploadError) throw uploadError;
     }
 
     // Use file name as title automatically if title is empty
-    const autoTitle = files[0]
+    const autoTitle = uploadFile
       ? files[0].name.replace(/\.[^/.]+$/, "")
       : "Untitled";
 
@@ -503,6 +504,32 @@ async function openPrivateFile(path){
   if(error) return toast(error.message);
   window.open(data.signedUrl,"_blank","noopener");
 }
+
+async function compressImageIfNeeded(file){
+  if(!file || !file.type.startsWith("image/")) return file;
+  return new Promise((resolve)=>{
+    const img=new Image();
+    const reader=new FileReader();
+    reader.onload=e=>img.src=e.target.result;
+    reader.onerror=()=>resolve(file);
+    img.onerror=()=>resolve(file);
+    img.onload=()=>{
+      const MAX=1920;
+      let w=img.width,h=img.height;
+      if(w>h && w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      else if(h>=w && h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      const c=document.createElement("canvas");
+      c.width=w;c.height=h;
+      c.getContext("2d").drawImage(img,0,0,w,h);
+      c.toBlob(b=>{
+        if(!b){resolve(file);return;}
+        resolve(new File([b],file.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"}));
+      },"image/jpeg",0.9);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 
 async function loadMembers(){
