@@ -253,3 +253,46 @@ html,body{overflow-x:hidden}
 }
 
 .card-camera-btn,#changeCoverBtn{display:none!important}
+
+
+/* ===== Step 3 Home Image Styling ===== */
+.cover-local-image{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.card-local-image{
+  display:block;
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:18px;
+  margin:0 auto 12px;
+}
+
+.card-default-content{
+  align-items:center;
+  text-align:center;
+}
+
+.card-default-content > div:last-child{
+  max-width:100%;
+}
+
+.round-arrow{
+  display:none !important;
+}
+
+.family-space-card{
+  cursor:pointer;
+}
+
+@media (max-width:900px){
+  .card-local-image{
+    height:88px;
+    border-radius:12px;
+    margin-bottom:8px;
+  }
+}

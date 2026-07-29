@@ -60,13 +60,15 @@
 <main class="main">
 <header class="legacy-header hidden"><h2 id="pageTitle">Home</h2><p id="welcomeText"></p><div id="userBadge"></div></header>
 <section class="page" id="homePage">
-<div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage"></div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br/>journeys and milestones.</p></div><button class="camera-fab hidden" id="changeCoverBtn" title="Change cover photo" type="button">📷</button><input accept="image/*" hidden="" id="coverFileInput" type="file"/></div>
+<div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage">
+        <img src="assets/images/hero.jpg" alt="Family Cover" id="localHeroImage" class="cover-local-image"/>
+      </div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br/>journeys and milestones.</p></div><button class="camera-fab hidden" id="changeCoverBtn" title="Change cover photo" type="button">📷</button><input accept="image/*" hidden="" id="coverFileInput" type="file"/></div>
 <div class="family-space-grid">
 <div class="family-space-card memories-card" data-go="memories">
 <img alt="" class="card-full-custom hidden" data-card-full="memories"/>
 <button class="card-camera-btn" data-card="memories" type="button">📷</button>
 <div class="card-default-content">
-<div class="card-art">🖼️💗</div>
+<img src="assets/images/memories.jpg" class="card-local-image" alt="Our Memories"/>
 <div><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
 <span class="round-arrow">→</span>
 </div>
@@ -75,7 +77,7 @@
 <img alt="" class="card-full-custom hidden" data-card-full="trips"/>
 <button class="card-camera-btn" data-card="trips" type="button">📷</button>
 <div class="card-default-content">
-<div class="card-art">🧳📷</div>
+<img src="assets/images/trips.jpg" class="card-local-image" alt="Family Trips"/>
 <div><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
 <span class="round-arrow">→</span>
 </div>
@@ -84,7 +86,7 @@
 <img alt="" class="card-full-custom hidden" data-card-full="celebrations"/>
 <button class="card-camera-btn" data-card="celebrations" type="button">📷</button>
 <div class="card-default-content">
-<div class="card-art">🎈🎉</div>
+<img src="assets/images/celebrations.jpg" class="card-local-image" alt="Celebrations"/>
 <div><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
 <span class="round-arrow">→</span>
 </div>
@@ -93,7 +95,7 @@
 <img alt="" class="card-full-custom hidden" data-card-full="study"/>
 <button class="card-camera-btn" data-card="study" type="button">📷</button>
 <div class="card-default-content">
-<div class="card-art">📚🌱</div>
+<img src="assets/images/study.jpg" class="card-local-image" alt="Study Hub"/>
 <div><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
 <span class="round-arrow">→</span>
 </div>

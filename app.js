@@ -598,7 +598,14 @@ async function approveMember(id){
 
 
 // Warm family home experience
-const DEFAULT_FAMILY_COVER = "https://images.unsplash.com/photo-1504151932400-72d4384f04b3?auto=format&fit=crop&w=1800&q=85";
+const DEFAULT_FAMILY_COVER = "assets/images/hero.jpg";
+
+const LOCAL_CARD_IMAGES = {
+  memories:"assets/images/memories.jpg",
+  trips:"assets/images/trips.jpg",
+  celebrations:"assets/images/celebrations.jpg",
+  study:"assets/images/study.jpg"
+};
 
 const profileStoragePath = () => `${currentUser.id}/profile/profile-photo`;
 
@@ -738,6 +745,7 @@ async function loadCardImages(){
     if(!src){
       const local = localStorage.getItem(cardLocalKey(card));
       if(local) src = local;
+      else src = LOCAL_CARD_IMAGES[card];
     }
     if(src) setCardImageDOM(card, src);
   }));
