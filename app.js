@@ -1153,13 +1153,15 @@ $("slideshowPlayPause").onclick=()=>{
 };
 // Swipe left/right, and tap-to-toggle controls
 (function(){
-  let startX=null, wasSwipe=false;
+  let startX=null, wasSwipe=false, lastSwipeAt=0;
   const stage=document.querySelector(".slideshow-stage");
   stage.addEventListener("touchstart",e=>{ startX=e.touches[0].clientX; wasSwipe=false; },{passive:true});
   stage.addEventListener("touchend",e=>{
     if(startX===null) return;
     const dx = e.changedTouches[0].clientX - startX;
-    if(Math.abs(dx)>40){
+    const now = Date.now();
+    if(Math.abs(dx)>40 && (now-lastSwipeAt)>450){
+      lastSwipeAt = now;
       wasSwipe=true;
       dx<0 ? showSlide(slideshowIndex+1) : showSlide(slideshowIndex-1);
       startSlideshowTimer();
