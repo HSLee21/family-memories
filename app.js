@@ -382,6 +382,7 @@ $("addForm").onsubmit = async e => {
     $("addDialog").close();
     $("addForm").reset();
 
+    mediaIndexCache.items=null;
     toast("Saved successfully!");
 
     // Refresh folder immediately
@@ -392,6 +393,42 @@ $("addForm").onsubmit = async e => {
     toast(err.message || "Could not save item.");
   }
 };
+
+
+
+const lazyImageObserver=('IntersectionObserver' in window)
+?new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting) return;
+    const img=entry.target;
+    if(img.dataset.src){
+      img.src=img.dataset.src;
+      img.removeAttribute('data-src');
+    }
+    lazyImageObserver.unobserve(img);
+  });
+},{rootMargin:'250px'})
+:null;
+
+
+const renderChunkSize=24;
+function renderItemsIncrementally(items,target){
+  const el=document.getElementById(target);
+  let index=0;
+  el.innerHTML="";
+  function renderBatch(){
+    const end=Math.min(index+renderChunkSize,items.length);
+    let html="";
+    for(let i=index;i<end;i++) html+=items[i];
+    el.insertAdjacentHTML("beforeend",html);
+    index=end;
+    if(index<items.length){
+      requestAnimationFrame(renderBatch);
+    }
+  }
+  renderBatch();
+}
+
 async function loadFolderItems(type,folderIdOrIds,target){
   $(target).innerHTML='<div class="empty">Loading…</div>';
   const table=tableMap[type];
@@ -420,13 +457,13 @@ async function loadFolderItems(type,folderIdOrIds,target){
     return {...item,signedUrl};
   }));
 
-  $(target).innerHTML=items.map(item=>{
+const cards=items.map(item=>{
     const ext=(item.file_path||"").split(".").pop().toLowerCase();
     const isImage=["jpg","jpeg","png","gif","webp","bmp","svg","avif"].includes(ext);
     const isVideo=isVideoPath(item.file_path);
     const media=item.file_path&&item.signedUrl
       ? isImage
-        ? `<img class="content-preview" src="${item.signedUrl}" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
+        ? `<img class="content-preview" loading="lazy" decoding="async" data-src="${item.signedUrl}" src="" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
         : isVideo
           ? `<div class="video-wrap"><video class="content-preview" playsinline muted preload="metadata" src="${item.signedUrl}"></video><button type="button" class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
           : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
@@ -438,7 +475,10 @@ async function loadFolderItems(type,folderIdOrIds,target){
       ${item.description?`<p>${escapeHtml(item.description)}</p>`:""}
       <button class="secondary delete-item" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}">Delete</button>
     </article>`;
-  }).join("");
+  });
+  renderItemsIncrementally(cards,target);
+
+  setTimeout(()=>{
   document.querySelectorAll(`#${target} [data-file]`).forEach(el=>el.onclick=()=>openPrivateFile(decodeURIComponent(el.dataset.file)));
   document.querySelectorAll(`#${target} video.content-preview`).forEach(el=>attachVideoPoster(el,el.currentSrc||el.src));
   document.querySelectorAll(`#${target} .video-play-btn`).forEach(btn=>{
@@ -463,6 +503,11 @@ async function loadFolderItems(type,folderIdOrIds,target){
       else if(video.webkitRequestFullscreen) video.webkitRequestFullscreen();
     };
   });
+  document.querySelectorAll(`#${target} img.content-preview`).forEach(img=>{
+    if(lazyImageObserver) lazyImageObserver.observe(img);
+    else if(img.dataset.src){img.src=img.dataset.src;}
+  });
+
   document.querySelectorAll(`#${target} .delete-item`).forEach(el=>el.onclick=async()=>{
     if(!confirm("Delete this item? This cannot be undone.")) return;
     const id=el.dataset.id;
@@ -472,9 +517,11 @@ async function loadFolderItems(type,folderIdOrIds,target){
     if(filePath){
       await client.storage.from(cfg.STORAGE_BUCKET).remove([filePath]);
     }
+    mediaIndexCache.items=null;
     toast("Deleted.");
     loadFolderItems(type,folderIdOrIds,target);
   });
+  },0);
 }
 // Videos hosted in storage have no poster image, so mobile browsers show a
 // blank box until the user taps play. Grab the first frame ourselves on a
@@ -897,6 +944,9 @@ function isVideoPath(path){
 // Fetch every item (with a file attached) across one or more section types, newest first.
 // Optionally scoped to a single folder id (used for homepage auto-cover selection).
 async function fetchMediaItems(types, folderId){
+  if(!folderId && mediaIndexCache.items && (Date.now()-mediaIndexCache.loaded)<300000){
+    return mediaIndexCache.items.filter(i=>types.includes(i._type));
+  }
   let all = [];
   for(const type of types){
     const table = tableMap[type];
@@ -908,11 +958,16 @@ async function fetchMediaItems(types, folderId){
     if(data) all = all.concat(data.map(d=>({...d,_type:type})));
   }
   all.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  if(!folderId){
+    mediaIndexCache.items=all;
+    mediaIndexCache.loaded=Date.now();
+  }
   return all;
 }
 
 const signedUrlCache = new Map();
 const slideshowDataCache = new Map();
+const mediaIndexCache = {items:null, loaded:0};
 
 async function signMediaItems(items){
   return Promise.all(items.map(async item=>{
@@ -1254,6 +1309,7 @@ $("slideshowDelete").onclick=async()=>{
     await client.storage.from(cfg.STORAGE_BUCKET).remove([photo.file_path]);
   }
   slideshowPhotos.splice(slideshowIndex,1);
+  mediaIndexCache.items=null;
   toast("Photo deleted.");
   if(!slideshowPhotos.length){
     clearTimeout(slideshowTimer);
