@@ -912,6 +912,7 @@ async function fetchMediaItems(types, folderId){
 }
 
 const signedUrlCache = new Map();
+const slideshowDataCache = new Map();
 
 async function signMediaItems(items){
   return Promise.all(items.map(async item=>{
