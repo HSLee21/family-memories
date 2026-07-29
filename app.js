@@ -330,10 +330,11 @@ $("addForm").onsubmit = async e => {
 
   try {
     let file_path = null;
+    let uploadFile = null;
 
     // Upload file/photo if selected
     if (files[0]) {
-      const uploadFile = await compressImageIfNeeded(files[0]);
+      uploadFile = await compressImageIfNeeded(files[0]);
       const safe = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safe}`;
 
@@ -346,7 +347,7 @@ $("addForm").onsubmit = async e => {
 
     // Use file name as title automatically if title is empty
     const autoTitle = uploadFile
-      ? files[0].name.replace(/\.[^/.]+$/, "")
+      ? uploadFile.name.replace(/\.[^/.]+$/, "")
       : "Untitled";
 
     const payload = {
