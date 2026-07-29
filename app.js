@@ -1077,11 +1077,34 @@ function showSlide(i){
   }
   lastSlideUrl=photo.signedUrl;
   slideshowImageReady = false;
-  img.classList.remove("hidden");
-  img.style.opacity=0;
-  img.onload=()=>{ if(token===slideshowLoadToken){ img.style.opacity=1; slideshowImageReady=true; } };
-  img.onerror=()=>{ if(token===slideshowLoadToken) slideshowImageReady=true; }; // don't get stuck waiting forever on a broken image
-  img.src=photo.signedUrl;
+
+  img.onload = null;
+  img.onerror = null;
+
+  img.classList.add("hidden");
+  img.style.transition = "none";
+  img.style.opacity = "0";
+
+  requestAnimationFrame(() => {
+    if (token !== slideshowLoadToken) return;
+
+    img.onload = () => {
+      if (token !== slideshowLoadToken) return;
+
+      requestAnimationFrame(() => {
+        img.classList.remove("hidden");
+        img.style.transition = "opacity .35s ease";
+        img.style.opacity = "1";
+        slideshowImageReady = true;
+      });
+    };
+
+    img.onerror = () => {
+      if (token === slideshowLoadToken) slideshowImageReady = true;
+    };
+
+    img.src = photo.signedUrl;
+  });
   $("slideshowCounter").textContent=`${slideshowIndex+1} / ${slideshowPhotos.length}`;
   if($("slideshowTitle")) $("slideshowTitle").textContent=photo._label||slideshowFallbackLabel||"";
 }
