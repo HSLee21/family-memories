@@ -255,7 +255,9 @@ html,body{overflow-x:hidden}
 .card-camera-btn,#changeCoverBtn{display:none!important}
 
 
+
 /* ===== Step 3 Home Image Styling ===== */
+
 .cover-local-image{
   width:100%;
   height:100%;
@@ -263,36 +265,76 @@ html,body{overflow-x:hidden}
   display:block;
 }
 
-.card-local-image{
-  display:block;
-  width:100%;
-  height:140px;
-  object-fit:cover;
-  border-radius:18px;
-  margin:0 auto 12px;
+.family-cover{
+  min-height:430px;
 }
 
 .card-default-content{
+  display:flex;
+  flex-direction:column;
   align-items:center;
+  justify-content:flex-start;
   text-align:center;
+  padding:18px 16px 18px;
 }
 
-.card-default-content > div:last-child{
-  max-width:100%;
-}
-
-.round-arrow{
-  display:none !important;
+.card-local-image{
+  display:block;
+  width:88%;
+  height:120px;
+  object-fit:cover;
+  object-position:center;
+  border-radius:16px;
+  margin:0 auto 10px;
 }
 
 .family-space-card{
+  min-height:210px;
   cursor:pointer;
 }
 
+.card-default-content h3{
+  margin:4px 0;
+}
+
+.card-default-content p{
+  margin:0;
+}
+
+.round-arrow{
+  display:none!important;
+}
+
 @media (max-width:900px){
+
+  .family-cover{
+    min-height:390px!important;
+    max-height:390px!important;
+  }
+
+  .family-space-card{
+    min-height:170px!important;
+  }
+
+  .card-default-content{
+    min-height:170px!important;
+    padding:10px 10px 12px!important;
+  }
+
   .card-local-image{
-    height:88px;
-    border-radius:12px;
-    margin-bottom:8px;
+    width:82%!important;
+    height:96px!important;
+    object-fit:contain!important;
+    object-position:center center!important;
+    margin:2px auto 6px!important;
+  }
+
+  .card-default-content h3{
+    font-size:11px!important;
+  }
+
+  .card-default-content p{
+    font-size:8px!important;
+    line-height:1.2!important;
   }
 }
