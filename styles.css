@@ -325,11 +325,13 @@ html,body{overflow-x:hidden}
   }
 
   .card-local-image{
-    width:90%!important;
-    height:78px!important;
+    display:block!important;
+    width:72%!important;
+    height:58px!important;
     object-fit:contain!important;
-    object-position:center center!important;
-    margin:6px auto 8px!important;
+    object-position:center!important;
+    margin:8px auto 6px!important;
+    flex-shrink:0!important;
   }
 
   .card-default-content h3{
