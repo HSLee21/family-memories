@@ -154,12 +154,14 @@ html,body{overflow-x:hidden}
 
   /* ---------- Home ---------- */
   .family-cover{
-    /* the one flexible element on Home: grows/shrinks with leftover
-       space, clamped between a sensible min and max */
-    flex:1 1 auto!important; height:auto!important;
-    min-height:140px!important; max-height:min(340px,44vh)!important;
-    border-radius:16px!important; margin:0!important;
-    position:relative!important; overflow:hidden!important;
+    flex:0 0 auto!important;
+    height:300px!important;
+    min-height:300px!important;
+    max-height:300px!important;
+    border-radius:16px!important;
+    margin:0 0 12px 0!important;
+    position:relative!important;
+    overflow:hidden!important;
   }
   .cover-image{ position:absolute!important; inset:0!important; background-size:cover!important; background-position:center 38%!important; }
   .cover-content{ position:absolute!important; left:14px!important; top:12px!important; right:60px!important; max-width:62%!important; text-shadow:0 1px 6px rgba(0,0,0,.35)!important; z-index:2!important; }
