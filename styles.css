@@ -498,3 +498,45 @@ html,body{overflow-x:hidden}
     max-height:210px !important;
   }
 }
+
+
+/* ===== Home card color refinement v17 ===== */
+@media (max-width:900px){
+
+  /* Match mockup pastel backgrounds */
+  .memories-card{
+    background:#dfeeff !important;
+  }
+
+  .trips-card{
+    background:#ffe4ee !important;
+  }
+
+  .celebrations-card{
+    background:#efe2ff !important;
+  }
+
+  .study-card{
+    background:#fff2d9 !important;
+  }
+
+  /* Remove white photo frame */
+  .card-local-image{
+    width:calc(100% - 12px) !important;
+    height:122px !important;
+    margin:6px auto 8px !important;
+    border-radius:14px !important;
+    background:transparent !important;
+    box-shadow:none !important;
+  }
+
+  /* Card spacing */
+  .card-default-content{
+    padding:4px 6px 8px !important;
+  }
+
+  /* Match bottom spacing */
+  .main{
+    padding-bottom:45px !important;
+  }
+}
