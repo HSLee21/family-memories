@@ -180,23 +180,27 @@ html,body{overflow-x:hidden}
   }
 
   .family-space-card{
-    position:relative;
-    overflow:hidden;
-    border-radius:16px;
-    background:#fff;
-    min-height:185px;
-    padding:0;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    position:relative!important;
+    overflow:hidden!important;
+    border-radius:16px!important;
+    background:#fff!important;
+    min-height:185px!important;
+    padding:0!important;
+    display:block!important;
+    text-align:center!important;
+    box-shadow:0 2px 8px rgba(0,0,0,.08)!important;
   }
 
   .card-default-content{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
-    text-align:center;
-    height:100%;
-    padding:10px;
+    width:100%!important;
+    height:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    text-align:center!important;
+    padding:10px!important;
+    box-sizing:border-box!important;
   }
 
   .card-local-image{
