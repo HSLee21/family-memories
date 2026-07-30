@@ -700,31 +700,9 @@ const HOME_CARDS = ["memories","trips","celebrations","study"];
 const cardLocalKey = (c) => `family-memories:card-full:${c}`;
 const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;
 function setCardImageDOM(card, src){
-  const cardEl = document.querySelector(`.family-space-card.${card}-card`);
-  const fullImg = document.querySelector(`[data-card-full="${card}"]`);
-  if(!cardEl || !fullImg) return;
-  if(src){
-    // Don't enlarge bundled default images after async load.
-    const isLocal = src.startsWith("assets/images/");
-    if(isLocal){
-      fullImg.classList.add("hidden");
-      cardEl.classList.remove("has-custom");
-      return;
-    }
-    fullImg.onload = () => {
-      fullImg.classList.remove("hidden");
-      cardEl.classList.add("has-custom");
-    };
-    fullImg.onerror = () => {
-      fullImg.classList.add("hidden");
-      cardEl.classList.remove("has-custom");
-    };
-    fullImg.src = src;
-  }else{
-    fullImg.removeAttribute("src");
-    fullImg.classList.add("hidden");
-    cardEl.classList.remove("has-custom");
-  }
+  const img = document.querySelector(`.family-space-card.${card}-card .card-local-image`);
+  if(!img) return;
+  img.src = src || LOCAL_CARD_IMAGES[card];
 }
 const cardCacheKey = (c) => `card_signed_url_cache:${c}`;
 async function loadCardImages(){
