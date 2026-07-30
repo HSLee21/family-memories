@@ -704,6 +704,13 @@ function setCardImageDOM(card, src){
   const fullImg = document.querySelector(`[data-card-full="${card}"]`);
   if(!cardEl || !fullImg) return;
   if(src){
+    // Don't enlarge bundled default images after async load.
+    const isLocal = src.startsWith("assets/images/");
+    if(isLocal){
+      fullImg.classList.add("hidden");
+      cardEl.classList.remove("has-custom");
+      return;
+    }
     fullImg.onload = () => {
       fullImg.classList.remove("hidden");
       cardEl.classList.add("has-custom");
