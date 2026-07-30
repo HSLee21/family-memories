@@ -500,35 +500,130 @@ html,body{overflow-x:hidden}
 }
 
 
-
-
-/* ===== Final Home Colour Fix ===== */
+/* ===== Home card color refinement v17 ===== */
 @media (max-width:900px){
 
-  .main{padding-bottom:46px!important;}
-
-  .memories-card{background:#dee9fc!important;}
-  .trips-card{background:#f9dbe5!important;}
-  .celebrations-card{background:#dcc6f3!important;}
-  .study-card{background:#f7e5cc!important;}
-
-  .memories-card .card-local-image{
-    background:#dee9fc!important;
-    object-fit:contain!important;
-    transform:scale(.90)!important;
+  /* Match mockup pastel backgrounds */
+  .memories-card{
+    background:#dfeeff !important;
   }
 
-  .trips-card .card-local-image{background:#f9dbe5!important;}
-  .celebrations-card .card-local-image{background:#dcc6f3!important;}
-  .study-card .card-local-image{background:#f7e5cc!important;}
+  .trips-card{
+    background:#ffe4ee !important;
+  }
+
+  .celebrations-card{
+    background:#efe2ff !important;
+  }
+
+  .study-card{
+    background:#fff2d9 !important;
+  }
+
+  /* Remove white photo frame */
+  .card-local-image{
+    width:calc(100% - 12px) !important;
+    height:122px !important;
+    margin:6px auto 8px !important;
+    border-radius:14px !important;
+    background:transparent !important;
+    box-shadow:none !important;
+  }
+
+  /* Card spacing */
+  .card-default-content{
+    padding:4px 6px 8px !important;
+  }
+
+  /* Match bottom spacing */
+  .main{
+    padding-bottom:45px !important;
+  }
+}
+
+
+
+/* ===== Mockup refinement v18 ===== */
+@media (max-width:900px){
+
+  /* Flat pastel cards matching mockup */
+  .memories-card{background:#d9ecff!important;}
+  .trips-card{background:#ffe3ec!important;}
+  .celebrations-card{background:#eedcff!important;}
+  .study-card{background:#fff0cf!important;}
+
+  /* Icons / image frame follow card colour */
+  .memories-card .card-local-image{
+    background:#d9ecff!important;
+    transform:scale(.88)!important;
+    object-fit:contain!important;
+    padding:6px!important;
+  }
+  .trips-card .card-local-image{
+    background:#ffe3ec!important;
+    padding:4px!important;
+  }
+  .celebrations-card .card-local-image{
+    background:#eedcff!important;
+    padding:4px!important;
+  }
+  .study-card .card-local-image{
+    background:#fff0cf!important;
+    padding:4px!important;
+  }
 
   .card-local-image{
-    width:calc(100% - 12px)!important;
-    height:116px!important;
-    margin:6px auto!important;
-    border-radius:16px!important;
+    border-radius:18px!important;
+    box-shadow:none!important;
+  }
+
+  .main{
+    padding-bottom:45px!important;
+  }
+}
+
+
+
+/* ===== Mockup colour match v19 ===== */
+@media (max-width:900px){
+
+  /* Keep bottom spacing */
+  .main{
+    padding-bottom:45px!important;
+  }
+
+  /* Flat card colours — matched to each icon image's own baked-in background */
+  .memories-card{background:#dee9fc!important;}
+  .trips-card{background:#f8d2de!important;}
+  .celebrations-card{background:#c9b4ea!important;}
+  .study-card{background:#f6dcc0!important;}
+
+  /* Image background EXACTLY matches card colour */
+  .memories-card .card-local-image{
+    background:#dee9fc!important;
+    transform:scale(.82)!important;
+    padding:0!important;
+    object-fit:contain!important;
+  }
+
+  .trips-card .card-local-image{
+    background:#f8d2de!important;
+    padding:0!important;
+  }
+
+  .celebrations-card .card-local-image{
+    background:#c9b4ea!important;
+    padding:0!important;
+  }
+
+  .study-card .card-local-image{
+    background:#f6dcc0!important;
+    padding:0!important;
+  }
+
+  .card-local-image{
     border:none!important;
     box-shadow:none!important;
-    padding:0!important;
+    border-radius:18px!important;
   }
 }
