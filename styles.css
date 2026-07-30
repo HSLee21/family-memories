@@ -399,3 +399,56 @@ html,body{overflow-x:hidden}
     line-height:1.15!important;
   }
 }
+
+
+/* ===== Home layout tuning v15 ===== */
+@media (max-width:900px){
+
+  /* Smaller hero */
+  .family-cover{
+    height:220px!important;
+    min-height:220px!important;
+    max-height:220px!important;
+    margin-bottom:4px!important;
+  }
+
+  /* Bring cards closer */
+  .family-space-grid{
+    gap:6px!important;
+    margin:2px 0 0!important;
+  }
+
+  /* Remove excessive bottom gap */
+  .main{
+    padding-bottom:64px!important;
+  }
+
+  /* Let content size naturally */
+  .family-space-card{
+    min-height:0!important;
+  }
+
+  .card-default-content{
+    min-height:auto!important;
+    padding:4px 4px 6px!important;
+  }
+
+  /* Bigger photos */
+  .card-local-image{
+    width:100%!important;
+    height:108px!important;
+    margin:0 0 4px!important;
+    border-radius:12px!important;
+  }
+
+  .card-default-content h3{
+    font-size:14px!important;
+    margin:1px 0!important;
+  }
+
+  .card-default-content p{
+    font-size:10px!important;
+    line-height:1.1!important;
+    margin:0!important;
+  }
+}
