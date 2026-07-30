@@ -308,22 +308,22 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
 
   .family-cover{
-    min-height:390px!important;
-    max-height:390px!important;
+    min-height:340px!important;
+    max-height:340px!important;
   }
 
   .family-space-card{
-    min-height:170px!important;
+    min-height:145px!important;
   }
 
   .card-default-content{
-    min-height:170px!important;
+    min-height:145px!important;
     padding:10px 10px 12px!important;
   }
 
   .card-local-image{
-    width:82%!important;
-    height:96px!important;
+    width:90%!important;
+    height:108px!important;
     object-fit:contain!important;
     object-position:center center!important;
     margin:2px auto 6px!important;
