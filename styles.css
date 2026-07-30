@@ -452,3 +452,49 @@ html,body{overflow-x:hidden}
     margin:0!important;
   }
 }
+
+
+/* ===== Home layout tuning v16 ===== */
+@media (max-width:900px){
+
+  /* Reduce empty gap above bottom nav */
+  .main{
+    padding-bottom:48px !important;
+  }
+
+  /* Slightly larger photos with breathing room */
+  .card-local-image{
+    height:118px !important;
+    width:calc(100% - 16px) !important;
+    margin:8px auto 6px !important;
+    border-radius:14px !important;
+  }
+
+  /* Compact card content */
+  .card-default-content{
+    padding:2px 6px 6px !important;
+    row-gap:2px !important;
+  }
+
+  .family-space-card{
+    overflow:visible !important;
+  }
+
+  .family-space-card h3{
+    margin:2px 0 !important;
+    font-size:15px !important;
+  }
+
+  .family-space-card p{
+    font-size:10px !important;
+    line-height:1.08 !important;
+    margin:0 !important;
+  }
+
+  /* Keep hero compact */
+  .family-cover{
+    height:210px !important;
+    min-height:210px !important;
+    max-height:210px !important;
+  }
+}
