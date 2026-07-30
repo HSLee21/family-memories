@@ -220,12 +220,12 @@ html,body{overflow-x:hidden}
   .folder-card{ padding:10px!important; gap:8px!important; min-height:0!important; border-radius:14px!important; }
   .folder-icon{ font-size:22px!important; }
   .folder-info h3{ font-size:14px!important; margin:0 0 2px!important; }
-  .folder-info p{ font-size:11px!important; }
+  .folder-info p{ font-size:15px!important; }
   .folder-menu{ padding:4px!important; }
   .content-grid{ grid-template-columns:repeat(4,1fr)!important; gap:6px!important; }
   .content-card{ padding:5px!important; border-radius:12px!important; }
   .content-preview{ border-radius:9px!important; }
-  .content-card h3{ font-size:11px!important; margin:4px 0 0!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
+  .content-card h3{ font-size:15px!important; margin:4px 0 0!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
   .content-card .meta{ font-size:9px!important; margin-top:4px!important; }
   .content-card p{ display:none!important; }
   .delete-item{ font-size:10px!important; padding:5px!important; margin-top:4px!important; border-radius:8px!important; }
@@ -308,33 +308,33 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
 
   .family-cover{
-    min-height:340px!important;
-    max-height:340px!important;
+    min-height:300px!important;
+    max-height:300px!important;
   }
 
   .family-space-card{
-    min-height:145px!important;
+    min-height:180px!important;
   }
 
   .card-default-content{
-    min-height:145px!important;
+    min-height:180px!important;
     padding:10px 10px 12px!important;
   }
 
   .card-local-image{
     width:90%!important;
-    height:108px!important;
+    height:78px!important;
     object-fit:contain!important;
     object-position:center center!important;
-    margin:2px auto 6px!important;
+    margin:6px auto 8px!important;
   }
 
   .card-default-content h3{
-    font-size:11px!important;
+    font-size:15px!important;
   }
 
   .card-default-content p{
-    font-size:8px!important;
+    font-size:10px!important;
     line-height:1.2!important;
   }
 }
