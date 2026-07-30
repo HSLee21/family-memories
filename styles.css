@@ -44,9 +44,7 @@ pointer-events:none
 /* These had NO styling outside the mobile media query, so on screens over 900px
    they rendered as unstyled default buttons/images - this was the "duplicated" look on PC */
 .card-camera-btn{position:absolute;top:16px;right:16px;width:40px;height:40px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,.15);font-size:16px;z-index:10;display:grid;place-items:center;border:0}
-.card-full-custom{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;border-radius:28px;z-index:1;display:block}
-.card-full-custom.hidden{display:none!important}
-.family-space-card.has-custom .card-default-content{opacity:0;visibility:hidden;pointer-events:none}
+
 
 /* Prevent grid items from forcing the layout wider than the viewport (classic CSS Grid gotcha - items default to min-width:auto) */
 .app,.main{overflow-x:hidden}
@@ -133,7 +131,7 @@ html,body{overflow-x:hidden}
     padding:0 8px!important;
     overflow-y:auto!important; -webkit-overflow-scrolling:touch!important;
     /* reserved clearance above the fixed nav for every page */
-    padding-bottom:calc(60px + env(safe-area-inset-bottom))!important;
+    padding-bottom:calc(90px + env(safe-area-inset-bottom))!important;
     background:#f6f8fb!important;
   }
 
@@ -182,9 +180,7 @@ html,body{overflow-x:hidden}
   .family-space-card h3{ font-size:12px!important; margin:1px 0!important; line-height:1.1!important; }
   .family-space-card p{ font-size:9px!important; line-height:1.2!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
   .round-arrow{ width:18px!important; height:18px!important; right:6px!important; bottom:6px!important; font-size:10px!important; }
-  .card-full-custom{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important; object-fit:cover!important; background:#fff!important; border-radius:14px!important; z-index:1!important; display:block!important; }
-  .card-full-custom.hidden{ display:none!important; }
-  .family-space-card.has-custom .card-default-content{ opacity:0!important; visibility:hidden!important; pointer-events:none!important; }
+  
 
   /* ---------- Gallery hub (mediaHub) ---------- */
   #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; }
@@ -316,23 +312,26 @@ html,body{overflow-x:hidden}
   }
 
   .family-space-card{
-    min-height:180px!important;
+    min-height:210px!important;
   }
 
   .card-default-content{
-    min-height:180px!important;
+    min-height:210px!important;
     padding:10px 10px 12px!important;
   }
 
-  .card-local-image{
+  
+.card-local-image{
     display:block!important;
-    width:72%!important;
-    height:58px!important;
-    object-fit:contain!important;
+    width:88%!important;
+    height:96px!important;
+    object-fit:cover!important;
     object-position:center!important;
-    margin:8px auto 6px!important;
+    margin:8px auto 8px!important;
+    border-radius:12px!important;
     flex-shrink:0!important;
-  }
+}
+
 
   .card-default-content h3{
     font-size:15px!important;

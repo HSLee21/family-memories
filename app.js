@@ -700,7 +700,7 @@ const HOME_CARDS = ["memories","trips","celebrations","study"];
 const cardLocalKey = (c) => `family-memories:card-full:${c}`;
 const cardStoragePath = (c) => `${currentUser.id}/app-settings/card-full-${c}`;
 function setCardImageDOM(card, src){
-  const img = document.querySelector(`.family-space-card.${card}-card .card-local-image`);
+  const img=document.querySelector(`.family-space-card.${card}-card .card-local-image`);
   if(!img) return;
   img.src = src || LOCAL_CARD_IMAGES[card];
 }
