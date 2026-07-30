@@ -152,10 +152,88 @@ html,body{overflow-x:hidden}
     overflow:hidden!important;
   }
 
-  /* ---------- Home ----------
-     Home rules removed in Phase 1.
-     A single consolidated Home mobile layout will be added in Phase 2.
-  */
+  /* ---------- Home ---------- */
+
+  .family-cover{
+    flex:0 0 auto;
+    height:300px;
+    min-height:300px;
+    max-height:300px;
+    border-radius:16px;
+    overflow:hidden;
+    margin-bottom:12px;
+  }
+
+  .cover-local-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  .family-space-grid{
+    flex:0 0 auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:0;
+  }
+
+  .family-space-card{
+    position:relative;
+    overflow:hidden;
+    border-radius:16px;
+    background:#fff;
+    min-height:185px;
+    padding:0;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+  }
+
+  .card-default-content{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    text-align:center;
+    height:100%;
+    padding:10px;
+  }
+
+  .card-local-image{
+    width:72%;
+    height:58px;
+    object-fit:contain;
+    object-position:center;
+    display:block;
+    margin:8px auto;
+    flex-shrink:0;
+  }
+
+  .card-body{
+    width:100%;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+  }
+
+  .card-body h3{
+    margin:4px 0;
+    font-size:15px;
+    line-height:1.2;
+  }
+
+  .card-body p{
+    margin:0;
+    font-size:10px;
+    line-height:1.25;
+    color:#6b7280;
+  }
+
+  .round-arrow{
+    display:none;
+  }
 
   /* ---------- Gallery hub (mediaHub) ---------- */
   #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; }
