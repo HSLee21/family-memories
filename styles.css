@@ -355,3 +355,47 @@ html,body{overflow-x:hidden}
     line-height:1.2!important;
   }
 }
+
+
+/* ===== Home layout tuning v14 ===== */
+@media (max-width:900px){
+
+  .family-cover{
+    height:255px!important;
+    min-height:255px!important;
+    max-height:255px!important;
+    margin-bottom:8px!important;
+  }
+
+  .family-space-grid{
+    gap:6px!important;
+    margin-top:0!important;
+  }
+
+  .family-space-card{
+    min-height:170px!important;
+  }
+
+  .card-default-content{
+    min-height:170px!important;
+    padding:6px!important;
+  }
+
+  .card-local-image{
+    width:100%!important;
+    height:96px!important;
+    margin:0 0 6px!important;
+    border-radius:12px!important;
+  }
+
+  .card-default-content h3{
+    font-size:14px!important;
+    margin:2px 0!important;
+    line-height:1.1!important;
+  }
+
+  .card-default-content p{
+    font-size:10px!important;
+    line-height:1.15!important;
+  }
+}
