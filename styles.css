@@ -46,7 +46,7 @@ pointer-events:none
 .card-camera-btn{position:absolute;top:16px;right:16px;width:40px;height:40px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,.15);font-size:16px;z-index:10;display:grid;place-items:center;border:0}
 .card-full-custom{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;border-radius:28px;z-index:1;display:block}
 .card-full-custom.hidden{display:none!important}
-.family-space-card.has-custom .card-default-content{opacity:0;pointer-events:none}
+.family-space-card.has-custom .card-default-content{opacity:0;visibility:hidden;pointer-events:none}
 
 /* Prevent grid items from forcing the layout wider than the viewport (classic CSS Grid gotcha - items default to min-width:auto) */
 .app,.main{overflow-x:hidden}
@@ -182,7 +182,7 @@ html,body{overflow-x:hidden}
   .round-arrow{ width:18px!important; height:18px!important; right:6px!important; bottom:6px!important; font-size:10px!important; }
   .card-full-custom{ position:absolute!important; inset:0!important; width:100%!important; height:100%!important; object-fit:cover!important; background:#fff!important; border-radius:14px!important; z-index:1!important; display:block!important; }
   .card-full-custom.hidden{ display:none!important; }
-  .family-space-card.has-custom .card-default-content{ opacity:0!important; pointer-events:none!important; }
+  .family-space-card.has-custom .card-default-content{ opacity:0!important; visibility:hidden!important; pointer-events:none!important; }
 
   /* ---------- Gallery hub (mediaHub) ---------- */
   #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; }
@@ -282,6 +282,7 @@ html,body{overflow-x:hidden}
   display:block;
   width:88%;
   height:120px;
+  aspect-ratio:500/333;
   object-fit:cover;
   object-position:center;
   border-radius:16px;
