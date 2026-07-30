@@ -343,3 +343,11 @@ html,body{overflow-x:hidden}
     line-height:1.2!important;
   }
 }
+
+
+/* Step 3 */
+@media (max-width:900px){
+.card-body{width:100%!important;text-align:center!important;padding:0 6px!important;}
+.card-body h3{margin:2px 0 4px!important;font-size:15px!important;}
+.card-body p{margin:0!important;font-size:10px!important;line-height:1.2!important;}
+}

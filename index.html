@@ -13,16 +13,16 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Pacifico&amp;display=swap" rel="stylesheet"/>
-<link href="styles.css?v=v20-fix" rel="stylesheet">
+<link href="styles.css?v=v20-fix" rel="stylesheet"/>
 <!-- PWA -->
-<link href="manifest.json" rel="manifest">
+<link href="manifest.json" rel="manifest"/>
 <meta content="#1670f8" name="theme-color"/>
-<link href="icon-192.png" rel="icon">
-<link href="apple-touch-icon.png" rel="apple-touch-icon"/>
+<link href="icon-192.png" rel="icon"/>
+<link href="apple-touch-icon.png" rel="apple-touch-icon">
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Memories" name="apple-mobile-web-app-title"/>
-</link></link></link></head>
+</link></head>
 <body>
 <div id="toast"></div>
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:#f7f9fc;display:grid;place-items:center;font-family:Inter,sans-serif">
@@ -61,51 +61,51 @@
 <header class="legacy-header hidden"><h2 id="pageTitle">Home</h2><p id="welcomeText"></p><div id="userBadge"></div></header>
 <section class="page" id="homePage">
 <div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage">
-        <img src="assets/images/hero.jpg" alt="Family Cover" id="localHeroImage" class="cover-local-image" width="1200" height="686" decoding="async" fetchpriority="high"/>
-      </div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br/>journeys and milestones.</p></div><button class="camera-fab hidden" id="changeCoverBtn" title="Change cover photo" type="button">📷</button><input accept="image/*" hidden="" id="coverFileInput" type="file"/></div>
+<img alt="Family Cover" class="cover-local-image" decoding="async" fetchpriority="high" height="686" id="localHeroImage" src="assets/images/hero.jpg" width="1200"/>
+</div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br/>journeys and milestones.</p></div><button class="camera-fab hidden" id="changeCoverBtn" title="Change cover photo" type="button">📷</button><input accept="image/*" hidden="" id="coverFileInput" type="file"/></div>
 <div class="family-space-grid">
 <div class="family-space-card memories-card" data-go="memories">
-<img alt="" class="card-full-custom hidden" decoding="async" data-card-full="memories"/>
+<img alt="" class="card-full-custom hidden" data-card-full="memories" decoding="async"/>
 <button class="card-camera-btn" data-card="memories" type="button">📷</button>
 <div class="card-default-content">
-<img src="assets/images/memories.jpg" class="card-local-image" alt="Our Memories" width="500" height="333" decoding="async"/>
-<div><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
+<img alt="Our Memories" class="card-local-image" decoding="async" height="333" src="assets/images/memories.jpg" width="500"/>
+<div class="card-body"><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
 <span class="round-arrow">→</span>
 </div>
 </div>
 <div class="family-space-card trips-card" data-go="trips">
-<img alt="" class="card-full-custom hidden" decoding="async" data-card-full="trips"/>
+<img alt="" class="card-full-custom hidden" data-card-full="trips" decoding="async"/>
 <button class="card-camera-btn" data-card="trips" type="button">📷</button>
 <div class="card-default-content">
-<img src="assets/images/trips.jpg" class="card-local-image" alt="Family Trips" width="500" height="333" decoding="async"/>
-<div><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
+<img alt="Family Trips" class="card-local-image" decoding="async" height="333" src="assets/images/trips.jpg" width="500"/>
+<div class="card-body"><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
 <span class="round-arrow">→</span>
 </div>
 </div>
 <div class="family-space-card celebrations-card" data-go="celebrations">
-<img alt="" class="card-full-custom hidden" decoding="async" data-card-full="celebrations"/>
+<img alt="" class="card-full-custom hidden" data-card-full="celebrations" decoding="async"/>
 <button class="card-camera-btn" data-card="celebrations" type="button">📷</button>
 <div class="card-default-content">
-<img src="assets/images/celebrations.jpg" class="card-local-image" alt="Celebrations" width="500" height="333" decoding="async"/>
-<div><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
+<img alt="Celebrations" class="card-local-image" decoding="async" height="333" src="assets/images/celebrations.jpg" width="500"/>
+<div class="card-body"><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
 <span class="round-arrow">→</span>
 </div>
 </div>
 <div class="family-space-card study-card" data-go="study">
-<img alt="" class="card-full-custom hidden" decoding="async" data-card-full="study"/>
+<img alt="" class="card-full-custom hidden" data-card-full="study" decoding="async"/>
 <button class="card-camera-btn" data-card="study" type="button">📷</button>
 <div class="card-default-content">
-<img src="assets/images/study.jpg" class="card-local-image" alt="Study Hub" width="500" height="333" decoding="async"/>
-<div><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
+<img alt="Study Hub" class="card-local-image" decoding="async" height="333" src="assets/images/study.jpg" width="500"/>
+<div class="card-body"><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
 <span class="round-arrow">→</span>
 </div>
 </div>
 </div>
-<input accept="image/*" hidden="" id="cardFile-memories" type="file">
-<input accept="image/*" hidden="" id="cardFile-trips" type="file">
-<input accept="image/*" hidden="" id="cardFile-celebrations" type="file">
-<input accept="image/*" hidden="" id="cardFile-study" type="file">
-</input></input></input></input></section>
+<input accept="image/*" hidden="" id="cardFile-memories" type="file"/>
+<input accept="image/*" hidden="" id="cardFile-trips" type="file"/>
+<input accept="image/*" hidden="" id="cardFile-celebrations" type="file"/>
+<input accept="image/*" hidden="" id="cardFile-study" type="file"/>
+</section>
 <section class="page hidden section-theme memories-theme" id="memoriesPage">
 <div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div></div>
 <div class="content-heading"><h2>Albums</h2><button class="link-button open-folder" data-section="memories">+ New Album</button></div><div class="folder-grid visual-grid" id="memoriesFolders"></div><div class="folder-browser hidden" id="memoriesBrowser"></div>
@@ -160,10 +160,10 @@
 <div class="slideshow-title" id="slideshowTitle"></div>
 <div class="slideshow-counter" id="slideshowCounter"></div>
 <div class="slideshow-toolbar" id="slideshowToolbar">
-<button aria-label="Background music" class="tb-btn" id="slideshowMusicBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></button>
-<button aria-label="Change background music" class="tb-btn" id="slideshowMusicUploadBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM12 2 6 8h3.5v6h5V8H18L12 2z"></path></svg></button>
+<button aria-label="Background music" class="tb-btn" id="slideshowMusicBtn"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg></button>
+<button aria-label="Change background music" class="tb-btn" id="slideshowMusicUploadBtn"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M5 20h14v-2H5v2zM12 2 6 8h3.5v6h5V8H18L12 2z"></path></svg></button>
 <button aria-label="Play or pause" class="tb-btn" id="slideshowPlayPause"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></button>
-<button aria-label="Delete this photo" class="tb-btn tb-delete" id="slideshowDelete"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
+<button aria-label="Delete this photo" class="tb-btn tb-delete" id="slideshowDelete"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
 <button aria-label="Close" class="tb-btn tb-close" id="slideshowClose">×</button>
 </div>
 </div>
