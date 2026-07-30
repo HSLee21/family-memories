@@ -592,32 +592,32 @@ html,body{overflow-x:hidden}
     padding-bottom:45px!important;
   }
 
-  /* Flat card colours */
-  .memories-card{background:#d9ecff!important;}
-  .trips-card{background:#ffe3ec!important;}
-  .celebrations-card{background:#eedcff!important;}
-  .study-card{background:#fff0cf!important;}
+  /* Flat card colours — matched to each icon image's own baked-in background */
+  .memories-card{background:#dee9fc!important;}
+  .trips-card{background:#f8d2de!important;}
+  .celebrations-card{background:#c9b4ea!important;}
+  .study-card{background:#f6dcc0!important;}
 
   /* Image background EXACTLY matches card colour */
   .memories-card .card-local-image{
-    background:#d9ecff!important;
+    background:#dee9fc!important;
     transform:scale(.82)!important;
     padding:0!important;
     object-fit:contain!important;
   }
 
   .trips-card .card-local-image{
-    background:#ffe3ec!important;
+    background:#f8d2de!important;
     padding:0!important;
   }
 
   .celebrations-card .card-local-image{
-    background:#eedcff!important;
+    background:#c9b4ea!important;
     padding:0!important;
   }
 
   .study-card .card-local-image{
-    background:#fff0cf!important;
+    background:#f6dcc0!important;
     padding:0!important;
   }
 
