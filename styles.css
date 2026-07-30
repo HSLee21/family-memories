@@ -598,32 +598,37 @@ html,body{overflow-x:hidden}
   .celebrations-card{background:#c9b4ea!important;}
   .study-card{background:#f6dcc0!important;}
 
-  /* Image background EXACTLY matches card colour */
+  /* Image background matches card colour, edges feathered so any
+     residual tone difference (from the image's own internal gradient)
+     fades out instead of showing as a hard seam */
   .memories-card .card-local-image{
     background:#dee9fc!important;
     transform:scale(.82)!important;
     padding:0!important;
     object-fit:contain!important;
+    box-shadow:inset 0 0 26px 8px #dee9fc!important;
   }
 
   .trips-card .card-local-image{
     background:#f8d2de!important;
     padding:0!important;
+    box-shadow:inset 0 0 26px 8px #f8d2de!important;
   }
 
   .celebrations-card .card-local-image{
     background:#c9b4ea!important;
     padding:0!important;
+    box-shadow:inset 0 0 26px 8px #c9b4ea!important;
   }
 
   .study-card .card-local-image{
     background:#f6dcc0!important;
     padding:0!important;
+    box-shadow:inset 0 0 26px 8px #f6dcc0!important;
   }
 
   .card-local-image{
     border:none!important;
-    box-shadow:none!important;
     border-radius:18px!important;
   }
 }
