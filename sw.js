@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v8";
+const CACHE_NAME = "family-memories-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -6,13 +6,26 @@ const APP_SHELL = [
   "./app.js",
   "./config.js",
   "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) =>
+      // Cache each file independently instead of cache.addAll(), which
+      // rejects (and aborts the ENTIRE install) if even one file 404s.
+      // A single missing/renamed asset must never again be able to block
+      // every future update from activating - that's what caused the
+      // old service worker to keep serving stale styles.css indefinitely.
+      Promise.all(
+        APP_SHELL.map((url) =>
+          cache.add(url).catch((err) =>
+            console.warn("SW: failed to precache", url, err)
+          )
+        )
+      )
+    )
   );
   self.skipWaiting();
 });
