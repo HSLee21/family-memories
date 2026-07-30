@@ -706,34 +706,9 @@ function setCardImageDOM(card, src){
 }
 const cardCacheKey = (c) => `card_signed_url_cache:${c}`;
 async function loadCardImages(){
-  // Show last-known-good photo immediately for each card (no waiting, no stale flash)
   for(const card of HOME_CARDS){
-    try{
-      const cached = JSON.parse(localStorage.getItem(cardCacheKey(card))||"null");
-      if(cached && cached.url && cached.expires>Date.now()){
-        setCardImageDOM(card, cached.url);
-      }
-    }catch(e){}
+    setCardImageDOM(card, LOCAL_CARD_IMAGES[card]);
   }
-  // Fetch all 4 fresh signed URLs in PARALLEL (was sequential, ~4x slower) then update any that changed
-  await Promise.all(HOME_CARDS.map(async (card)=>{
-    let src = null;
-    if(currentUser){
-      try{
-        const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card), 86400);
-        if(data?.signedUrl){
-          src = data.signedUrl;
-          try{ localStorage.setItem(cardCacheKey(card), JSON.stringify({url:src, expires:Date.now()+86400*1000})); }catch(e){}
-        }
-      }catch{}
-    }
-    if(!src){
-      const local = localStorage.getItem(cardLocalKey(card));
-      if(local) src = local;
-      else src = LOCAL_CARD_IMAGES[card];
-    }
-    if(src) setCardImageDOM(card, src);
-  }));
 }
 function initCardCameraButtons(){
   document.querySelectorAll(".family-space-card[data-go]").forEach(el=>{
