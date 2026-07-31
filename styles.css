@@ -463,3 +463,21 @@ html,body{overflow-x:hidden}
     padding-bottom:80px!important; /* ~20px above 60px nav */
   }
 }
+
+
+/* ===== Home card text clipping fix ===== */
+@media (max-width:900px){
+  .family-space-card{
+    min-height:158px !important;
+  }
+
+  .card-default-content{
+    min-height:158px !important;
+    padding:8px 6px 10px !important;
+  }
+
+  .card-default-content p{
+    line-height:1.25 !important;
+    padding-bottom:6px !important;
+  }
+}
