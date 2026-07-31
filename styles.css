@@ -404,12 +404,12 @@ html,body{overflow-x:hidden}
   .celebrations-card{background:#c9b4ea!important;}
   .study-card{background:#f6dcc0!important;}
 
-  /* Icons fill the card completely — cover crops to fit so it works
-     regardless of any individual icon's own aspect ratio */
+  /* Icons sized to sit nicely inside the card, not dominate it —
+     cover crops to fit so it works regardless of aspect ratio */
   .card-local-image{
-    width:100%!important;
-    height:170px!important;
-    margin:4px auto 6px!important;
+    width:calc(100% - 24px)!important;
+    height:120px!important;
+    margin:10px auto 8px!important;
     object-fit:cover!important;
     object-position:center!important;
     background:transparent!important;
