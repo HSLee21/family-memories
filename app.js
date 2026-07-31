@@ -1166,11 +1166,17 @@ async function openSlideshow(types,label){
 
   slideshowHasMusic = await musicPromise;
   if(myToken !== slideshowOpenToken) return;
-  if(slideshowHasMusic){
-    $("slideshowMusic").currentTime=0;
-    $("slideshowMusic").play().catch(()=>{});
-  }
   updateMusicBtn();
+  if(slideshowHasMusic){
+    const audio=$("slideshowMusic");
+    audio.currentTime=0;
+    const playNow=()=>audio.play().catch(()=>{});
+    if(document.visibilityState==="visible"){
+      requestAnimationFrame(playNow);
+    }else{
+      playNow();
+    }
+  }
 }
 
 let slideshowLoadToken = 0;
