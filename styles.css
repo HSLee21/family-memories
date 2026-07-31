@@ -427,9 +427,9 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
   /* Home */
   .family-cover{
-    height:230px!important;
-    min-height:230px!important;
-    max-height:230px!important;
+    height:220px!important;
+    min-height:220px!important;
+    max-height:220px!important;
     margin-bottom:8px!important;
   }
   .family-space-grid{
