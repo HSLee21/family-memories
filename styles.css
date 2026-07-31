@@ -379,6 +379,7 @@ html,body{overflow-x:hidden}
   .family-space-card{
     min-height:0!important;
     overflow:visible!important;
+    box-shadow:none!important;
   }
 
   .card-default-content{
