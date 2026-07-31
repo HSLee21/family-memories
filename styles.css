@@ -153,9 +153,9 @@ html,body{overflow-x:hidden}
   /* ---------- Home ---------- */
   .family-cover{
     flex:0 0 auto!important;
-    height:300px!important;
-    min-height:300px!important;
-    max-height:300px!important;
+    height:220px!important;
+    min-height:220px!important;
+    max-height:220px!important;
     border-radius:16px!important;
     margin:0 0 12px 0!important;
     position:relative!important;
@@ -175,9 +175,9 @@ html,body{overflow-x:hidden}
     gap:8px!important; margin:0!important; align-content:stretch!important;
   }
   .family-space-card{ border-radius:14px!important; min-height:0!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
-  .card-default-content{ min-height:118px!important; padding:8px 8px 24px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .card-default-content{ min-height:104px!important; padding:8px 8px 24px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
   .card-art{ font-size:28px!important; line-height:1!important; margin:0 0 2px!important; overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
-  .family-space-card h3{ font-size:12px!important; margin:1px 0!important; line-height:1.1!important; }
+  .family-space-card h3{ font-size:14px!important; margin:1px 0!important; line-height:1.1!important; }
   .family-space-card p{ font-size:9px!important; line-height:1.2!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
   .round-arrow{ width:18px!important; height:18px!important; right:6px!important; bottom:6px!important; font-size:10px!important; }
   
@@ -194,7 +194,7 @@ html,body{overflow-x:hidden}
   }
   #mediaHubPage .media-hub-card{ padding:12px 10px!important; border-radius:16px!important; gap:6px!important; font-size:13px!important; min-height:0!important; justify-content:center!important; }
   #mediaHubPage .media-hub-card.wide{ grid-column:1/-1!important; flex-direction:row!important; padding:16px!important; }
-  #mediaHubPage .media-hub-ico{ width:32px!important; height:32px!important; }
+  #mediaHubPage .media-hub-ico{ width:52px!important; height:52px!important; }
   .video-fs-btn{ top:6px!important; right:6px!important; bottom:auto!important; }
   .video-play-btn{ width:30px!important; height:30px!important; }
   .video-play-btn svg{ width:14px!important; height:14px!important; }
@@ -236,7 +236,7 @@ html,body{overflow-x:hidden}
     position:fixed!important; left:50%!important; transform:translateX(-50%)!important;
     bottom:0!important;
     width:100%!important; max-width:480px!important;
-    height:60px!important; padding:0!important;
+    height:64px!important; padding:0!important;
     border-radius:20px 20px 0 0!important;
     background:#fff!important; border:1px solid #e8edf4!important; border-bottom:0!important;
     box-shadow:0 -2px 12px rgba(0,0,0,.06)!important;
@@ -244,7 +244,7 @@ html,body{overflow-x:hidden}
     align-items:center!important; justify-items:center!important;
     z-index:100!important;
   }
-  .mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:5px!important; background:none!important; border:0!important; padding:5px 0 9px!important; margin:0!important; color:#1670f8!important; width:100%!important; height:100%!important; }
+  .mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:5px!important; background:none!important; border:0!important; padding:4px 0 6px!important; margin:0!important; color:#1670f8!important; width:100%!important; height:100%!important; }
   .mobile-nav-item .nav-ico{ width:26px!important; height:26px!important; line-height:1!important; display:flex!important; align-items:center!important; justify-content:center!important; color:#1670f8!important; }
   .mobile-nav-item .nav-ico svg{ width:100%!important; height:100%!important; display:block!important; }
   .mobile-nav-item small{ font-size:12px!important; font-weight:700!important; color:#1670f8!important; line-height:1!important; }
@@ -254,189 +254,3 @@ html,body{overflow-x:hidden}
 
 
 
-/* ===== Step 3 Home Image Styling ===== */
-
-.cover-local-image{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.family-cover{
-  min-height:430px;
-}
-
-.card-default-content{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  text-align:center;
-  padding:18px 16px 18px;
-}
-
-.card-local-image{
-  display:block;
-  width:100%;
-  height:88px;
-  aspect-ratio:500/333;
-  object-fit:cover;
-  object-position:center;
-  border-radius:16px;
-  margin:0 0 8px;
-}
-
-.family-space-card{
-  min-height:210px;
-  cursor:pointer;
-}
-
-.card-default-content h3{
-  margin:4px 0;
-}
-
-.card-default-content p{
-  margin:0;
-}
-
-.round-arrow{
-  display:none!important;
-}
-
-@media (max-width:900px){
-
-  .family-cover{
-    height:340px!important;
-    min-height:340px!important;
-    max-height:340px!important;
-  }
-
-  .family-space-grid{
-    gap:6px!important;
-    margin-top:4px!important;
-  }
-
-  .family-space-card{
-    min-height:150px!important;
-  }
-
-  .card-default-content{
-    min-height:150px!important;
-    padding:6px 6px 8px!important;
-  }
-
-  .card-local-image{
-    width:100%!important;
-    height:72px!important;
-    margin:0 0 6px!important;
-    border-radius:12px!important;
-    object-fit:cover!important;
-  }
-
-  .card-default-content h3{
-    font-size:13px!important;
-    margin:2px 0!important;
-  }
-
-  .card-default-content p{
-    font-size:9px!important;
-    line-height:1.15!important;
-  }
-
-
-
-  .card-default-content h3{
-    font-size:15px!important;
-  }
-
-  .card-default-content p{
-    font-size:10px!important;
-    line-height:1.2!important;
-  }
-}
-
-
-/* ===== Mobile home layout (consolidated — replaces old v14–v20 patches) ===== */
-@media (max-width:900px){
-
-  .family-cover{
-    height:210px!important;
-    min-height:210px!important;
-    max-height:210px!important;
-    margin-bottom:4px!important;
-  }
-
-  .family-space-grid{
-    gap:6px!important;
-    margin:2px 0 0!important;
-  }
-
-  .main{
-    padding-bottom:45px!important;
-  }
-
-  .family-space-card{
-    min-height:0!important;
-    overflow:visible!important;
-    box-shadow:none!important;
-  }
-
-  .card-default-content{
-    min-height:auto!important;
-    padding:4px 6px 8px!important;
-    row-gap:2px!important;
-  }
-
-  .family-space-card h3{
-    margin:2px 0!important;
-    font-size:15px!important;
-  }
-
-  .family-space-card p{
-    font-size:10px!important;
-    line-height:1.08!important;
-    margin:0!important;
-  }
-
-  /* Card pastel backgrounds — resampled directly from each icon's own
-     source image (previous values were sampled from a phone screenshot,
-     which drifted from the true colour for celebrations/study) */
-  .memories-card{background:#b8d0f0!important;}
-  .trips-card{background:#fcd0e0!important;}
-  .celebrations-card{background:#ccb4f0!important;}
-  .study-card{background:#f8d8b0!important;}
-
-  /* Icons sized to sit nicely inside the card, not dominate it —
-     cover crops to fit so it works regardless of aspect ratio */
-  .card-local-image{
-    width:calc(100% - 24px)!important;
-    height:120px!important;
-    margin:10px auto 8px!important;
-    object-fit:cover!important;
-    object-position:center!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    border:none!important;
-    border-radius:14px!important;
-  }
-}
-
-
-/* ===== ChatGPT UI tuning ===== */
-@media (max-width:900px){
-.family-cover{height:220px!important;}
-.card-local-image{height:148px!important;}
-.family-space-card .card-local-image{margin-bottom:8px!important;}
-.family-space-grid{padding-bottom:28px!important;}
-.mobile-bottom-nav{
-  padding-top:6px!important;
-  padding-bottom:calc(6px + env(safe-area-inset-bottom))!important;
-}
-.gallery-grid .card-icon,
-.gallery-card .card-icon,
-.gallery-grid svg{
-  transform:scale(1.25)!important;
-}
-.gallery-grid{padding-bottom:28px!important;}
-}
