@@ -398,11 +398,13 @@ html,body{overflow-x:hidden}
     margin:0!important;
   }
 
-  /* Card pastel backgrounds, matched to each icon's own baked-in colour */
-  .memories-card{background:#dee9fc!important;}
-  .trips-card{background:#f8d2de!important;}
-  .celebrations-card{background:#c9b4ea!important;}
-  .study-card{background:#f6dcc0!important;}
+  /* Card pastel backgrounds — resampled directly from each icon's own
+     source image (previous values were sampled from a phone screenshot,
+     which drifted from the true colour for celebrations/study) */
+  .memories-card{background:#b8d0f0!important;}
+  .trips-card{background:#fcd0e0!important;}
+  .celebrations-card{background:#ccb4f0!important;}
+  .study-card{background:#f8d8b0!important;}
 
   /* Icons sized to sit nicely inside the card, not dominate it —
      cover crops to fit so it works regardless of aspect ratio */
