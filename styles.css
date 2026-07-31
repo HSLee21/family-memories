@@ -502,3 +502,21 @@ html,body{overflow-x:hidden}
   }
 
 }
+
+
+
+/* ===== Profile avatar circle fix ===== */
+.profile-large{
+  width:120px !important;
+  height:120px !important;
+  aspect-ratio:1 / 1 !important;
+  border-radius:50% !important;
+  overflow:hidden !important;
+}
+
+.profile-large img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  border-radius:50% !important;
+}
