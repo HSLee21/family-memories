@@ -590,7 +590,15 @@ async function loadMembers(){
     <div class="member-actions">${m.status!=="approved"?`<button class="primary approve-member" data-id="${m.id}">Approve</button>`:""}</div>
   </div>`).join("");
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
+  document.querySelectorAll(".reject-member").forEach(b=>b.onclick=()=>rejectMember(b.dataset.id));
 }
+
+async function rejectMember(id){
+  if(!confirm("Reject this member?")) return;
+  const {error}=await client.from("profiles").delete().eq("id",id);
+  if(error) toast(error.message); else {toast("Member rejected.");loadMembers();}
+}
+
 async function approveMember(id){
   const {error}=await client.from("profiles").update({status:"approved"}).eq("id",id);
   if(error) toast(error.message); else {toast("Member approved.");loadMembers()}
