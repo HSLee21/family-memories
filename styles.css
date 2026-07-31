@@ -131,7 +131,7 @@ html,body{overflow-x:hidden}
     padding:0 8px!important;
     overflow-y:auto!important; -webkit-overflow-scrolling:touch!important;
     /* reserved clearance above the fixed nav for every page */
-    padding-bottom:calc(86px + env(safe-area-inset-bottom))!important;
+    padding-bottom:calc(90px + env(safe-area-inset-bottom))!important;
     background:#f6f8fb!important;
   }
 
@@ -153,9 +153,9 @@ html,body{overflow-x:hidden}
   /* ---------- Home ---------- */
   .family-cover{
     flex:0 0 auto!important;
-    height:210px!important;
-    min-height:210px!important;
-    max-height:210px!important;
+    height:300px!important;
+    min-height:300px!important;
+    max-height:300px!important;
     border-radius:16px!important;
     margin:0 0 12px 0!important;
     position:relative!important;
@@ -174,16 +174,16 @@ html,body{overflow-x:hidden}
     display:grid!important; grid-template-columns:1fr 1fr!important;
     gap:8px!important; margin:0!important; align-content:stretch!important;
   }
-  .family-space-card{ border-radius:14px!important; min-height:0!important; padding:12px!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
-  .card-default-content{ min-height:92px!important; padding:0!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .family-space-card{ border-radius:14px!important; min-height:0!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
+  .card-default-content{ min-height:118px!important; padding:8px 8px 24px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
   .card-art{ font-size:28px!important; line-height:1!important; margin:0 0 2px!important; overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
-  .family-space-card h3{ font-size:14px!important; margin:1px 0!important; line-height:1.1!important; }
+  .family-space-card h3{ font-size:12px!important; margin:1px 0!important; line-height:1.1!important; }
   .family-space-card p{ font-size:9px!important; line-height:1.2!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
   .round-arrow{ width:18px!important; height:18px!important; right:6px!important; bottom:6px!important; font-size:10px!important; }
   
 
   /* ---------- Gallery hub (mediaHub) ---------- */
-  #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; margin-bottom:18px!important; }
+  #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; }
   #mediaHubPage .media-hub-grid{
     /* the one flexible element on Gallery: rows stretch to absorb
        leftover space instead of leaving a gap below the last row */
@@ -194,7 +194,7 @@ html,body{overflow-x:hidden}
   }
   #mediaHubPage .media-hub-card{ padding:12px 10px!important; border-radius:16px!important; gap:6px!important; font-size:13px!important; min-height:0!important; justify-content:center!important; }
   #mediaHubPage .media-hub-card.wide{ grid-column:1/-1!important; flex-direction:row!important; padding:16px!important; }
-  #mediaHubPage .media-hub-ico{ width:52px!important; height:52px!important; }
+  #mediaHubPage .media-hub-ico{ width:32px!important; height:32px!important; }
   .video-fs-btn{ top:6px!important; right:6px!important; bottom:auto!important; }
   .video-play-btn{ width:30px!important; height:30px!important; }
   .video-play-btn svg{ width:14px!important; height:14px!important; }
@@ -236,7 +236,7 @@ html,body{overflow-x:hidden}
     position:fixed!important; left:50%!important; transform:translateX(-50%)!important;
     bottom:0!important;
     width:100%!important; max-width:480px!important;
-    height:64px!important; padding:0!important;
+    height:60px!important; padding:0!important;
     border-radius:20px 20px 0 0!important;
     background:#fff!important; border:1px solid #e8edf4!important; border-bottom:0!important;
     box-shadow:0 -2px 12px rgba(0,0,0,.06)!important;
@@ -244,7 +244,7 @@ html,body{overflow-x:hidden}
     align-items:center!important; justify-items:center!important;
     z-index:100!important;
   }
-  .mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:5px!important; background:none!important; border:0!important; padding:4px 0 6px!important; margin:0!important; color:#1670f8!important; width:100%!important; height:100%!important; }
+  .mobile-nav-item{ display:flex!important; flex-direction:column!important; align-items:center!important; justify-content:center!important; gap:5px!important; background:none!important; border:0!important; padding:5px 0 9px!important; margin:0!important; color:#1670f8!important; width:100%!important; height:100%!important; }
   .mobile-nav-item .nav-ico{ width:26px!important; height:26px!important; line-height:1!important; display:flex!important; align-items:center!important; justify-content:center!important; color:#1670f8!important; }
   .mobile-nav-item .nav-ico svg{ width:100%!important; height:100%!important; display:block!important; }
   .mobile-nav-item small{ font-size:12px!important; font-weight:700!important; color:#1670f8!important; line-height:1!important; }
@@ -254,3 +254,170 @@ html,body{overflow-x:hidden}
 
 
 
+/* ===== Step 3 Home Image Styling ===== */
+
+.cover-local-image{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.family-cover{
+  min-height:430px;
+}
+
+.card-default-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:center;
+  padding:18px 16px 18px;
+}
+
+.card-local-image{
+  display:block;
+  width:100%;
+  height:88px;
+  aspect-ratio:500/333;
+  object-fit:cover;
+  object-position:center;
+  border-radius:16px;
+  margin:0 0 8px;
+}
+
+.family-space-card{
+  min-height:210px;
+  cursor:pointer;
+}
+
+.card-default-content h3{
+  margin:4px 0;
+}
+
+.card-default-content p{
+  margin:0;
+}
+
+.round-arrow{
+  display:none!important;
+}
+
+@media (max-width:900px){
+
+  .family-cover{
+    height:340px!important;
+    min-height:340px!important;
+    max-height:340px!important;
+  }
+
+  .family-space-grid{
+    gap:6px!important;
+    margin-top:4px!important;
+  }
+
+  .family-space-card{
+    min-height:150px!important;
+  }
+
+  .card-default-content{
+    min-height:150px!important;
+    padding:6px 6px 8px!important;
+  }
+
+  .card-local-image{
+    width:100%!important;
+    height:72px!important;
+    margin:0 0 6px!important;
+    border-radius:12px!important;
+    object-fit:cover!important;
+  }
+
+  .card-default-content h3{
+    font-size:13px!important;
+    margin:2px 0!important;
+  }
+
+  .card-default-content p{
+    font-size:9px!important;
+    line-height:1.15!important;
+  }
+
+
+
+  .card-default-content h3{
+    font-size:15px!important;
+  }
+
+  .card-default-content p{
+    font-size:10px!important;
+    line-height:1.2!important;
+  }
+}
+
+
+/* ===== Mobile home layout (consolidated — replaces old v14–v20 patches) ===== */
+@media (max-width:900px){
+
+  .family-cover{
+    height:210px!important;
+    min-height:210px!important;
+    max-height:210px!important;
+    margin-bottom:4px!important;
+  }
+
+  .family-space-grid{
+    gap:6px!important;
+    margin:2px 0 0!important;
+  }
+
+  .main{
+    padding-bottom:45px!important;
+  }
+
+  .family-space-card{
+    min-height:0!important;
+    overflow:visible!important;
+    box-shadow:none!important;
+  }
+
+  .card-default-content{
+    min-height:auto!important;
+    padding:4px 6px 8px!important;
+    row-gap:2px!important;
+  }
+
+  .family-space-card h3{
+    margin:2px 0!important;
+    font-size:15px!important;
+  }
+
+  .family-space-card p{
+    font-size:10px!important;
+    line-height:1.08!important;
+    margin:0!important;
+  }
+
+  /* Card pastel backgrounds — resampled directly from each icon's own
+     source image (previous values were sampled from a phone screenshot,
+     which drifted from the true colour for celebrations/study) */
+  .memories-card{background:#b8d0f0!important;}
+  .trips-card{background:#fcd0e0!important;}
+  .celebrations-card{background:#ccb4f0!important;}
+  .study-card{background:#f8d8b0!important;}
+
+  /* Icons sized to sit nicely inside the card, not dominate it —
+     cover crops to fit so it works regardless of aspect ratio */
+  .card-local-image{
+    width:calc(100% - 24px)!important;
+    height:120px!important;
+    margin:10px auto 8px!important;
+    object-fit:cover!important;
+    object-position:center!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    border:none!important;
+    border-radius:14px!important;
+  }
+}
