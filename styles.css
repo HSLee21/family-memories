@@ -481,3 +481,24 @@ html,body{overflow-x:hidden}
     padding-bottom:6px !important;
   }
 }
+
+
+/* ===== Final home card clipping fix ===== */
+@media (max-width:900px){
+
+  .family-space-card{
+    min-height:170px !important;
+  }
+
+  .card-default-content{
+    min-height:168px !important;
+    padding:8px 6px 12px !important;
+  }
+
+  .card-default-content p{
+    margin-bottom:0 !important;
+    line-height:1.28 !important;
+    padding-bottom:8px !important;
+  }
+
+}
