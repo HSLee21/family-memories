@@ -361,9 +361,9 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
 
   .family-cover{
-    height:210px!important;
-    min-height:210px!important;
-    max-height:210px!important;
+    height:225px!important;
+    min-height:225px!important;
+    max-height:225px!important;
     margin-bottom:4px!important;
   }
 
@@ -373,7 +373,7 @@ html,body{overflow-x:hidden}
   }
 
   .main{
-    padding-bottom:45px!important;
+    padding-bottom:60px!important;
   }
 
   .family-space-card{
@@ -411,7 +411,7 @@ html,body{overflow-x:hidden}
      cover crops to fit so it works regardless of aspect ratio */
   .card-local-image{
     width:calc(100% - 24px)!important;
-    height:120px!important;
+    height:100px!important;
     margin:10px auto 8px!important;
     object-fit:cover!important;
     object-position:center!important;
