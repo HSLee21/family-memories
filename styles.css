@@ -131,7 +131,7 @@ html,body{overflow-x:hidden}
     padding:0 8px!important;
     overflow-y:auto!important; -webkit-overflow-scrolling:touch!important;
     /* reserved clearance above the fixed nav for every page */
-    padding-bottom:calc(90px + env(safe-area-inset-bottom))!important;
+    padding-bottom:calc(86px + env(safe-area-inset-bottom))!important;
     background:#f6f8fb!important;
   }
 
@@ -153,9 +153,9 @@ html,body{overflow-x:hidden}
   /* ---------- Home ---------- */
   .family-cover{
     flex:0 0 auto!important;
-    height:220px!important;
-    min-height:220px!important;
-    max-height:220px!important;
+    height:210px!important;
+    min-height:210px!important;
+    max-height:210px!important;
     border-radius:16px!important;
     margin:0 0 12px 0!important;
     position:relative!important;
@@ -174,8 +174,8 @@ html,body{overflow-x:hidden}
     display:grid!important; grid-template-columns:1fr 1fr!important;
     gap:8px!important; margin:0!important; align-content:stretch!important;
   }
-  .family-space-card{ border-radius:14px!important; min-height:0!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
-  .card-default-content{ min-height:104px!important; padding:8px 8px 24px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .family-space-card{ border-radius:14px!important; min-height:0!important; padding:12px!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
+  .card-default-content{ min-height:92px!important; padding:0!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
   .card-art{ font-size:28px!important; line-height:1!important; margin:0 0 2px!important; overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
   .family-space-card h3{ font-size:14px!important; margin:1px 0!important; line-height:1.1!important; }
   .family-space-card p{ font-size:9px!important; line-height:1.2!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
@@ -183,7 +183,7 @@ html,body{overflow-x:hidden}
   
 
   /* ---------- Gallery hub (mediaHub) ---------- */
-  #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; }
+  #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; margin-bottom:18px!important; }
   #mediaHubPage .media-hub-grid{
     /* the one flexible element on Gallery: rows stretch to absorb
        leftover space instead of leaving a gap below the last row */
