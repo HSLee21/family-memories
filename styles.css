@@ -421,3 +421,22 @@ html,body{overflow-x:hidden}
     border-radius:14px!important;
   }
 }
+
+
+/* ===== ChatGPT UI tuning ===== */
+@media (max-width:900px){
+.family-cover{height:220px!important;}
+.card-local-image{height:148px!important;}
+.family-space-card .card-local-image{margin-bottom:8px!important;}
+.family-space-grid{padding-bottom:28px!important;}
+.mobile-bottom-nav{
+  padding-top:6px!important;
+  padding-bottom:calc(6px + env(safe-area-inset-bottom))!important;
+}
+.gallery-grid .card-icon,
+.gallery-card .card-icon,
+.gallery-grid svg{
+  transform:scale(1.25)!important;
+}
+.gallery-grid{padding-bottom:28px!important;}
+}
