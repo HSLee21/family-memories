@@ -357,184 +357,278 @@ html,body{overflow-x:hidden}
 }
 
 
-/* ===== Mobile home layout (consolidated — replaces old v14–v20 patches) ===== */
+/* ===== Home layout tuning v14 ===== */
 @media (max-width:900px){
 
   .family-cover{
-    height:225px!important;
-    min-height:225px!important;
-    max-height:225px!important;
+    height:255px!important;
+    min-height:255px!important;
+    max-height:255px!important;
+    margin-bottom:8px!important;
+  }
+
+  .family-space-grid{
+    gap:6px!important;
+    margin-top:0!important;
+  }
+
+  .family-space-card{
+    min-height:170px!important;
+  }
+
+  .card-default-content{
+    min-height:170px!important;
+    padding:6px!important;
+  }
+
+  .card-local-image{
+    width:100%!important;
+    height:96px!important;
+    margin:0 0 6px!important;
+    border-radius:12px!important;
+  }
+
+  .card-default-content h3{
+    font-size:14px!important;
+    margin:2px 0!important;
+    line-height:1.1!important;
+  }
+
+  .card-default-content p{
+    font-size:10px!important;
+    line-height:1.15!important;
+  }
+}
+
+
+/* ===== Home layout tuning v15 ===== */
+@media (max-width:900px){
+
+  /* Smaller hero */
+  .family-cover{
+    height:220px!important;
+    min-height:220px!important;
+    max-height:220px!important;
     margin-bottom:4px!important;
   }
 
+  /* Bring cards closer */
   .family-space-grid{
     gap:6px!important;
     margin:2px 0 0!important;
   }
 
+  /* Remove excessive bottom gap */
   .main{
-    padding-bottom:60px!important;
+    padding-bottom:64px!important;
   }
 
+  /* Let content size naturally */
   .family-space-card{
     min-height:0!important;
-    overflow:visible!important;
-    box-shadow:none!important;
   }
 
   .card-default-content{
     min-height:auto!important;
-    padding:4px 6px 8px!important;
-    row-gap:2px!important;
+    padding:4px 4px 6px!important;
+  }
+
+  /* Bigger photos */
+  .card-local-image{
+    width:100%!important;
+    height:108px!important;
+    margin:0 0 4px!important;
+    border-radius:12px!important;
+  }
+
+  .card-default-content h3{
+    font-size:14px!important;
+    margin:1px 0!important;
+  }
+
+  .card-default-content p{
+    font-size:10px!important;
+    line-height:1.1!important;
+    margin:0!important;
+  }
+}
+
+
+/* ===== Home layout tuning v16 ===== */
+@media (max-width:900px){
+
+  /* Reduce empty gap above bottom nav */
+  .main{
+    padding-bottom:48px !important;
+  }
+
+  /* Slightly larger photos with breathing room */
+  .card-local-image{
+    height:118px !important;
+    width:calc(100% - 16px) !important;
+    margin:8px auto 6px !important;
+    border-radius:14px !important;
+  }
+
+  /* Compact card content */
+  .card-default-content{
+    padding:2px 6px 6px !important;
+    row-gap:2px !important;
+  }
+
+  .family-space-card{
+    overflow:visible !important;
   }
 
   .family-space-card h3{
-    margin:2px 0!important;
-    font-size:15px!important;
+    margin:2px 0 !important;
+    font-size:15px !important;
   }
 
   .family-space-card p{
-    font-size:10px!important;
-    line-height:1.08!important;
-    margin:0!important;
+    font-size:10px !important;
+    line-height:1.08 !important;
+    margin:0 !important;
   }
 
-  /* Card pastel backgrounds — resampled directly from each icon's own
-     source image (previous values were sampled from a phone screenshot,
-     which drifted from the true colour for celebrations/study) */
-  .memories-card{background:#b8d0f0!important;}
-  .trips-card{background:#fcd0e0!important;}
-  .celebrations-card{background:#ccb4f0!important;}
-  .study-card{background:#f8d8b0!important;}
-
-  /* Icons sized to sit nicely inside the card, not dominate it —
-     cover crops to fit so it works regardless of aspect ratio */
-  .card-local-image{
-    width:calc(100% - 24px)!important;
-    height:100px!important;
-    margin:10px auto 8px!important;
-    object-fit:cover!important;
-    object-position:center!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    border:none!important;
-    border-radius:14px!important;
-  }
-}
-
-
-/* ===== ChatGPT tweak ===== */
-@media (max-width:900px){
-  /* Home */
+  /* Keep hero compact */
   .family-cover{
-    height:220px!important;
-    min-height:220px!important;
-    max-height:220px!important;
-    margin-bottom:8px!important;
+    height:210px !important;
+    min-height:210px !important;
+    max-height:210px !important;
   }
-  .family-space-grid{
-    gap:12px!important;
-    margin-top:0!important;
+}
+
+
+/* ===== Home card color refinement v17 ===== */
+@media (max-width:900px){
+
+  /* Match mockup pastel backgrounds */
+  .memories-card{
+    background:#dfeeff !important;
   }
-  .family-space-card{
-    min-height:180px!important;
+
+  .trips-card{
+    background:#ffe4ee !important;
   }
-  .card-default-content{
-    padding:8px 8px 10px!important;
+
+  .celebrations-card{
+    background:#efe2ff !important;
   }
+
+  .study-card{
+    background:#fff2d9 !important;
+  }
+
+  /* Remove white photo frame */
   .card-local-image{
-    height:96px!important;
-    width:calc(100% - 18px)!important;
-    margin:4px auto 6px!important;
+    width:calc(100% - 12px) !important;
+    height:122px !important;
+    margin:6px auto 8px !important;
+    border-radius:14px !important;
+    background:transparent !important;
+    box-shadow:none !important;
   }
 
-  /* Gallery */
-  #mediaHubPage .section-hero{
-    margin-bottom:18px!important;
+  /* Card spacing */
+  .card-default-content{
+    padding:4px 6px 8px !important;
   }
-  #mediaHubPage .media-hub-grid{
-    gap:12px!important;
-  }
-  #mediaHubPage .media-hub-ico{
-    width:56px!important;
-    height:56px!important;
-  }
+
+  /* Match bottom spacing */
   .main{
-    padding-bottom:80px!important; /* ~20px above 60px nav */
+    padding-bottom:45px !important;
   }
 }
 
 
-/* ===== Home card text clipping fix ===== */
-@media (max-width:900px){
-  .family-space-card{
-    min-height:158px !important;
-  }
 
-  .card-default-content{
-    min-height:158px !important;
-    padding:8px 6px 10px !important;
-  }
-
-  .card-default-content p{
-    line-height:1.25 !important;
-    padding-bottom:6px !important;
-  }
-}
-
-
-/* ===== Final home card clipping fix ===== */
+/* ===== Mockup refinement v18 ===== */
 @media (max-width:900px){
 
-  .family-space-card{
-    height:155px !important;
-    min-height:155px !important;
-    max-height:155px !important;
+  /* Flat pastel cards matching mockup */
+  .memories-card{background:#d9ecff!important;}
+  .trips-card{background:#ffe3ec!important;}
+  .celebrations-card{background:#eedcff!important;}
+  .study-card{background:#fff0cf!important;}
+
+  /* Icons / image frame follow card colour */
+  .memories-card .card-local-image{
+    background:#d9ecff!important;
+    transform:scale(.88)!important;
+    object-fit:contain!important;
+    padding:6px!important;
+  }
+  .trips-card .card-local-image{
+    background:#ffe3ec!important;
+    padding:4px!important;
+  }
+  .celebrations-card .card-local-image{
+    background:#eedcff!important;
+    padding:4px!important;
+  }
+  .study-card .card-local-image{
+    background:#fff0cf!important;
+    padding:4px!important;
   }
 
-  .card-default-content{
-    min-height:auto !important;
-    padding:8px 6px 12px !important;
+  .card-local-image{
+    border-radius:18px!important;
+    box-shadow:none!important;
   }
 
-  .card-default-content p{
-    margin-bottom:0 !important;
-    line-height:1.28 !important;
-    padding-bottom:8px !important;
+  .main{
+    padding-bottom:45px!important;
+  }
+}
+
+
+
+/* ===== Mockup colour match v19 ===== */
+@media (max-width:900px){
+
+  /* Keep bottom spacing */
+  .main{
+    padding-bottom:45px!important;
   }
 
-}
+  /* Flat card colours — matched to each icon image's own baked-in background */
+  .memories-card{background:#dee9fc!important;}
+  .trips-card{background:#f8d2de!important;}
+  .celebrations-card{background:#c9b4ea!important;}
+  .study-card{background:#f6dcc0!important;}
 
+  /* Image background matches card colour, edges feathered so any
+     residual tone difference (from the image's own internal gradient)
+     fades out instead of showing as a hard seam */
+  .memories-card .card-local-image{
+    background:#dee9fc!important;
+    transform:scale(.82)!important;
+    padding:0!important;
+    object-fit:contain!important;
+    box-shadow:inset 0 0 26px 8px #dee9fc!important;
+  }
 
+  .trips-card .card-local-image{
+    background:#f8d2de!important;
+    padding:0!important;
+    box-shadow:inset 0 0 26px 8px #f8d2de!important;
+  }
 
-/* ===== Profile avatar circle fix ===== */
-.profile-large{
-  width:120px !important;
-  height:120px !important;
-  aspect-ratio:1 / 1 !important;
-  border-radius:50% !important;
-  overflow:hidden !important;
-}
+  .celebrations-card .card-local-image{
+    background:#c9b4ea!important;
+    padding:0!important;
+    box-shadow:inset 0 0 26px 8px #c9b4ea!important;
+  }
 
-.profile-large img{
-  width:100% !important;
-  height:100% !important;
-  object-fit:cover !important;
-  border-radius:50% !important;
-}
+  .study-card .card-local-image{
+    background:#f6dcc0!important;
+    padding:0!important;
+    box-shadow:inset 0 0 26px 8px #f6dcc0!important;
+  }
 
-
-
-
-/* Android only */
-body.android .family-cover{
-    height:205px !important;
-    min-height:205px !important;
-    max-height:205px !important;
-}
-
-body.android .family-space-card{
-    height:165px !important;
-    min-height:165px !important;
-    max-height:165px !important;
+  .card-local-image{
+    border:none!important;
+    border-radius:18px!important;
+  }
 }
