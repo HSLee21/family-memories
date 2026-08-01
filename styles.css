@@ -443,7 +443,7 @@ html,body{overflow-x:hidden}
     padding:8px 8px 10px!important;
   }
   .card-local-image{
-    height:88px!important;
+    height:82px!important;
     width:calc(100% - 18px)!important;
     margin:4px auto 6px!important;
   }
