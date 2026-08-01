@@ -443,7 +443,7 @@ html,body{overflow-x:hidden}
     padding:8px 8px 10px!important;
   }
   .card-local-image{
-    height:95px!important;
+    height:96px!important;
     width:calc(100% - 18px)!important;
     margin:4px auto 6px!important;
   }
@@ -487,7 +487,7 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
 
   .family-space-card{
-    min-height:170px !important;
+    min-height:160px !important;
   }
 
   .card-default-content{
