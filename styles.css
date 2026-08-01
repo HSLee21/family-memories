@@ -520,3 +520,11 @@ html,body{overflow-x:hidden}
   object-fit:cover !important;
   border-radius:50% !important;
 }
+
+
+/* Android only - Home hero height */
+body.android .family-cover{
+    height:200px !important;
+    min-height:200px !important;
+    max-height:200px !important;
+}
