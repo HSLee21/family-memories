@@ -580,17 +580,51 @@ async function compressImageIfNeeded(file){
 
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 
+const AVATAR_COLORS=["#dbeafe:#2563eb","#fde2e7:#db2777","#ede9fe:#7c3aed","#dcfce7:#16a34a","#fef3c7:#d97706","#e0f2fe:#0284c7"];
+function initialsOf(name,email){
+  const src=(name||"").trim()||(email||"").trim();
+  if(!src) return "?";
+  const parts=src.split(/\s+/).filter(Boolean);
+  if(parts.length>=2) return (parts[0][0]+parts[1][0]).toUpperCase();
+  return src.slice(0,2).toUpperCase();
+}
+function avatarColorFor(id){
+  let hash=0;
+  for(const ch of String(id||"")) hash=(hash*31+ch.charCodeAt(0))>>>0;
+  return AVATAR_COLORS[hash%AVATAR_COLORS.length].split(":");
+}
+
 async function loadMembers(){
   if(currentProfile?.role!=="admin") return;
   $("membersList").innerHTML="Loading…";
   const {data,error}=await client.from("profiles").select("id,name,email,role,status,created_at").order("created_at",{ascending:false});
   if(error){$("membersList").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
-  $("membersList").innerHTML=data.map(m=>`<div class="member-row">
-    <div><strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong><div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"family")} · ${escapeHtml(m.status||"pending")}</div></div>
-    <div class="member-actions">${m.status!=="approved"?`<button class="primary approve-member" data-id="${m.id}">Approve</button>`:""}</div>
-  </div>`).join("");
+
+  $("membersCount").textContent=data.length;
+
+  $("membersList").innerHTML=data.map(m=>{
+    const [bg,fg]=avatarColorFor(m.id);
+    return `<div class="admin-member-row">
+      <span class="admin-row-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>
+      <div class="admin-row-body">
+        <strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong>
+        <div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"family")}${m.status!=="approved"?` · ${escapeHtml(m.status||"pending")}`:""}</div>
+      </div>
+      ${m.status!=="approved"?`<button class="admin-approve-btn approve-member" data-id="${m.id}">Approve</button>`:`<span class="admin-row-chevron">›</span>`}
+    </div>`;
+  }).join("");
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
-  document.querySelectorAll(".reject-member").forEach(b=>b.onclick=()=>rejectMember(b.dataset.id));
+
+  // Family avatar header, built from real approved members (not fake
+  // Dad/Mom/child placeholders - this app doesn't store relationships).
+  const approved=data.filter(m=>m.status==="approved");
+  $("adminTreeAvatars").innerHTML=(approved.length?approved:data).map(m=>{
+    const [bg,fg]=avatarColorFor(m.id);
+    return `<div class="admin-tree-member">
+      <span class="admin-tree-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>
+      <span class="admin-tree-name">${escapeHtml(m.name||m.email||"Member")}</span>
+    </div>`;
+  }).join("");
 }
 
 async function rejectMember(id){
@@ -621,11 +655,22 @@ async function loadInvites(){
   $("invitesList").innerHTML="Loading…";
   const {data,error}=await client.from("invites").select("email,role,created_at").order("created_at",{ascending:false});
   if(error){$("invitesList").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
+
+  $("invitesCount").textContent=data.length;
+
   if(!data.length){$("invitesList").innerHTML=`<div class="empty">No pending invites.</div>`;return}
-  $("invitesList").innerHTML=data.map(inv=>`<div class="member-row">
-    <div><strong>${escapeHtml(inv.email)}</strong><div class="small muted">Invited as ${escapeHtml(inv.role)} · awaiting sign-up</div></div>
-    <div class="member-actions"><button class="secondary cancel-invite" data-email="${escapeHtml(inv.email)}">Cancel</button></div>
-  </div>`).join("");
+  $("invitesList").innerHTML=data.map(inv=>{
+    const invitedOn=inv.created_at?new Date(inv.created_at).toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}):"";
+    return `<div class="admin-invite-row-item">
+      <span class="admin-row-avatar admin-row-avatar-invite">✉️</span>
+      <div class="admin-row-body">
+        <strong>${escapeHtml(inv.email)}</strong>
+        <div class="small muted">Invited as ${escapeHtml(inv.role)} · awaiting sign-up</div>
+        ${invitedOn?`<div class="small muted admin-invite-date">📅 Invited on ${invitedOn}</div>`:""}
+      </div>
+      <button class="admin-cancel-btn cancel-invite" data-email="${escapeHtml(inv.email)}">Cancel Invite</button>
+    </div>`;
+  }).join("");
   document.querySelectorAll(".cancel-invite").forEach(b=>b.onclick=()=>cancelInvite(b.dataset.email));
 }
 

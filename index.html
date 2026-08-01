@@ -144,7 +144,36 @@
 </section>
 <section class="page hidden utility-page" id="searchPage"><h1>Search</h1><p class="muted">Find albums, trips, celebrations and study materials.</p><div class="search-box">🔍 <input id="globalSearch" placeholder="Search your family space..."/></div><div class="search-results" id="searchResults"><div class="empty">Start typing to search.</div></div></section>
 <section class="page hidden utility-page" id="profilePage"><div class="profile-panel"><button class="profile-large" id="profileEditPhoto"><img alt="Profile" class="hidden" id="profileLargePhoto"/><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p class="muted" id="profileDisplayEmail"></p><div class="profile-menu"><button class="hidden" id="familyAdminShortcut">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
-<section class="page hidden utility-page" id="adminPage"><div class="content-heading"><div><h1>Family Admin</h1><p class="muted">Invite new family members and approve sign-ups.</p></div></div><form class="stack admin-invite-form" id="addMemberForm"><input id="newMemberEmail" placeholder="New member's email address" required="" type="email"/><select id="newMemberRole"><option value="family">Member</option><option value="admin">Admin</option></select><button class="primary" type="submit">Add Member</button></form><h3 class="admin-subheading small muted">Pending invites</h3><div class="member-list" id="invitesList"></div><h3 class="admin-subheading small muted">Members</h3><div class="member-list" id="membersList"></div></section>
+<section class="page hidden utility-page admin-page" id="adminPage">
+<div class="admin-tree-card">
+  <h1 class="admin-tree-title">Our Family <span class="admin-tree-heart">♥</span></h1>
+  <p class="admin-tree-tagline">Together, Always</p>
+  <div class="admin-tree-avatars" id="adminTreeAvatars"></div>
+</div>
+
+<div class="admin-invite-card">
+  <h2 class="admin-invite-heading"><span class="admin-invite-icon">＋👤</span> Invite Family Member</h2>
+  <form class="admin-invite-form" id="addMemberForm">
+    <div class="admin-invite-fields">
+      <div class="admin-field admin-field-email"><span class="admin-field-icon">✉️</span><input id="newMemberEmail" placeholder="Enter email address" required="" type="email"/></div>
+      <div class="admin-field admin-field-role"><span class="admin-field-icon">🛡️</span><select id="newMemberRole"><option value="family">Member</option><option value="admin">Admin</option></select></div>
+    </div>
+    <button class="admin-send-btn" type="submit"><span class="admin-send-icon">➤</span> Send Invitation</button>
+    <p class="small muted admin-invite-hint">Add them here, then share the app link so they can sign in.</p>
+  </form>
+</div>
+
+<div class="admin-lists-grid">
+  <div class="admin-list-card">
+    <h3 class="admin-list-heading">Pending Invitations <span class="admin-count-badge" id="invitesCount">0</span></h3>
+    <div id="invitesList"></div>
+  </div>
+  <div class="admin-list-card">
+    <h3 class="admin-list-heading">Family Members <span class="admin-count-badge admin-count-badge-green" id="membersCount">0</span></h3>
+    <div id="membersList"></div>
+  </div>
+</div>
+</section>
 </main>
 <div class="media-overlay hidden" id="slideshowOverlay">
 <div class="slideshow-stage">
