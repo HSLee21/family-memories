@@ -445,7 +445,7 @@ html,body{overflow-x:hidden}
   .card-local-image{
     height:88px!important;
     width:calc(100% - 18px)!important;
-    margin:8px auto 6px!important;
+    margin:4px auto 6px!important;
   }
 
   /* Gallery */
