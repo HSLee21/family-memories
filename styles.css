@@ -532,7 +532,7 @@ body.android .family-cover{
 }
 
 body.android .family-space-card{
-    height:155px !important;
-    min-height:155px !important;
-    max-height:155px !important;
+    height:165px !important;
+    min-height:165px !important;
+    max-height:165px !important;
 }
