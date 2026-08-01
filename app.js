@@ -615,17 +615,66 @@ async function loadMembers(){
   }).join("");
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
 
-  // Family avatar header, built from real approved members (not fake
-  // Dad/Mom/child placeholders - this app doesn't store relationships).
-  const approved=data.filter(m=>m.status==="approved");
-  $("adminTreeAvatars").innerHTML=(approved.length?approved:data).map(m=>{
-    const [bg,fg]=avatarColorFor(m.id);
-    return `<div class="admin-tree-member">
-      <span class="admin-tree-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>
-      <span class="admin-tree-name">${escapeHtml(m.name||m.email||"Member")}</span>
-    </div>`;
-  }).join("");
+  // Family avatar header is a fixed Dad/Mum/Daughter/Daughter layout with
+  // real uploaded photos (not tied to actual invited accounts - this app
+  // has no parent/child relationship data, these are just 4 display slots
+  // the admin can put real family photos into).
+  loadFamilyTree();
 }
+
+const FAMILY_TREE_ORDER=["dad","mom","daughter1","daughter2"];
+const familyTreeStoragePath=(slotKey)=>`${currentUser.id}/app-settings/family-tree-${slotKey}`;
+
+function setFamilyTreeTitle(){
+  const name=(currentProfile?.name||"").trim();
+  const surname=name.split(/\s+/).pop();
+  $("adminTreeTitle").innerHTML=`${surname?escapeHtml(surname)+"'s":"Our"} Family <span class="admin-tree-heart">♥</span>`;
+}
+
+async function loadFamilyTree(){
+  setFamilyTreeTitle();
+  const isAdmin=currentProfile?.role==="admin";
+  const {data,error}=await client.from("family_tree_slots").select("slot_key,label,photo_path");
+  if(error){ $("adminTreeAvatars").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`; return; }
+  const bySlot=Object.fromEntries(data.map(d=>[d.slot_key,d]));
+
+  const cells=await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
+    const slot=bySlot[key]||{label:key,photo_path:null};
+    let avatarHtml=`<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
+    if(slot.photo_path){
+      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
+      if(signed?.signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}"/>`;
+    }
+    return `<div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${key}">
+      <div class="admin-tree-avatar-wrap">${avatarHtml}${isAdmin?'<span class="admin-tree-edit-badge">📷</span>':""}</div>
+      <span class="admin-tree-name">${escapeHtml(slot.label)}</span>
+    </div>`;
+  }));
+  $("adminTreeAvatars").innerHTML=cells.join("");
+
+  if(isAdmin){
+    document.querySelectorAll(".admin-tree-editable").forEach(el=>{
+      el.onclick=()=>{
+        $("familyTreePhotoInput").dataset.slot=el.dataset.slot;
+        $("familyTreePhotoInput").click();
+      };
+    });
+  }
+}
+
+if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
+  const file=e.target.files[0];
+  const slotKey=e.target.dataset.slot;
+  e.target.value="";
+  if(!file||!slotKey) return;
+  const path=familyTreeStoragePath(slotKey);
+  const {error:upErr}=await client.storage.from(cfg.STORAGE_BUCKET).upload(path,file,{upsert:true,contentType:file.type});
+  if(upErr) return toast(upErr.message);
+  const {error:dbErr}=await client.from("family_tree_slots").update({photo_path:path,updated_at:new Date().toISOString()}).eq("slot_key",slotKey);
+  if(dbErr) return toast(dbErr.message);
+  toast("Photo updated.");
+  loadFamilyTree();
+};
 
 async function rejectMember(id){
   if(!confirm("Reject this member?")) return;
