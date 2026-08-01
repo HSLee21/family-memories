@@ -491,7 +491,7 @@ html,body{overflow-x:hidden}
   }
 
   .card-default-content{
-    min-height:168px !important;
+    min-height:auto !important;
     padding:8px 6px 12px !important;
   }
 
