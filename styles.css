@@ -427,9 +427,9 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
   /* Home */
   .family-cover{
-    height:220px!important;
-    min-height:220px!important;
-    max-height:220px!important;
+    height:215px!important;
+    min-height:215px!important;
+    max-height:215px!important;
     margin-bottom:8px!important;
   }
   .family-space-grid{
@@ -443,7 +443,7 @@ html,body{overflow-x:hidden}
     padding:8px 8px 10px!important;
   }
   .card-local-image{
-    height:93px!important;
+    height:95px!important;
     width:calc(100% - 18px)!important;
     margin:4px auto 6px!important;
   }
