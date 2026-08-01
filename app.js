@@ -167,7 +167,7 @@ function navigate(page){
   $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
-  if(page==="admin") loadMembers();
+  if(page==="admin"){ loadMembers(); loadInvites(); }
   if(page==="home") loadHomeExperience();
   if(page==="profile") loadProfilePage();
 }
@@ -586,7 +586,7 @@ async function loadMembers(){
   const {data,error}=await client.from("profiles").select("id,name,email,role,status,created_at").order("created_at",{ascending:false});
   if(error){$("membersList").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
   $("membersList").innerHTML=data.map(m=>`<div class="member-row">
-    <div><strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong><div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"member")} · ${escapeHtml(m.status||"pending")}</div></div>
+    <div><strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong><div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"family")} · ${escapeHtml(m.status||"pending")}</div></div>
     <div class="member-actions">${m.status!=="approved"?`<button class="primary approve-member" data-id="${m.id}">Approve</button>`:""}</div>
   </div>`).join("");
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
@@ -602,6 +602,37 @@ async function rejectMember(id){
 async function approveMember(id){
   const {error}=await client.from("profiles").update({status:"approved"}).eq("id",id);
   if(error) toast(error.message); else {toast("Member approved.");loadMembers()}
+}
+
+if($("addMemberForm")) $("addMemberForm").onsubmit=async e=>{
+  e.preventDefault();
+  const email=$("newMemberEmail").value.trim().toLowerCase();
+  const role=$("newMemberRole").value;
+  if(!email) return;
+  const {error}=await client.from("invites").insert({email,role,invited_by:currentUser.id});
+  if(error) return toast(error.message);
+  toast(`Invite added for ${email}. Share the app link with them.`);
+  $("addMemberForm").reset();
+  loadInvites();
+};
+
+async function loadInvites(){
+  if(currentProfile?.role!=="admin") return;
+  $("invitesList").innerHTML="Loading…";
+  const {data,error}=await client.from("invites").select("email,role,created_at").order("created_at",{ascending:false});
+  if(error){$("invitesList").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
+  if(!data.length){$("invitesList").innerHTML=`<div class="empty">No pending invites.</div>`;return}
+  $("invitesList").innerHTML=data.map(inv=>`<div class="member-row">
+    <div><strong>${escapeHtml(inv.email)}</strong><div class="small muted">Invited as ${escapeHtml(inv.role)} · awaiting sign-up</div></div>
+    <div class="member-actions"><button class="secondary cancel-invite" data-email="${escapeHtml(inv.email)}">Cancel</button></div>
+  </div>`).join("");
+  document.querySelectorAll(".cancel-invite").forEach(b=>b.onclick=()=>cancelInvite(b.dataset.email));
+}
+
+async function cancelInvite(email){
+  if(!confirm(`Cancel invite for ${email}?`)) return;
+  const {error}=await client.from("invites").delete().eq("email",email);
+  if(error) toast(error.message); else {toast("Invite cancelled.");loadInvites();}
 }
 
 
