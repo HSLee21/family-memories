@@ -487,7 +487,9 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
 
   .family-space-card{
-    min-height:140px !important;
+    height:155px !important;
+    min-height:155px !important;
+    max-height:155px !important;
   }
 
   .card-default-content{
