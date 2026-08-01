@@ -528,3 +528,23 @@ body.android .family-cover{
     min-height:200px !important;
     max-height:200px !important;
 }
+
+
+/* Android only - shorter Home cards */
+body.android .family-space-card{
+    min-height:140px !important;
+}
+body.android .card-default-content{
+    min-height:140px !important;
+    padding:6px 6px 6px !important;
+}
+body.android .card-local-image{
+    height:66px !important;
+}
+body.android .card-default-content h3{
+    font-size:12px !important;
+}
+body.android .card-default-content p{
+    font-size:8.5px !important;
+    line-height:1.15 !important;
+}
