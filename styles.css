@@ -522,15 +522,15 @@ html,body{overflow-x:hidden}
 }
 
 
-/* Android only - Home hero height */
+
+
+/* Android only */
 body.android .family-cover{
     height:200px !important;
     min-height:200px !important;
     max-height:200px !important;
 }
 
-
-/* Android only - shorter Home cards */
 body.android .family-space-card{
     min-height:140px !important;
 }
