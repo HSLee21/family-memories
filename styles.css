@@ -526,9 +526,9 @@ html,body{overflow-x:hidden}
 
 /* Android only */
 body.android .family-cover{
-    height:200px !important;
-    min-height:200px !important;
-    max-height:200px !important;
+    height:205px !important;
+    min-height:205px !important;
+    max-height:205px !important;
 }
 
 body.android .family-space-card{
