@@ -90,7 +90,7 @@ pointer-events:none
 #slideshowOverlay.hide-controls .slideshow-toolbar{transform:translateX(-50%) translateY(10px)}
 
 .slideshow-title{position:absolute;top:calc(14px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);color:#fff;font-size:13px;font-weight:700;background:rgba(255,255,255,.15);padding:4px 14px;border-radius:20px;max-width:64%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px)}.slideshow-counter{position:absolute;top:calc(46px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);color:#fff;font-size:13px;font-weight:600;background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px}.video-gallery-head{display:flex;align-items:center;padding:calc(14px + env(safe-area-inset-top)) 16px 14px;color:#fff}.video-gallery-head h2{flex:1;font-size:18px}.video-gallery-list{flex:1;overflow-y:auto;padding:8px 16px calc(20px + env(safe-area-inset-bottom))}.video-gallery-item{width:100%;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.08);border:0;color:#fff;border-radius:14px;padding:14px;margin-bottom:10px;text-align:left;font-size:15px;font-weight:600}.video-thumb{width:38px;height:38px;background:#1670f8;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}.video-thumb svg{width:20px;height:20px;color:#fff}.video-player-wrap{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top)) 12px 12px}.video-player-wrap.hidden{display:none}.video-player-title{color:#fff;font-size:14px;font-weight:700;text-align:center;padding:8px 40px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.video-player-wrap video{flex:1;width:100%;border-radius:12px;background:#000}
-@media(max-width:900px){.topbar{height:88px;padding:12px 18px}.top-family-avatar{width:54px;height:54px}.brand-words .script-logo{font-size:20px}.brand-words strong{font-size:22px}.brand-words small{display:none}.top-actions .icon-btn{display:none}.top-profile{width:48px;height:48px;padding:0;flex-shrink:0}.main{width:calc(100% - 20px)}.family-cover{height:52vh;min-height:380px;border-radius:24px}.cover-content{left:7%;top:12%}.cover-script{font-size:30px}.cover-content h1{font-size:58px}.cover-content p{font-size:18px}.family-space-grid{grid-template-columns:1fr 1fr;gap:12px}.family-space-card{min-height:210px;padding:18px}.card-art{font-size:44px}.family-space-card h3{font-size:19px}.family-space-card p{font-size:13px}.section-hero{padding:22px;gap:14px}.section-hero .hero-art{font-size:48px}.section-hero h1{font-size:26px}.hero-add{font-size:0;width:46px;height:46px;padding:0}.hero-add:after{content:'+';font-size:26px}.filter-row{padding:14px;gap:8px}.filter{padding:12px 4px;font-size:20px}.visual-grid{grid-template-columns:1fr 1fr}.content-grid{grid-template-columns:repeat(3,1fr);gap:10px}.content-card{padding:8px}.folder-grid{padding:10px 14px 24px}.content-heading{padding:20px 16px 10px}.tool-grid{grid-template-columns:1fr}.utility-page{padding:24px 18px;border-radius:22px}.mobile-bottom-nav{height:72px}}
+/* (old pre-!important mobile block removed - fully superseded by the block below) */
 
 /* ===== Desktop/tablet styling for elements the mobile block below customizes ===== */
 /* These had NO styling outside the mobile media query, so on screens over 900px
@@ -183,7 +183,7 @@ html,body{overflow-x:hidden}
     padding:0 8px!important;
     overflow-y:auto!important; -webkit-overflow-scrolling:touch!important;
     /* reserved clearance above the fixed nav for every page */
-    padding-bottom:calc(90px + env(safe-area-inset-bottom))!important;
+    padding-bottom:calc(110px + env(safe-area-inset-bottom))!important;
     background:#f6f8fb!important;
   }
 
@@ -227,11 +227,18 @@ html,body{overflow-x:hidden}
     gap:8px!important; margin:0!important; align-content:stretch!important;
   }
   .family-space-card{ border-radius:14px!important; min-height:0!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
-  .card-default-content{ min-height:106px!important; padding:8px 8px 20px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
-  .card-art{ font-size:26px!important; line-height:1!important; margin:0 0 2px!important; overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
+  /* Flat pastel card colours, resampled directly from each icon image's
+     own background so the image blends in seamlessly with no visible
+     seam (see .card-local-image using object-fit:contain below). */
+  .memories-card{ background:#b8d0f0!important; }
+  .trips-card{ background:#fcd0e0!important; }
+  .celebrations-card{ background:#ccb4f0!important; }
+  .study-card{ background:#f8d8b0!important; }
+  .card-default-content{ min-height:0!important; padding:6px 8px 20px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .card-local-image{ width:100%!important; height:70px!important; margin:0 0 6px!important; border-radius:12px!important; object-fit:contain!important; object-position:center!important; }
   .family-space-card h3{ font-size:12px!important; margin:1px 0!important; line-height:1.1!important; }
-  .family-space-card p{ font-size:9px!important; line-height:1.3!important; display:-webkit-box!important; -webkit-line-clamp:1!important; -webkit-box-orient:vertical!important; overflow:hidden!important; text-overflow:ellipsis!important; }
-  .round-arrow{ width:18px!important; height:18px!important; right:6px!important; bottom:6px!important; font-size:10px!important; }
+  .family-space-card p{ font-size:9px!important; line-height:1.25!important; margin:0!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
+  .round-arrow{ width:16px!important; height:16px!important; right:5px!important; bottom:5px!important; font-size:9px!important; }
   
 
   /* ---------- Gallery hub (mediaHub) ---------- */
@@ -281,7 +288,7 @@ html,body{overflow-x:hidden}
   .delete-item{ font-size:10px!important; padding:5px!important; margin-top:4px!important; border-radius:8px!important; }
   .content-heading{ padding:20px 16px 10px!important; }
   .tool-grid{ grid-template-columns:1fr!important; }
-  .utility-page{ padding:24px 18px!important; border-radius:22px!important; margin-top:auto!important; margin-bottom:auto!important; background:transparent!important; box-shadow:none!important; }
+  .utility-page{ padding:24px 18px 130px!important; border-radius:22px!important; background:transparent!important; box-shadow:none!important; }
 
   /* ---------- Bottom nav ---------- */
   .mobile-bottom-nav{
@@ -300,13 +307,18 @@ html,body{overflow-x:hidden}
   .mobile-nav-item .nav-ico{ width:26px!important; height:26px!important; line-height:1!important; display:flex!important; align-items:center!important; justify-content:center!important; color:#1670f8!important; }
   .mobile-nav-item .nav-ico svg{ width:100%!important; height:100%!important; display:block!important; }
   .mobile-nav-item small{ font-size:12px!important; font-weight:700!important; color:#1670f8!important; line-height:1!important; }
+
+  /* Gallery page specifically needs the flexible-fill above to actually
+     reach the nav; pull its trailing margin in to close the last gap. */
+  #mediaHubPage{ margin-bottom:-160px!important; }
 }
 
 .card-camera-btn,#changeCoverBtn{display:none!important}
 
 
 
-/* ===== Step 3 Home Image Styling ===== */
+/* ===== Step 3 Home Image Styling (desktop / >900px only - the mobile
+   block above is authoritative below 900px) ===== */
 
 .cover-local-image{
   width:100%;
@@ -356,208 +368,6 @@ html,body{overflow-x:hidden}
   display:none!important;
 }
 
-@media (max-width:900px){
-
-  .family-cover{
-    height:340px!important;
-    min-height:340px!important;
-    max-height:340px!important;
-  }
-
-  .family-space-grid{
-    gap:6px!important;
-    margin-top:4px!important;
-  }
-
-  .family-space-card{
-    min-height:150px!important;
-  }
-
-  .card-default-content{
-    min-height:150px!important;
-    padding:6px 6px 8px!important;
-  }
-
-  .card-local-image{
-    width:100%!important;
-    height:72px!important;
-    margin:0 0 6px!important;
-    border-radius:12px!important;
-    object-fit:cover!important;
-  }
-
-  .card-default-content h3{
-    font-size:13px!important;
-    margin:2px 0!important;
-  }
-
-  .card-default-content p{
-    font-size:9px!important;
-    line-height:1.15!important;
-  }
-
-
-
-  .card-default-content h3{
-    font-size:15px!important;
-  }
-
-  .card-default-content p{
-    font-size:10px!important;
-    line-height:1.2!important;
-  }
-}
-
-
-/* ===== Mobile home layout (consolidated — replaces old v14–v20 patches) ===== */
-@media (max-width:900px){
-
-  .family-cover{
-    height:225px!important;
-    min-height:225px!important;
-    max-height:225px!important;
-    margin-bottom:4px!important;
-  }
-
-  .family-space-grid{
-    gap:6px!important;
-    margin:2px 0 0!important;
-  }
-
-  .main{
-    padding-bottom:60px!important;
-  }
-
-  .family-space-card{
-    min-height:0!important;
-    overflow:visible!important;
-    box-shadow:none!important;
-  }
-
-  .card-default-content{
-    min-height:auto!important;
-    padding:4px 6px 8px!important;
-    row-gap:2px!important;
-  }
-
-  .family-space-card h3{
-    margin:2px 0!important;
-    font-size:15px!important;
-  }
-
-  .family-space-card p{
-    font-size:10px!important;
-    line-height:1.08!important;
-    margin:0!important;
-  }
-
-  /* Card pastel backgrounds — resampled directly from each icon's own
-     source image (previous values were sampled from a phone screenshot,
-     which drifted from the true colour for celebrations/study) */
-  .memories-card{background:#b8d0f0!important;}
-  .trips-card{background:#fcd0e0!important;}
-  .celebrations-card{background:#ccb4f0!important;}
-  .study-card{background:#f8d8b0!important;}
-
-  /* Icons sized to sit nicely inside the card, not dominate it —
-     cover crops to fit so it works regardless of aspect ratio */
-  .card-local-image{
-    width:calc(100% - 24px)!important;
-    height:100px!important;
-    margin:10px auto 8px!important;
-    object-fit:cover!important;
-    object-position:center!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    border:none!important;
-    border-radius:14px!important;
-  }
-}
-
-
-/* ===== ChatGPT tweak ===== */
-@media (max-width:900px){
-  /* Home */
-  .family-cover{
-    height:240px!important;
-    min-height:240px!important;
-    max-height:240px!important;
-    margin-bottom:8px!important;
-  }
-  .family-space-grid{
-    gap:12px!important;
-    margin-top:0!important;
-  }
-  .family-space-card{
-    min-height:180px!important;
-  }
-  .card-default-content{
-    padding:8px 8px 10px!important;
-  }
-  .card-local-image{
-    height:88px!important;
-    width:calc(100% - 18px)!important;
-    margin:4px auto 10px!important;
-  }
-
-  /* Gallery */
-  #mediaHubPage .section-hero{
-    min-height:190px!important;
-    margin-bottom:18px!important;
-  }
-  #mediaHubPage .media-hub-grid{
-    gap:12px!important;
-  }
-  #mediaHubPage .media-hub-ico{
-    width:56px!important;
-    height:56px!important;
-  }
-  .main{
-    padding-bottom:80px!important; /* ~20px above 60px nav */
-  }
-}
-
-
-/* ===== Home card text clipping fix ===== */
-@media (max-width:900px){
-  .family-space-card{
-    min-height:158px !important;
-  }
-
-  .card-default-content{
-    min-height:158px !important;
-    padding:8px 6px 10px !important;
-  }
-
-  .card-default-content p{
-    line-height:1.25 !important;
-    padding-bottom:6px !important;
-  }
-}
-
-
-/* ===== Final home card clipping fix ===== */
-@media (max-width:900px){
-
-  .family-space-card{
-    min-height:165px !important;
-  }
-
-  .card-default-content{
-    min-height:auto !important;
-    padding:2px 4px 2px !important;
-  }
-
-  .card-default-content p{
-    margin-bottom:0 !important;
-    line-height:1.28 !important;
-    padding-bottom:8px !important;
-  }
-
-}
-
-
-
 /* ===== Profile avatar circle fix ===== */
 .profile-large{
   width:120px !important;
@@ -582,9 +392,6 @@ html,body{overflow-x:hidden}
   bottom:15px !important;
 }
 
-
-
-
 /* Android only */
 body.android .family-cover{
     height:205px !important;
@@ -596,20 +403,4 @@ body.android .family-space-card{
     height:165px !important;
     min-height:165px !important;
     max-height:165px !important;
-}
-
-/* ===== Bottom nav clearance fix (final, wins over earlier conflicting
-   .main padding-bottom rules elsewhere in this file) ===== */
-@media (max-width:900px){
-  .main{
-    padding-bottom:80px !important;
-  }
-
-  .utility-page{
-    padding-bottom:0 !important;
-  }
-
-  #mediaHubPage{
-    margin-bottom:0 !important;
-  }
 }
