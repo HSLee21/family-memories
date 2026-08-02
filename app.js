@@ -610,10 +610,16 @@ async function loadMembers(){
         <strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong>
         <div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"family")}${m.status!=="approved"?` · ${escapeHtml(m.status||"pending")}`:""}</div>
       </div>
-      ${m.status!=="approved"?`<button class="admin-approve-btn approve-member" data-id="${m.id}">Approve</button>`:`<span class="admin-row-chevron">›</span>`}
+      ${m.status!=="approved"?`<button class="admin-approve-btn approve-member" data-id="${m.id}">Approve</button>`:`
+      <div class="admin-row-actions">
+        <button class="admin-icon-btn rename-member" data-id="${m.id}" data-name="${escapeHtml(m.name||"")}" title="Rename">✏️</button>
+        <button class="admin-icon-btn admin-icon-btn-danger delete-member" data-id="${m.id}" data-name="${escapeHtml(m.name||m.email||"this member")}" title="Remove">🗑️</button>
+      </div>`}
     </div>`;
   }).join("");
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
+  document.querySelectorAll(".rename-member").forEach(b=>b.onclick=()=>renameMember(b.dataset.id,b.dataset.name));
+  document.querySelectorAll(".delete-member").forEach(b=>b.onclick=()=>deleteMember(b.dataset.id,b.dataset.name));
 
   // Family avatar header is a fixed Dad/Mum/Daughter/Daughter layout with
   // real uploaded photos (not tied to actual invited accounts - this app
@@ -685,6 +691,22 @@ async function rejectMember(id){
 async function approveMember(id){
   const {error}=await client.from("profiles").update({status:"approved"}).eq("id",id);
   if(error) toast(error.message); else {toast("Member approved.");loadMembers()}
+}
+
+async function renameMember(id,currentName){
+  const newName=prompt("Rename family member:",currentName||"");
+  if(newName===null) return;
+  const trimmed=newName.trim();
+  if(!trimmed) return toast("Name can't be empty.");
+  const {error}=await client.from("profiles").update({name:trimmed}).eq("id",id);
+  if(error) toast(error.message); else {toast("Name updated.");loadMembers();}
+}
+
+async function deleteMember(id,name){
+  if(currentUser?.id===id) return toast("You can't remove yourself.");
+  if(!confirm(`Remove ${name} from the family? They will lose access immediately.`)) return;
+  const {error}=await client.from("profiles").delete().eq("id",id);
+  if(error) toast(error.message); else {toast("Member removed.");loadMembers();}
 }
 
 if($("addMemberForm")) $("addMemberForm").onsubmit=async e=>{
