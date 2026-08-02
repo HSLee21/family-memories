@@ -202,15 +202,15 @@ html,body{overflow-x:hidden}
   /* ---------- Home ---------- */
   .family-cover{
     flex:0 0 auto!important;
-    height:285px!important;
-    min-height:285px!important;
-    max-height:285px!important;
+    height:210px!important;
+    min-height:210px!important;
+    max-height:210px!important;
     border-radius:16px!important;
     margin:0 0 12px 0!important;
     position:relative!important;
     overflow:hidden!important;
   }
-  .cover-image{ position:absolute!important; inset:0!important; background-size:cover!important; background-position:center 38%!important; }
+  .cover-image{ position:absolute!important; inset:0!important; background-size:cover!important; background-position:center center!important; }
   .cover-content{ position:absolute!important; left:14px!important; top:12px!important; right:60px!important; max-width:62%!important; text-shadow:0 1px 6px rgba(0,0,0,.35)!important; z-index:2!important; }
   .cover-script{ font-family:Pacifico,cursive!important; font-size:15px!important; line-height:1!important; margin:0 0 2px!important; display:block!important; color:#fff!important; }
   .cover-content h1{ font-size:26px!important; line-height:.9!important; margin:0 0 3px!important; font-weight:800!important; color:#fff!important; }
@@ -224,10 +224,10 @@ html,body{overflow-x:hidden}
     gap:8px!important; margin:0!important; align-content:stretch!important;
   }
   .family-space-card{ border-radius:14px!important; min-height:0!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
-  .card-default-content{ min-height:132px!important; padding:8px 8px 22px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
-  .card-art{ font-size:26px!important; line-height:1!important; margin:0 0 2px!important; overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
-  .family-space-card h3{ font-size:12px!important; margin:1px 0!important; line-height:1.1!important; }
-  .family-space-card p{ font-size:9px!important; line-height:1.35!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
+  .card-default-content{ min-height:170px!important; padding:8px 8px 22px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .card-art{ font-size:46px!important; line-height:1!important; margin:0 0 2px!important; overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
+  .family-space-card h3{ font-size:18px!important; margin:1px 0!important; line-height:1.1!important; }
+  .family-space-card p{ font-size:13px!important; line-height:1.35!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
   .round-arrow{ width:18px!important; height:18px!important; right:6px!important; bottom:6px!important; font-size:10px!important; }
   
 
