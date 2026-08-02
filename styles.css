@@ -336,31 +336,81 @@ gap:0!important;
 
 
 
-/* ===== HOME V2 ===== */
+
+/* ===== HOME V3 (Compact Rebuild) ===== */
+
+.family-cover{
+height:160px!important;
+min-height:160px!important;
+max-height:160px!important;
+border-radius:18px!important;
+margin-bottom:10px!important;
+}
+
+.cover-content{
+left:14px!important;
+top:14px!important;
+right:18px!important;
+max-width:58%!important;
+}
+
+.cover-script{
+font-size:18px!important;
+}
+
+.cover-content h1{
+font-size:34px!important;
+margin:2px 0 6px!important;
+line-height:.95!important;
+}
+
+.cover-content p{
+font-size:12px!important;
+line-height:1.3!important;
+}
+
+.family-space-grid{
+gap:8px!important;
+margin-top:8px!important;
+}
+
 .family-space-card{
 display:flex!important;
 flex-direction:column!important;
 padding:0!important;
 overflow:hidden!important;
+border-radius:16px!important;
+background:#fff!important;
+box-shadow:0 2px 8px rgba(0,0,0,.08)!important;
 }
+
 .card-local-image{
 display:block!important;
 width:100%!important;
-height:110px!important;
+height:75px!important;
 object-fit:cover!important;
 }
+
 .family-space-card h3{
-margin:12px 12px 4px!important;
-font-size:16px!important;
+margin:8px 10px 2px!important;
+font-size:13px!important;
 font-weight:700!important;
+line-height:1.15!important;
 }
+
 .family-space-card p{
-margin:0 12px 14px!important;
-font-size:12px!important;
-line-height:1.4!important;
+margin:0 10px 8px!important;
+font-size:10px!important;
+line-height:1.25!important;
 color:#64748b!important;
-max-width:none!important;
+display:-webkit-box!important;
+-webkit-line-clamp:2!important;
+-webkit-box-orient:vertical!important;
+overflow:hidden!important;
 }
-.round-arrow,.card-camera-btn,#changeCoverBtn{
+
+.round-arrow,
+.card-camera-btn,
+#changeCoverBtn{
 display:none!important;
 }
