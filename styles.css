@@ -540,12 +540,12 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
 
   .family-space-card{
-    min-height:160px !important;
+    min-height:162px !important;
   }
 
   .card-default-content{
     min-height:auto !important;
-    padding:4px 6px 4px !important;
+    padding:2px 4px 2px !important;
   }
 
   .card-default-content p{
