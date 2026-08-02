@@ -601,20 +601,14 @@ body.android .family-space-card{
    .main padding-bottom rules elsewhere in this file) ===== */
 @media (max-width:900px){
   .main{
-    padding-bottom:110px !important;
+    padding-bottom:80px !important;
   }
 
-  /* Admin/Profile pages (.utility-page) don't reliably inherit .main's
-     clearance because of the flex/scroll-region rules earlier in this
-     file - give it directly instead of chasing that cascade further. */
   .utility-page{
-    padding-bottom:130px !important;
+    padding-bottom:0 !important;
   }
 
-  /* Gallery page specifically had too much empty space above the nav
-     compared to other pages - pull it in without touching the shared
-     .main clearance that other pages still need. */
   #mediaHubPage{
-    margin-bottom:-160px !important;
+    margin-bottom:0 !important;
   }
 }
