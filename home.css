@@ -1,0 +1,223 @@
+/*==========================================================
+  HOME.CSS
+  Family Memories App
+==========================================================*/
+
+/*==========================================================
+  SECTION 1 — HERO
+==========================================================*/
+
+#homePage{
+    background:#ffffff;
+    padding:0;
+}
+
+.family-cover{
+    position:relative;
+    width:100%;
+    height:235px;
+    margin:0 0 14px;
+    overflow:hidden;
+    border-radius:20px;
+    background:#eef3f8;
+}
+
+.cover-image{
+    position:absolute;
+    inset:0;
+}
+
+.cover-image img,
+.cover-local-image{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    object-position:center 75%;
+}
+
+.family-cover::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        to top,
+        rgba(0,0,0,.42) 0%,
+        rgba(0,0,0,.18) 42%,
+        rgba(0,0,0,0) 72%
+    );
+    z-index:1;
+}
+
+.cover-content{
+    position:absolute;
+    top:18px;
+    left:18px;
+    right:18px;
+    z-index:2;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+
+.cover-script{
+    display:block;
+    margin-bottom:4px;
+    font-size:15px;
+    font-weight:500;
+    opacity:.95;
+}
+
+.cover-content h1{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+    line-height:1.05;
+}
+
+.cover-content p{
+    margin-top:6px;
+    max-width:190px;
+    font-size:8px;
+    line-height:1.35;
+    opacity:.95;
+}
+
+/*==========================================================
+  SECTION 2 — HOME CARDS
+==========================================================*/
+
+.family-space-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin:0;
+}
+
+.family-space-card{
+    position:relative;
+    overflow:hidden;
+    height:190px;
+    padding:0;
+    border-radius:18px;
+    border:0;
+    background:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+
+.card-local-image{
+    width:100%;
+    height:115px;
+    display:block;
+    object-fit:cover;
+}
+
+.card-default-content{
+    padding:8px 10px;
+    text-align:center;
+}
+
+.family-space-card h3{
+    margin:4px 0 3px;
+    font-size:11px;
+    font-weight:700;
+    color:#1e293b;
+}
+
+.family-space-card p{
+    margin:0;
+    font-size:9px;
+    line-height:1.3;
+    color:#64748b;
+}
+
+.memories-card{background:#DCEBFF;}
+.trips-card{background:#FCE0EA;}
+.celebrations-card{background:#E7D8FF;}
+.study-card{background:#FBE6BF;}
+
+.card-camera-btn,
+.round-arrow{
+    display:none!important;
+}
+
+/*==========================================================
+  SECTION 3 — MOBILE
+==========================================================*/
+
+@media (max-width:900px){
+
+#homePage{padding:0;}
+
+.family-cover{
+    height:235px;
+    border-radius:18px;
+    margin-bottom:12px;
+}
+
+.cover-content{
+    top:18px;
+    left:16px;
+    right:16px;
+    max-width:58%;
+}
+
+.cover-script{font-size:15px;}
+
+.cover-content h1{
+    font-size:22px;
+    margin:2px 0 4px;
+}
+
+.cover-content p{
+    font-size:8px;
+    line-height:1.3;
+}
+
+.family-space-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+}
+
+.family-space-card{
+    height:190px;
+    border-radius:16px;
+}
+
+.card-local-image{height:115px;}
+
+.card-default-content{padding:8px;}
+
+.family-space-card h3{font-size:11px;}
+.family-space-card p{font-size:9px;}
+
+.camera-fab,
+.card-camera-btn,
+.round-arrow,
+#changeCoverBtn{
+    display:none!important;
+}
+}
+
+@media (max-width:380px){
+.family-cover{height:220px;}
+.family-space-card{height:180px;}
+.card-local-image{height:108px;}
+.family-space-card h3{font-size:10px;}
+.family-space-card p{font-size:8px;}
+}
+
+.family-cover,
+.family-space-card{
+    transition:transform .25s ease, box-shadow .25s ease;
+}
+
+.family-space-card:active{
+    transform:scale(.98);
+}
+
+.cover-local-image,
+.card-local-image{
+    image-rendering:auto;
+}
+
+/* END HOME.CSS */
