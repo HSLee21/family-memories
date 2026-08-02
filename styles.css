@@ -221,12 +221,14 @@ html,body{overflow-x:hidden}
   .camera-fab{ width:26px!important; height:26px!important; left:10px!important; right:auto!important; bottom:8px!important; background:rgba(255,255,255,.9)!important; backdrop-filter:blur(8px)!important; border-radius:50%!important; font-size:10px!important; box-shadow:0 2px 8px rgba(0,0,0,.15)!important; display:grid!important; place-items:center!important; z-index:3!important; }
 
   .family-space-grid{
-    /* fixed size — Home's flexible slack lives in .family-cover above */
-    flex:0 0 auto!important;
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    gap:8px!important; margin:0!important; align-content:stretch!important;
+    /* Flexible: grows/shrinks to exactly fill whatever space is left
+       after the fixed-height cover above, instead of a guessed fixed
+       size that either clips (too tall) or leaves a gap (too short). */
+    flex:1 1 0!important; min-height:0!important;
+    display:grid!important; grid-template-columns:1fr 1fr!important; grid-template-rows:1fr 1fr!important;
+    gap:8px!important; margin:0!important;
   }
-  .family-space-card{ border-radius:14px!important; min-height:0!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
+  .family-space-card{ height:100%!important; min-height:0!important; border-radius:14px!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
   /* Flat pastel card colours, resampled directly from each icon image's
      own background so the image blends in seamlessly with no visible
      seam (see .card-local-image using object-fit:contain below). */
@@ -234,8 +236,8 @@ html,body{overflow-x:hidden}
   .trips-card{ background:#fcd0e0!important; }
   .celebrations-card{ background:#ccb4f0!important; }
   .study-card{ background:#f8d8b0!important; }
-  .card-default-content{ min-height:0!important; padding:6px 8px 20px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
-  .card-local-image{ width:100%!important; height:70px!important; margin:0 0 6px!important; border-radius:12px!important; object-fit:contain!important; object-position:center!important; }
+  .card-default-content{ height:100%!important; min-height:0!important; padding:6px 8px 20px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .card-local-image{ flex:1 1 0!important; min-height:0!important; width:100%!important; margin:0 0 6px!important; border-radius:12px!important; object-fit:contain!important; object-position:center!important; }
   .family-space-card h3{ font-size:12px!important; margin:1px 0!important; line-height:1.1!important; }
   .family-space-card p{ font-size:9px!important; line-height:1.25!important; margin:0!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
   .round-arrow{ width:16px!important; height:16px!important; right:5px!important; bottom:5px!important; font-size:9px!important; }
@@ -245,8 +247,10 @@ html,body{overflow-x:hidden}
   #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; margin-bottom:14px!important; }
   #mediaHubPage .media-hub-grid{
     /* the one flexible element on Gallery: rows stretch to absorb
-       leftover space instead of leaving a gap below the last row */
-    flex:1 1 auto!important;
+       leftover space instead of leaving a gap below the last row.
+       flex-basis:0 (not auto) makes this stretch reliably regardless
+       of content size. */
+    flex:1 1 0!important;
     display:grid!important; grid-template-columns:1fr 1fr!important;
     grid-auto-rows:minmax(0,1fr)!important; align-content:stretch!important;
     gap:10px!important; padding:0!important; min-height:0!important;
@@ -310,7 +314,8 @@ html,body{overflow-x:hidden}
 
   /* Gallery page specifically needs the flexible-fill above to actually
      reach the nav; pull its trailing margin in to close the last gap. */
-  #mediaHubPage{ margin-bottom:-220px!important; }
+  /* (margin-bottom hack removed - #mediaHubPage .media-hub-grid above
+     now reliably fills remaining space on its own via flex-basis:0) */
 }
 
 .card-camera-btn,#changeCoverBtn{display:none!important}
