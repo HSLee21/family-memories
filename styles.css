@@ -497,7 +497,7 @@ html,body{overflow-x:hidden}
   .card-local-image{
     height:88px!important;
     width:calc(100% - 18px)!important;
-    margin:4px auto 6px!important;
+    margin:4px auto 10px!important;
   }
 
   /* Gallery */
@@ -540,7 +540,7 @@ html,body{overflow-x:hidden}
 @media (max-width:900px){
 
   .family-space-card{
-    min-height:162px !important;
+    min-height:165px !important;
   }
 
   .card-default-content{
