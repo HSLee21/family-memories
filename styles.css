@@ -1,12 +1,12 @@
 *{box-sizing:border-box} html,body{overscroll-behavior:none} :root{--ink:#14213d;--muted:#667085;--blue:#1670f8;--pink:#ff416c;--purple:#7c3aed;--orange:#f57c00;--green:#16a05d;--line:#e8edf4;--shadow:0 12px 35px rgba(27,45,80,.10)} body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:#f8fbff}.hidden{display:none!important}button,input,textarea,select{font:inherit}button{cursor:pointer}.muted{color:var(--muted)}.small{font-size:12px}.primary,.secondary{border:0;border-radius:14px;padding:12px 18px;font-weight:700}.primary{background:var(--blue);color:#fff}.secondary{background:#f1f4f8;color:var(--ink)}#toast{position:fixed;z-index:1000;left:50%;bottom:110px;transform:translate(-50%,20px);background:#182230;color:#fff;padding:12px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.2s}#toast.show{opacity:1;transform:translate(-50%,0)}
 .auth-shell,.center-screen{position:fixed;inset:0;z-index:200;overflow-y:auto;min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px;background:linear-gradient(145deg,#f7fbff,#fff7f9)}.auth-card,.message-card{width:min(480px,100%);background:#fff;padding:34px;border-radius:28px;box-shadow:var(--shadow);text-align:center}.auth-brand{display:flex;justify-content:center;align-items:center;gap:14px}.brand-photo,.top-family-avatar{display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#bfe1ff,#ffd8df);font-weight:800}.brand-photo{width:76px;height:76px}.script-logo{font-family:Pacifico,cursive;color:#111;font-size:27px}.script-logo b{color:var(--blue)}.auth-brand h1{margin:-4px 0 0;font-size:34px}.tabs{display:flex;background:#f3f1f1;border-radius:14px;padding:4px;margin:24px 0}.tab{flex:1;border:0;background:transparent;padding:12px;border-radius:11px}.tab.active{background:#fff;box-shadow:0 2px 8px #0001}.stack{display:grid;gap:14px}.stack input,.stack textarea,.dialog-card input,.dialog-card textarea,.dialog-card select,.tool-card input,.tool-card select{width:100%;border:1px solid #dfe5ec;border-radius:14px;padding:14px;background:#fff}.text-link{border:0;background:none;color:#8c6655;text-align:right}.profile-photo-button{border:0}
 #appView{position:relative;z-index:1}
-.app{min-height:100vh;padding-bottom:100px}.topbar{height:130px;display:flex;align-items:center;justify-content:space-between;padding:20px 4vw;background:#fff;position:relative;z-index:10}.brand-button{display:flex;align-items:center;gap:16px;border:0;background:none;text-align:left}.top-family-avatar{width:84px;height:84px;font-size:20px}.brand-words{display:grid}.brand-words strong{font-size:30px;line-height:1}.brand-words small{margin-top:8px;color:var(--muted);font-size:15px}.top-actions{display:flex;align-items:center;gap:18px}.icon-btn{border:0;background:transparent;font-size:28px;position:relative}.icon-btn i{position:absolute;width:9px;height:9px;background:#ff416c;border-radius:50%;right:2px;top:0}.top-profile{width:62px;height:62px;padding:0;border:0;border-radius:50%;overflow:hidden;background:#eef3f8;font-weight:800;flex-shrink:0}.top-profile img{display:block;width:100%;height:100%;object-fit:cover}.main{width:100%;max-width:1500px;padding:0 18px;box-sizing:border-box;margin:0 auto}.page{animation:fade .22s ease}@keyframes fade{from{opacity:.4;transform:translateY(4px)}}
+.app{min-height:100vh;padding-bottom:100px}.topbar{height:130px;display:flex;align-items:center;justify-content:space-between;padding:20px 4vw;background:#fff;position:relative;z-index:10}.brand-button{display:flex;align-items:center;gap:16px;border:0;background:none;text-align:left}.top-family-avatar{width:84px;height:84px;font-size:20px}.brand-words{display:grid}.brand-words strong{font-size:30px;line-height:1}.brand-words small{margin-top:8px;color:var(--muted);font-size:15px}.top-actions{display:flex;align-items:center;gap:18px}.icon-btn{border:0;background:transparent;font-size:25px;position:relative}.icon-btn i{position:absolute;width:9px;height:9px;background:#ff416c;border-radius:50%;right:2px;top:0}.top-profile{width:62px;height:62px;padding:0;border:0;border-radius:50%;overflow:hidden;background:#eef3f8;font-weight:800;flex-shrink:0}.top-profile img{display:block;width:100%;height:100%;object-fit:cover}.main{width:100%;max-width:1500px;padding:0 18px;box-sizing:border-box;margin:0 auto}.page{animation:fade .22s ease}@keyframes fade{from{opacity:.4;transform:translateY(4px)}}
 .family-cover{height:min(540px,54vw);min-height:420px;border-radius:30px;overflow:hidden;position:relative;background:#dbe7f2;box-shadow:var(--shadow)}.cover-image{position:absolute;inset:0;background-position:center;background-size:cover;background-image:url('https://images.unsplash.com/photo-1504151932400-72d4384f04b3?auto=format&fit=crop&w=1800&q=88')}.cover-content{position:absolute;left:6%;top:18%;color:white;text-shadow:0 2px 16px #0006}.cover-script{font-family:Pacifico,cursive;font-size:42px}.cover-content h1{font-size:clamp(60px,8vw,120px);line-height:.95;margin:8px 0 18px}.cover-content p{font-size:clamp(18px,2vw,30px);line-height:1.45}.camera-fab{position:absolute;right:24px;bottom:24px;width:54px;height:54px;border-radius:50%;border:0;background:#fff;font-size:22px;box-shadow:0 6px 18px #0003}.family-space-grid{
     flex:0 0 auto;
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px;
+    gap:10px;
     margin:0;
   }
 
@@ -15,7 +15,7 @@
     overflow:hidden;
     border-radius:18px;
     background:#fff;
-    min-height:210px;
+    min-height:190px;
     padding:0;
     box-shadow:0 4px 14px rgba(0,0,0,.08);
   }
@@ -29,9 +29,9 @@
   .card-local-image{
     display:block;
     width:100%;
-    height:110px;
+    height:100px;
     object-fit:cover;
-    flex:0 0 110px;
+    flex:0 0 100px;
   }
 
   .card-body{
@@ -42,7 +42,7 @@
 
   .card-body h3{
     margin:0 0 6px;
-    font-size:20px;
+    font-size:18px;
     line-height:1.15;
     font-weight:700;
   }
@@ -56,8 +56,8 @@
 
   .round-arrow{
     position:absolute;
-    right:12px;
-    bottom:12px;
+    right:10px;
+    bottom:10px;
     width:28px;
     height:28px;
     border-radius:50%;
