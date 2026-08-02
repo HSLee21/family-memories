@@ -502,6 +502,7 @@ html,body{overflow-x:hidden}
 
   /* Gallery */
   #mediaHubPage .section-hero{
+    min-height:200px!important;
     margin-bottom:18px!important;
   }
   #mediaHubPage .media-hub-grid{
