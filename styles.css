@@ -192,7 +192,7 @@ html,body{overflow-x:hidden}
      height instead of leaving blank space below them. */
   #homePage.page:not(.hidden),
   #mediaHubPage.page:not(.hidden){
-    flex:1 1 auto!important;
+    flex:0 0 auto!important;
     display:flex!important; flex-direction:column!important;
     min-height:0!important; gap:8px!important;
     padding-bottom:0!important; margin-bottom:0!important;
