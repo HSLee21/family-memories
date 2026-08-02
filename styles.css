@@ -336,77 +336,92 @@ gap:0!important;
 
 
 
-/* ===== HOME V2 ===== */
-.family-space-card{
-display:flex!important;
-flex-direction:column!important;
-padding:0!important;
-overflow:hidden!important;
-}
-.card-local-image{
-display:block!important;
-width:100%!important;
-height:110px!important;
-object-fit:cover!important;
-}
-.family-space-card h3{
-margin:12px 12px 4px!important;
-font-size:16px!important;
-font-weight:700!important;
-}
-.family-space-card p{
-margin:0 12px 14px!important;
-font-size:12px!important;
-line-height:1.4!important;
-color:#64748b!important;
-max-width:none!important;
-}
-.round-arrow,.card-camera-btn,#changeCoverBtn{
-display:none!important;
-}
 
-/* ===== HOME V4 (User Requested) ===== */
+/* ===== HOME REBUILD ===== */
 
+.home-hero,
 .family-cover{
-    height:210px!important;
-    min-height:210px!important;
-    max-height:210px!important;
-    border-radius:20px!important;
-    margin-bottom:10px!important;
-    overflow:hidden!important;
+    position:relative;
+    height:210px;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:12px;
 }
 
-.family-cover img,
-.family-cover picture img,
-.cover-image img{
-    width:100%!important;
-    height:100%!important;
-    object-fit:cover!important;
-    object-position:center 75%!important;
+.home-hero-image,
+.cover-image{
+    position:absolute;
+    inset:0;
 }
 
+.home-hero-image img,
+.cover-image img,
+.cover-local-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center 75%;
+    display:block;
+}
+
+.home-hero-content,
 .cover-content{
-    left:18px!important;
-    top:18px!important;
-    right:18px!important;
-    max-width:58%!important;
+    position:absolute;
+    left:18px;
+    top:18px;
+    max-width:58%;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.35);
 }
 
+.home-grid,
 .family-space-grid{
-    gap:8px!important;
-    margin-top:8px!important;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
 }
 
+.home-card,
 .family-space-card{
-    min-height:190px!important;
-    border-radius:18px!important;
-    overflow:hidden!important;
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    min-height:190px;
+    padding:0;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
+.home-card-image,
 .card-local-image{
-    width:100%!important;
-    height:115px!important;
-    object-fit:cover!important;
+    width:100%;
+    height:115px;
+    object-fit:cover;
+    display:block;
+}
+
+.home-card-body,
+.family-space-card h3,
+.family-space-card p{
+    text-align:center;
+}
+
+.home-card-body{
+    padding:8px;
+}
+
+.home-card h3,
+.family-space-card h3{
+    margin:6px 8px 2px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.home-card p,
+.family-space-card p{
+    margin:0 8px 8px;
+    font-size:8px;
+    line-height:1.25;
+    color:#64748b;
 }
 
 .round-arrow,
