@@ -374,7 +374,7 @@ display:none!important;
 
 .home-card{
   position:relative;
-  height:180px;
+  height:100px;
   overflow:hidden;
   border-radius:18px;
 }
@@ -418,3 +418,24 @@ display:none!important;
 .home-card-body{
   display:none !important;
 }
+
+
+/* ChatGPT amendment */
+.home-card{
+  height:100px!important;
+  min-height:100px!important;
+}
+.home-card-image{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}
+.home-card-overlay{
+  position:absolute!important;
+  left:10px;
+  right:10px;
+  bottom:8px;
+  text-align:center;
+}
+.home-card-overlay h3{font-size:11px!important;margin:0 0 2px;color:#fff;}
+.home-card-overlay p{font-size:7px!important;margin:0;color:#fff;}
