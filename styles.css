@@ -81,23 +81,9 @@
   }
 
   /* ---------- Gallery hub (mediaHub) ---------- */
-  #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; }
-  #mediaHubPage .media-hub-grid{
-    /* the one flexible element on Gallery: rows stretch to absorb
-       leftover space instead of leaving a gap below the last row */
-    flex:1 1 auto!important;
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-    grid-auto-rows:minmax(0,1fr)!important; align-content:stretch!important;
-    gap:8px!important; padding:0!important; min-height:0!important;
-  }
-  #mediaHubPage .media-hub-card{ padding:12px 10px!important; border-radius:16px!important; gap:6px!important; font-size:11px!important; min-height:0!important; justify-content:center!important; }
-  #mediaHubPage .media-hub-card.wide{ grid-column:1/-1!important; flex-direction:row!important; padding:16px!important; }
-  #mediaHubPage .media-hub-ico{ width:26px!important; height:26px!important; }
-  .video-fs-btn{ top:6px!important; right:6px!important; bottom:auto!important; }
-  .video-play-btn{ width:30px!important; height:30px!important; }
-  .video-play-btn svg{ width:14px!important; height:14px!important; }
+/* Restored to original mobile behaviour */
 
-  /* ---------- Fullscreen photo/video overlays ---------- */
+/* ---------- Fullscreen photo/video overlays ---------- */
   /* Now siblings of <main> in the DOM (not nested inside its scrolling
      container), so position:fixed reliably covers the full viewport,
      including the area behind the topbar and bottom nav. */
@@ -106,30 +92,10 @@
   .tb-btn{ width:40px; height:40px; }
   .tb-btn.tb-nav{ width:34px; height:34px; }
 
-  /* ---------- Other pages (Memories/Trips/Celebrations/Study Hub,
-     Search/Profile/Admin) — variable-length content, scrolls inside
-     .main using the default flex:0 0 auto + the reserved bottom
-     clearance set on .main above ---------- */
-  .section-theme{ background:transparent!important; border-radius:0!important; box-shadow:none!important; }
-  .folder-grid{ padding:8px 10px 16px!important; }
-  .visual-grid{ grid-template-columns:1fr 1fr!important; gap:8px!important; }
-  .folder-card{ padding:10px!important; gap:8px!important; min-height:0!important; border-radius:14px!important; }
-  .folder-icon{ font-size:22px!important; }
-  .folder-info h3{ font-size:14px!important; margin:0 0 2px!important; }
-  .folder-info p{ font-size:15px!important; }
-  .folder-menu{ padding:4px!important; }
-  .content-grid{ grid-template-columns:repeat(4,1fr)!important; gap:6px!important; }
-  .content-card{ padding:5px!important; border-radius:12px!important; }
-  .content-preview{ border-radius:9px!important; }
-  .content-card h3{ font-size:15px!important; margin:4px 0 0!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
-  .content-card .meta{ font-size:9px!important; margin-top:4px!important; }
-  .content-card p{ display:none!important; }
-  .delete-item{ font-size:10px!important; padding:5px!important; margin-top:4px!important; border-radius:8px!important; }
-  .content-heading{ padding:20px 16px 10px!important; }
-  .tool-grid{ grid-template-columns:1fr!important; }
-  .utility-page{ padding:24px 18px!important; border-radius:22px!important; margin-top:auto!important; margin-bottom:auto!important; background:transparent!important; box-shadow:none!important; }
+  /* ---------- Other pages ---------- */
+/* Restored to original mobile behaviour */
 
-  /* ---------- Bottom nav ---------- */
+/* ---------- Bottom nav ---------- */
   .mobile-bottom-nav{
     position:fixed!important; left:50%!important; transform:translateX(-50%)!important;
     bottom:0!important;
