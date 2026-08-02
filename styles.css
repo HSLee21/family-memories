@@ -614,6 +614,12 @@ body.android .family-space-card{
      compared to other pages - pull it in without touching the shared
      .main clearance that other pages still need. */
   #mediaHubPage{
-    margin-bottom:-160px !important;
+    margin-bottom:0 !important;
+    padding-bottom:12px !important;
   }
 }
+
+
+/* ChatGPT fix: prevent home cover image clipping */
+.family-cover{overflow:visible!important;min-height:460px!important;height:auto!important;}
+.cover-image{background-position:center center!important;background-size:contain!important;background-repeat:no-repeat!important;}
