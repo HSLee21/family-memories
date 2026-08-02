@@ -199,25 +199,72 @@ html,body{overflow-x:hidden}
     overflow:hidden!important;
   }
 
-  /* ---------- Home ---------- */
+    /* ---------- Home ---------- */
   .family-cover{
-    flex:0 0 auto!important;
-    height:210px!important;
-    min-height:210px!important;
-    max-height:210px!important;
-    border-radius:16px!important;
-    margin:0 0 12px 0!important;
-    position:relative!important;
-    overflow:hidden!important;
+    flex:0 0 auto;
+    position:relative;
+    width:100%;
+    height:220px;
+    min-height:220px;
+    max-height:220px;
+    margin:0 0 12px 0;
+    border-radius:18px;
+    overflow:hidden;
+    background:#dfe8f3;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
   }
-  .cover-image{ position:absolute!important; inset:0!important; background-size:cover!important; background-position:center center!important; }
-  .cover-content{ position:absolute!important; left:14px!important; top:12px!important; right:60px!important; max-width:62%!important; text-shadow:0 1px 6px rgba(0,0,0,.35)!important; z-index:2!important; }
-  .cover-script{ font-family:Pacifico,cursive!important; font-size:15px!important; line-height:1!important; margin:0 0 2px!important; display:block!important; color:#fff!important; }
-  .cover-content h1{ font-size:26px!important; line-height:.9!important; margin:0 0 3px!important; font-weight:800!important; color:#fff!important; }
-  .cover-content p{ font-size:9px!important; line-height:1.2!important; margin:0!important; color:rgba(255,255,255,.92)!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
-  .camera-fab{ width:26px!important; height:26px!important; left:10px!important; right:auto!important; bottom:8px!important; background:rgba(255,255,255,.9)!important; backdrop-filter:blur(8px)!important; border-radius:50%!important; font-size:10px!important; box-shadow:0 2px 8px rgba(0,0,0,.15)!important; display:grid!important; place-items:center!important; z-index:3!important; }
+  .cover-image{
+    position:absolute;
+    inset:0;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+  .cover-content{
+    position:absolute;
+    left:18px;
+    top:18px;
+    right:18px;
+    z-index:5;
+    color:#fff;
+    text-shadow:0 2px 10px rgba(0,0,0,.45);
+  }
+  .cover-script{
+    display:block;
+    font-family:Pacifico,cursive;
+    font-size:18px;
+    margin-bottom:4px;
+  }
+  .cover-content h1{
+    margin:0;
+    font-size:28px;
+    line-height:1.05;
+    font-weight:800;
+  }
+  .cover-content p{
+    margin-top:6px;
+    max-width:70%;
+    font-size:12px;
+    line-height:1.4;
+    color:rgba(255,255,255,.95);
+  }
+  .camera-fab{
+    position:absolute;
+    right:14px;
+    bottom:14px;
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:50%;
+    background:#fff;
+    display:grid;
+    place-items:center;
+    box-shadow:0 4px 12px rgba(0,0,0,.18);
+    z-index:10;
+  }
 
   .family-space-grid{
+.family-space-grid{
     /* fixed size — Home's flexible slack lives in .family-cover above */
     flex:0 0 auto!important;
     display:grid!important; grid-template-columns:1fr 1fr!important;
