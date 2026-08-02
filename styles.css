@@ -183,7 +183,7 @@ html,body{overflow-x:hidden}
     padding:0 8px!important;
     overflow-y:auto!important; -webkit-overflow-scrolling:touch!important;
     /* reserved clearance above the fixed nav for every page */
-    padding-bottom:calc(110px + env(safe-area-inset-bottom))!important;
+    padding-bottom:calc(64px + env(safe-area-inset-bottom))!important;
     background:#f6f8fb!important;
   }
 
