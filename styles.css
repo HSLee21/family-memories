@@ -215,7 +215,7 @@ html,body{overflow-x:hidden}
   .cover-script{ font-family:Pacifico,cursive!important; font-size:15px!important; line-height:1!important; margin:0 0 2px!important; display:block!important; color:#fff!important; }
   .cover-content h1{ font-size:26px!important; line-height:.9!important; margin:0 0 3px!important; font-weight:800!important; color:#fff!important; }
   .cover-content p{ font-size:9px!important; line-height:1.2!important; margin:0!important; color:rgba(255,255,255,.92)!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
-  .camera-fab{ width:26px!important; height:26px!important; left:10px!important; right:auto!important; bottom:8px!important; background:rgba(255,255,255,.9)!important; backdrop-filter:blur(8px)!important; border-radius:50%!important; font-size:10px!important; box-shadow:0 2px 8px rgba(0,0,0,.15)!important; display:grid!important; place-items:center!important; z-index:3!important; }
+  .camera-fab{display:none!important;}
 
   .family-space-grid{
     /* fixed size — Home's flexible slack lives in .family-cover above */
@@ -224,7 +224,13 @@ html,body{overflow-x:hidden}
     gap:8px!important; margin:0!important; align-content:stretch!important;
   }
   .family-space-card{ border-radius:14px!important; min-height:0!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
-  .card-default-content{ min-height:170px!important; padding:8px 8px 22px 8px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .card-default-content{
+display:flex!important;
+flex-direction:column!important;
+padding:0!important;
+min-height:auto!important;
+gap:0!important;
+}
   .card-art{ font-size:46px!important; line-height:1!important; margin:0 0 2px!important; overflow:hidden!important; display:flex!important; align-items:center!important; height:1.1em!important; }
   .family-space-card h3{ font-size:18px!important; margin:1px 0!important; line-height:1.1!important; }
   .family-space-card p{ font-size:13px!important; line-height:1.35!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
@@ -328,3 +334,33 @@ html,body{overflow-x:hidden}
 }
 
 
+
+
+/* ===== HOME V2 ===== */
+.family-space-card{
+display:flex!important;
+flex-direction:column!important;
+padding:0!important;
+overflow:hidden!important;
+}
+.card-local-image{
+display:block!important;
+width:100%!important;
+height:110px!important;
+object-fit:cover!important;
+}
+.family-space-card h3{
+margin:12px 12px 4px!important;
+font-size:16px!important;
+font-weight:700!important;
+}
+.family-space-card p{
+margin:0 12px 14px!important;
+font-size:12px!important;
+line-height:1.4!important;
+color:#64748b!important;
+max-width:none!important;
+}
+.round-arrow,.card-camera-btn,#changeCoverBtn{
+display:none!important;
+}

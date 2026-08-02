@@ -62,45 +62,17 @@
 <section class="page" id="homePage">
 <div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage">
 <img alt="Family Cover" class="cover-local-image" decoding="async" fetchpriority="high" height="686" id="localHeroImage" src="assets/images/hero.jpg" width="1200"/>
-</div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br/>journeys and milestones.</p></div><button class="camera-fab hidden" id="changeCoverBtn" title="Change cover photo" type="button">📷</button><input accept="image/*" hidden="" id="coverFileInput" type="file"/></div>
+</div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br/>journeys and milestones.</p></div></div>
 <div class="family-space-grid">
-<div class="family-space-card memories-card" data-go="memories">
-<button class="card-camera-btn" data-card="memories" type="button">📷</button>
-<div class="card-default-content">
-<img alt="Our Memories" class="card-local-image" decoding="async" height="333" src="assets/images/memories.jpg" width="500"/>
-<div class="card-body"><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
-<span class="round-arrow">→</span>
+<div class="family-space-card memories-card" data-go="memories"><img alt="Our Memories" class="card-local-image" decoding="async" height="333" src="assets/images/memories.jpg" width="500"/><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
+<div class="family-space-card trips-card" data-go="trips"><img alt="Family Trips" class="card-local-image" decoding="async" height="333" src="assets/images/trips.jpg" width="500"/><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
+<div class="family-space-card celebrations-card" data-go="celebrations"><img alt="Celebrations" class="card-local-image" decoding="async" height="333" src="assets/images/celebrations.jpg" width="500"/><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
+<div class="family-space-card study-card" data-go="study"><img alt="Study Hub" class="card-local-image" decoding="async" height="333" src="assets/images/study.jpg" width="500"/><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
 </div>
-</div>
-<div class="family-space-card trips-card" data-go="trips">
-<button class="card-camera-btn" data-card="trips" type="button">📷</button>
-<div class="card-default-content">
-<img alt="Family Trips" class="card-local-image" decoding="async" height="333" src="assets/images/trips.jpg" width="500"/>
-<div class="card-body"><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
-<span class="round-arrow">→</span>
-</div>
-</div>
-<div class="family-space-card celebrations-card" data-go="celebrations">
-<button class="card-camera-btn" data-card="celebrations" type="button">📷</button>
-<div class="card-default-content">
-<img alt="Celebrations" class="card-local-image" decoding="async" height="333" src="assets/images/celebrations.jpg" width="500"/>
-<div class="card-body"><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
-<span class="round-arrow">→</span>
-</div>
-</div>
-<div class="family-space-card study-card" data-go="study">
-<button class="card-camera-btn" data-card="study" type="button">📷</button>
-<div class="card-default-content">
-<img alt="Study Hub" class="card-local-image" decoding="async" height="333" src="assets/images/study.jpg" width="500"/>
-<div class="card-body"><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
-<span class="round-arrow">→</span>
-</div>
-</div>
-</div>
-<input accept="image/*" hidden="" id="cardFile-memories" type="file"/>
-<input accept="image/*" hidden="" id="cardFile-trips" type="file"/>
-<input accept="image/*" hidden="" id="cardFile-celebrations" type="file"/>
-<input accept="image/*" hidden="" id="cardFile-study" type="file"/>
+
+
+
+
 </section>
 <section class="page hidden section-theme memories-theme" id="memoriesPage">
 <div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div></div>
@@ -146,33 +118,31 @@
 <section class="page hidden utility-page" id="profilePage"><div class="profile-panel"><button class="profile-large" id="profileEditPhoto"><img alt="Profile" class="hidden" id="profileLargePhoto"/><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p class="muted" id="profileDisplayEmail"></p><div class="profile-menu"><button class="hidden" id="familyAdminShortcut">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
 <section class="page hidden utility-page admin-page" id="adminPage">
 <div class="admin-tree-card">
-  <h1 class="admin-tree-title" id="adminTreeTitle">Our Family <span class="admin-tree-heart">♥</span></h1>
-  <p class="admin-tree-tagline">Together, Always</p>
-  <div class="admin-tree-avatars" id="adminTreeAvatars"></div>
-  <input accept="image/*" class="hidden" id="familyTreePhotoInput" type="file"/>
+<h1 class="admin-tree-title" id="adminTreeTitle">Our Family <span class="admin-tree-heart">♥</span></h1>
+<p class="admin-tree-tagline">Together, Always</p>
+<div class="admin-tree-avatars" id="adminTreeAvatars"></div>
+<input accept="image/*" class="hidden" id="familyTreePhotoInput" type="file"/>
 </div>
-
 <div class="admin-invite-card">
-  <h2 class="admin-invite-heading"><span class="admin-invite-icon">＋👤</span> Invite Family Member</h2>
-  <form class="admin-invite-form" id="addMemberForm">
-    <div class="admin-invite-fields">
-      <div class="admin-field admin-field-email"><span class="admin-field-icon">✉️</span><input id="newMemberEmail" placeholder="Enter email address" required="" type="email"/></div>
-      <div class="admin-field admin-field-role"><span class="admin-field-icon">🛡️</span><select id="newMemberRole"><option value="family">Member</option><option value="admin">Admin</option></select></div>
-    </div>
-    <button class="admin-send-btn" type="submit"><span class="admin-send-icon">➤</span> Send Invitation</button>
-    <p class="small muted admin-invite-hint">Add them here, then share the app link so they can sign in.</p>
-  </form>
+<h2 class="admin-invite-heading"><span class="admin-invite-icon">＋👤</span> Invite Family Member</h2>
+<form class="admin-invite-form" id="addMemberForm">
+<div class="admin-invite-fields">
+<div class="admin-field admin-field-email"><span class="admin-field-icon">✉️</span><input id="newMemberEmail" placeholder="Enter email address" required="" type="email"/></div>
+<div class="admin-field admin-field-role"><span class="admin-field-icon">🛡️</span><select id="newMemberRole"><option value="family">Member</option><option value="admin">Admin</option></select></div>
 </div>
-
+<button class="admin-send-btn" type="submit"><span class="admin-send-icon">➤</span> Send Invitation</button>
+<p class="small muted admin-invite-hint">Add them here, then share the app link so they can sign in.</p>
+</form>
+</div>
 <div class="admin-lists-grid">
-  <div class="admin-list-card">
-    <h3 class="admin-list-heading">Pending Invitations <span class="admin-count-badge" id="invitesCount">0</span></h3>
-    <div id="invitesList"></div>
-  </div>
-  <div class="admin-list-card">
-    <h3 class="admin-list-heading">Family Members <span class="admin-count-badge admin-count-badge-green" id="membersCount">0</span></h3>
-    <div id="membersList"></div>
-  </div>
+<div class="admin-list-card">
+<h3 class="admin-list-heading">Pending Invitations <span class="admin-count-badge" id="invitesCount">0</span></h3>
+<div id="invitesList"></div>
+</div>
+<div class="admin-list-card">
+<h3 class="admin-list-heading">Family Members <span class="admin-count-badge admin-count-badge-green" id="membersCount">0</span></h3>
+<div id="membersList"></div>
+</div>
 </div>
 </section>
 </main>
