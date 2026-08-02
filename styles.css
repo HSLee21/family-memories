@@ -202,19 +202,19 @@ html,body{overflow-x:hidden}
   /* ---------- Home ---------- */
   .family-cover{
     flex:0 0 auto!important;
-    height:210px!important;
-    min-height:210px!important;
-    max-height:210px!important;
+    height:225px!important;
+    min-height:225px!important;
+    max-height:225px!important;
     border-radius:16px!important;
     margin:0 0 12px 0!important;
     position:relative!important;
     overflow:hidden!important;
   }
   .cover-image{ position:absolute!important; inset:0!important; background-size:cover!important; background-position:center center!important; }
-  .cover-content{ position:absolute!important; left:14px!important; top:12px!important; right:60px!important; max-width:62%!important; text-shadow:0 1px 6px rgba(0,0,0,.35)!important; z-index:2!important; }
+  .cover-content{ position:absolute!important; left:14px!important; top:4px!important; right:60px!important; max-width:62%!important; text-shadow:0 1px 6px rgba(0,0,0,.35)!important; z-index:2!important; }
   .cover-script{ font-family:Pacifico,cursive!important; font-size:15px!important; line-height:1!important; margin:0 0 2px!important; display:block!important; color:#fff!important; }
-  .cover-content h1{ font-size:26px!important; line-height:.9!important; margin:0 0 3px!important; font-weight:800!important; color:#fff!important; }
-  .cover-content p{ font-size:9px!important; line-height:1.2!important; margin:0!important; color:rgba(255,255,255,.92)!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
+  .cover-content h1{ font-size:22px!important; line-height:.9!important; margin:0 0 3px!important; font-weight:800!important; color:#fff!important; }
+  .cover-content p{ font-size:8px!important; line-height:1.2!important; margin:0!important; color:rgba(255,255,255,.92)!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
   .camera-fab{display:none!important;}
 
   .family-space-grid{
