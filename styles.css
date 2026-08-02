@@ -305,269 +305,22 @@ html,body{overflow-x:hidden}
 
 
 
-/* ===== Step 3 Home Image Styling ===== */
-
-.cover-local-image{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.card-default-content{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  text-align:center;
-  padding:18px 16px 18px;
-}
-
-.card-local-image{
-  display:block;
-  width:100%;
-  height:88px;
-  aspect-ratio:500/333;
-  object-fit:cover;
-  object-position:center;
-  border-radius:16px;
-  margin:0 0 8px;
-}
-
-.family-space-card{
-  min-height:210px;
-  cursor:pointer;
-}
-
-.card-default-content h3{
-  margin:4px 0;
-}
-
-.card-default-content p{
-  margin:0;
-}
-
-.round-arrow{
-  display:none!important;
-}
-
-@media (max-width:900px){
-
-  .family-cover{
-    height:340px!important;
-    min-height:340px!important;
-    max-height:340px!important;
-  }
-
-  .family-space-grid{
-    gap:6px!important;
-    margin-top:4px!important;
-  }
-
-  .family-space-card{
-    min-height:150px!important;
-  }
-
-  .card-default-content{
-    min-height:150px!important;
-    padding:6px 6px 8px!important;
-  }
-
-  .card-local-image{
-    width:100%!important;
-    height:72px!important;
-    margin:0 0 6px!important;
-    border-radius:12px!important;
-    object-fit:cover!important;
-  }
-
-  .card-default-content h3{
-    font-size:13px!important;
-    margin:2px 0!important;
-  }
-
-  .card-default-content p{
-    font-size:9px!important;
-    line-height:1.15!important;
-  }
-
-
-
-  .card-default-content h3{
-    font-size:15px!important;
-  }
-
-  .card-default-content p{
-    font-size:10px!important;
-    line-height:1.2!important;
-  }
-}
-
-
-/* ===== Mobile home layout (consolidated — replaces old v14–v20 patches) ===== */
-@media (max-width:900px){
-
-  .family-cover{
-    height:225px!important;
-    min-height:225px!important;
-    max-height:225px!important;
-    margin-bottom:4px!important;
-  }
-
-  .family-space-grid{
-    gap:6px!important;
-    margin:2px 0 0!important;
-  }
-
-  .main{
-    padding-bottom:60px!important;
-  }
-
-  .family-space-card{
-    min-height:0!important;
-    overflow:visible!important;
-    box-shadow:none!important;
-  }
-
-  .card-default-content{
-    min-height:auto!important;
-    padding:4px 6px 8px!important;
-    row-gap:2px!important;
-  }
-
-  .family-space-card h3{
-    margin:2px 0!important;
-    font-size:15px!important;
-  }
-
-  .family-space-card p{
-    font-size:10px!important;
-    line-height:1.08!important;
-    margin:0!important;
-  }
-
-  /* Card pastel backgrounds — resampled directly from each icon's own
-     source image (previous values were sampled from a phone screenshot,
-     which drifted from the true colour for celebrations/study) */
-  .memories-card{background:#b8d0f0!important;}
-  .trips-card{background:#fcd0e0!important;}
-  .celebrations-card{background:#ccb4f0!important;}
-  .study-card{background:#f8d8b0!important;}
-
-  /* Icons sized to sit nicely inside the card, not dominate it —
-     cover crops to fit so it works regardless of aspect ratio */
-  .card-local-image{
-    width:calc(100% - 24px)!important;
-    height:100px!important;
-    margin:10px auto 8px!important;
-    object-fit:cover!important;
-    object-position:center!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    border:none!important;
-    border-radius:14px!important;
-  }
-}
-
-
-/* ===== ChatGPT tweak ===== */
-@media (max-width:900px){
-  /* Home */
-  .family-cover{
-    height:210px!important;
-    min-height:210px!important;
-    max-height:210px!important;
-    margin-bottom:8px!important;
-  }
-  .family-space-grid{
-    gap:12px!important;
-    margin-top:0!important;
-  }
-  .family-space-card{
-    min-height:180px!important;
-  }
-  .card-default-content{
-    padding:8px 8px 10px!important;
-  }
-  .card-local-image{
-    height:95px!important;
-    width:calc(100% - 18px)!important;
-    margin:4px auto 6px!important;
-  }
-
-  /* Gallery */
-  #mediaHubPage .section-hero{
-    margin-bottom:18px!important;
-  }
-  #mediaHubPage .media-hub-grid{
-    gap:12px!important;
-  }
-  #mediaHubPage .media-hub-ico{
-    width:56px!important;
-    height:56px!important;
-  }
-  .main{
-    padding-bottom:80px!important; /* ~20px above 60px nav */
-  }
-}
-
-
-/* ===== Home card text clipping fix ===== */
-@media (max-width:900px){
-  .family-space-card{
-    min-height:158px !important;
-  }
-
-  .card-default-content{
-    min-height:158px !important;
-    padding:8px 6px 10px !important;
-  }
-
-  .card-default-content p{
-    line-height:1.25 !important;
-    padding-bottom:6px !important;
-  }
-}
-
-
-/* ===== Final home card clipping fix ===== */
-@media (max-width:900px){
-
-  .family-space-card{
-    min-height:170px !important;
-  }
-
-  .card-default-content{
-    min-height:auto !important;
-    padding:8px 6px 12px !important;
-  }
-
-  .card-default-content p{
-    margin-bottom:0 !important;
-    line-height:1.28 !important;
-    padding-bottom:8px !important;
-  }
-
-}
-
 
 
 /* ===== Profile avatar circle fix ===== */
 .profile-large{
   width:120px !important;
   height:120px !important;
-  aspect-ratio:1 / 1 !important;
+  aspect-ratio:1/1 !important;
   border-radius:50% !important;
   overflow:hidden !important;
 }
-
 .profile-large img{
   width:100% !important;
   height:100% !important;
   object-fit:cover !important;
   border-radius:50% !important;
 }
-
 .profile-large small{
   width:24px !important;
   height:24px !important;
@@ -576,41 +329,21 @@ html,body{overflow-x:hidden}
   bottom:15px !important;
 }
 
-
-
-
 /* Android only */
 body.android .family-cover{
     height:205px !important;
     min-height:205px !important;
     max-height:205px !important;
 }
-
 body.android .family-space-card{
     height:165px !important;
     min-height:165px !important;
     max-height:165px !important;
 }
 
-/* ===== Bottom nav clearance fix (final, wins over earlier conflicting
-   .main padding-bottom rules elsewhere in this file) ===== */
+/* Bottom nav clearance */
 @media (max-width:900px){
-  .main{
-    padding-bottom:110px !important;
-  }
-
-  /* Admin/Profile pages (.utility-page) don't reliably inherit .main's
-     clearance because of the flex/scroll-region rules earlier in this
-     file - give it directly instead of chasing that cascade further. */
-  .utility-page{
-    padding-bottom:130px !important;
-  }
-
-  /* Gallery page specifically had too much empty space above the nav
-     compared to other pages - pull it in without touching the shared
-     .main clearance that other pages still need. */
-  #mediaHubPage{
-    margin-bottom:0 !important;
-    padding-bottom:12px !important;
-  }
+  .main{padding-bottom:110px !important;}
+  .utility-page{padding-bottom:130px !important;}
+  #mediaHubPage{margin-bottom:0 !important;padding-bottom:12px !important;}
 }
