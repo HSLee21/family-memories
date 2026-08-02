@@ -202,15 +202,15 @@ html,body{overflow-x:hidden}
   /* ---------- Home ---------- */
   .family-cover{
     flex:0 0 auto!important;
-    height:225px!important;
-    min-height:225px!important;
-    max-height:225px!important;
-    border-radius:16px!important;
+    height:250px!important;
+    min-height:250px!important;
+    max-height:250px!important;
+    border-radius:20px!important;
     margin:0 0 12px 0!important;
     position:relative!important;
     overflow:hidden!important;
   }
-  .cover-image{ position:absolute!important; inset:0!important; background-size:cover!important; background-position:center center!important; }
+  .cover-image{ position:absolute!important; inset:0!important; background-size:cover!important; background-position:center 75%!important; }
   .cover-content{ position:absolute!important; left:14px!important; top:4px!important; right:60px!important; max-width:62%!important; text-shadow:0 1px 6px rgba(0,0,0,.35)!important; z-index:2!important; }
   .cover-script{ font-family:Pacifico,cursive!important; font-size:15px!important; line-height:1!important; margin:0 0 2px!important; display:block!important; color:#fff!important; }
   .cover-content h1{ font-size:22px!important; line-height:.9!important; margin:0 0 3px!important; font-weight:800!important; color:#fff!important; }
@@ -344,15 +344,6 @@ body,
 .app,
 .main{
     background:#ffffff;
-}
-
-.home-hero,
-.family-cover{
-    position:relative;
-    height:250px;
-    border-radius:20px;
-    overflow:hidden;
-    margin-bottom:12px;
 }
 
 .home-hero-image img,
