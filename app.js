@@ -602,10 +602,13 @@ async function loadMembers(){
 
   $("membersCount").textContent=data.length;
 
-  $("membersList").innerHTML=data.map(m=>{
+  const rows=await Promise.all(data.map(async m=>{
     const [bg,fg]=avatarColorFor(m.id);
+    let avatarHtml=`<span class="admin-row-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>`;
+    const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(`${m.id}/profile/profile-photo`,3600);
+    if(signed?.signedUrl) avatarHtml=`<img class="admin-row-avatar admin-row-avatar-photo" src="${signed.signedUrl}" alt="${escapeHtml(m.name||m.email||"")}"/>`;
     return `<div class="admin-member-row">
-      <span class="admin-row-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>
+      ${avatarHtml}
       <div class="admin-row-body">
         <strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong>
         <div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"family")}${m.status!=="approved"?` · ${escapeHtml(m.status||"pending")}`:""}</div>
@@ -616,7 +619,8 @@ async function loadMembers(){
         <button class="admin-icon-btn admin-icon-btn-danger delete-member" data-id="${m.id}" data-name="${escapeHtml(m.name||m.email||"this member")}" title="Remove">🗑️</button>
       </div>`}
     </div>`;
-  }).join("");
+  }));
+  $("membersList").innerHTML=rows.join("");
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
   document.querySelectorAll(".rename-member").forEach(b=>b.onclick=()=>renameMember(b.dataset.id,b.dataset.name));
   document.querySelectorAll(".delete-member").forEach(b=>b.onclick=()=>deleteMember(b.dataset.id,b.dataset.name));
