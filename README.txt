@@ -1,3 +1,2 @@
-Replace your app.js and styles.css with these files.
-This version uses a compact centered family-tree layout that should fit your current iPhone card width.
-Daughter names are Hansyne (left) and Jaxyne (right).
+Replace your current styles.css with this file.
+This fixes the Family Admin tree panel so it spans the full width instead of sitting in the left half of the grid.
