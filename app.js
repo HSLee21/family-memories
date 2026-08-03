@@ -631,8 +631,6 @@ const FAMILY_TREE_ORDER=["dad","mom","daughter1","daughter2"];
 const TREE_SLOT_LABELS={dad:"Dad",mom:"Mum",daughter1:"Hansyne",daughter2:"Jaxyne"};
 const familyTreeStoragePath=(slotKey)=>`${currentUser.id}/app-settings/family-tree-${slotKey}`;
 
-const familyTreeCameraSvg=`<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9 4.5 7.4 6.5H4.8A2.8 2.8 0 0 0 2 9.3v7.2A2.8 2.8 0 0 0 4.8 19.3h14.4A2.8 2.8 0 0 0 22 16.5V9.3a2.8 2.8 0 0 0-2.8-2.8h-2.6L15 4.5H9zm3 12.3a4.2 4.2 0 1 1 0-8.4 4.2 4.2 0 0 1 0 8.4zm0-1.8a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z"/></svg>`;
-
 function setFamilyTreeTitle(){
   const name=(currentProfile?.name||"").trim();
   const surname=name.split(/\s+/).pop();
@@ -640,8 +638,6 @@ function setFamilyTreeTitle(){
 }
 
 function familyTreeLabelFor(key,slot){
-  if(key==="daughter1") return TREE_SLOT_LABELS.daughter1;
-  if(key==="daughter2") return TREE_SLOT_LABELS.daughter2;
   return TREE_SLOT_LABELS[key] || slot?.label || key;
 }
 
@@ -649,10 +645,10 @@ function familyTreeNodeHtml({key,label,photoUrl,editable}){
   const avatar = photoUrl
     ? `<img alt="${escapeHtml(label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${photoUrl}"/>`
     : `<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
-  return `<div class="family-tree-node${editable?" family-tree-node-editable":""} ${editable?"admin-tree-editable":""}" data-slot="${key}">
+  return `<div class="family-tree-node${editable?" family-tree-node-editable":""}${editable?" admin-tree-editable":""}" data-slot="${key}">
     <div class="family-tree-avatar-shell">
       <div class="admin-tree-avatar-wrap">${avatar}</div>
-      ${editable?`<span class="family-tree-camera-badge">${familyTreeCameraSvg}</span>`:""}
+      ${editable?'<span class="family-tree-camera-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 4.5 7.4 6.5H4.8A2.8 2.8 0 0 0 2 9.3v7.2A2.8 2.8 0 0 0 4.8 19.3h14.4A2.8 2.8 0 0 0 22 16.5V9.3a2.8 2.8 0 0 0-2.8-2.8h-2.6L15 4.5H9zm3 12.3a4.2 4.2 0 1 1 0-8.4 4.2 4.2 0 0 1 0 8.4zm0-1.8a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z"/></svg></span>':''}
     </div>
     <span class="family-tree-name-pill">${escapeHtml(label)}</span>
   </div>`;
@@ -676,27 +672,28 @@ async function loadFamilyTree(){
     return {key,label,photoUrl};
   }));
 
-  const treeHtml = `
+  $("adminTreeAvatars").innerHTML=`
     <div class="family-tree-stage${isAdmin?" family-tree-stage-editable":""}">
-      <div class="family-tree-canopy"></div>
-      <div class="family-tree-row family-tree-row-top">
-        ${familyTreeNodeHtml({...items[0],editable:isAdmin})}
-        ${familyTreeNodeHtml({...items[1],editable:isAdmin})}
+      <div class="family-tree-title-stack">
+        <div class="family-tree-top-row">
+          ${familyTreeNodeHtml({...items[0],editable:isAdmin})}
+          ${familyTreeNodeHtml({...items[1],editable:isAdmin})}
+        </div>
+
+        <div class="family-tree-connector">
+          <span class="family-tree-line"></span>
+          <span class="family-tree-heart">♥</span>
+          <span class="family-tree-line"></span>
+        </div>
+
+        <div class="family-tree-trunk"></div>
+
+        <div class="family-tree-bottom-row">
+          ${familyTreeNodeHtml({...items[2],editable:isAdmin})}
+          ${familyTreeNodeHtml({...items[3],editable:isAdmin})}
+        </div>
       </div>
-      <div class="family-tree-heart-link">
-        <span></span>
-        <i>♥</i>
-        <span></span>
-      </div>
-      <div class="family-tree-trunk"></div>
-      <div class="family-tree-branch-row"></div>
-      <div class="family-tree-row family-tree-row-bottom">
-        ${familyTreeNodeHtml({...items[2],editable:isAdmin})}
-        ${familyTreeNodeHtml({...items[3],editable:isAdmin})}
-      </div>
-      <div class="family-tree-base"></div>
     </div>`;
-  $("adminTreeAvatars").innerHTML=treeHtml;
 
   if(isAdmin){
     document.querySelectorAll(".admin-tree-editable").forEach(el=>{

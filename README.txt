@@ -1,3 +1,3 @@
 Replace your app.js and styles.css with these files.
-HTML does not need to change for this tree design.
-Daughter labels are set to Hansyne (left) and Jaxyne (right) in the Family Admin tree.
+This version uses a compact centered family-tree layout that should fit your current iPhone card width.
+Daughter names are Hansyne (left) and Jaxyne (right).
