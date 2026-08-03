@@ -1,2 +1,3 @@
-Replace your current app.js and styles.css with these files.
-This patch improves the Family Admin avatar badge, keeps the 4-avatar block balanced, and adds more reliable video poster thumbnails.
+Replace your app.js and styles.css with these files.
+HTML does not need to change for this tree design.
+Daughter labels are set to Hansyne (left) and Jaxyne (right) in the Family Admin tree.

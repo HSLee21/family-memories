@@ -416,72 +416,208 @@ body.android .family-space-card{
     min-height:165px !important;
     max-height:165px !important;
 }
+/* ===== Family Tree (organization-chart / tree style) ===== */
+.admin-tree-card{text-align:center}
+.admin-tree-title{font-size:28px;font-weight:800;color:#0f172a;margin:0}
+.admin-tree-heart{color:#f43f5e}
+.admin-tree-tagline{color:#64748b;margin:6px 0 18px}
+.admin-tree-avatars{width:100%;max-width:100%;margin:0 auto;padding:0}
 
-/* ===== Admin page balance + avatar polish ===== */
-@media (max-width: 900px){
-  #adminPage.utility-page{
-    padding: 12px 12px calc(100px + env(safe-area-inset-bottom)) !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  #adminPage.admin-page{
-    gap: 14px !important;
-  }
-
-  #adminPage .admin-tree-card,
-  #adminPage .admin-invite-card,
-  #adminPage .admin-list-card{
-    width: 100% !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-  }
-
-  #adminPage .admin-tree-card{
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-  }
-
-  #adminPage .admin-tree-avatars{
-    width: min(100%, 300px) !important;
-    max-width: 300px !important;
-    margin: 2px auto 0 !important;
-    padding: 0 !important;
-    gap: 16px 18px !important;
-    justify-items: center !important;
-  }
-
-  #adminPage .admin-tree-member{
-    max-width: none !important;
-  }
-
-  #adminPage .admin-tree-avatar-wrap{
-    width: 72px !important;
-    height: 72px !important;
-  }
-
-  #adminPage .admin-tree-avatar-photo{
-    box-shadow: none !important;
-    border: 0 !important;
-    background: #fff !important;
-  }
-
-  #adminPage .admin-tree-edit-badge{
-    right: 0 !important;
-    bottom: 0 !important;
-    transform: translate(35%,35%) !important;
-    width: 22px !important;
-    height: 22px !important;
-    border: 2px solid #fff !important;
-    background: #2563eb !important;
-  }
-
-  #adminPage .admin-tree-edit-badge svg{
-    width: 12px !important;
-    height: 12px !important;
-    display: block !important;
-  }
+.family-tree-stage{
+  position:relative;
+  width:min(560px,100%);
+  margin:0 auto;
+  padding:18px 14px 20px;
+  border-radius:30px;
+  overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,251,255,.98));
 }
+.family-tree-stage::before{
+  content:"";
+  position:absolute;
+  inset:18px 8px 16px;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(170,205,255,.18), transparent 48%),
+    radial-gradient(circle at 50% 95%, rgba(175,214,140,.22), transparent 20%);
+  pointer-events:none;
+}
+.family-tree-canopy{
+  position:absolute;
+  inset:22px 14px auto;
+  height:78px;
+  background:radial-gradient(circle at 50% 0%, rgba(255,255,255,.85), rgba(255,255,255,0) 72%);
+  pointer-events:none;
+}
+.family-tree-row{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px 18px;
+  justify-items:center;
+  align-items:start;
+}
+.family-tree-row-top{margin-top:6px}
+.family-tree-row-bottom{margin-top:72px}
+.family-tree-heart-link{
+  position:relative;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:min(360px,90%);
+  margin:6px auto 0;
+}
+.family-tree-heart-link span{
+  height:2px;
+  flex:1;
+  border-radius:999px;
+  background:linear-gradient(90deg, rgba(238,118,145,.18), #ef7b9a);
+}
+.family-tree-heart-link i{
+  flex:0 0 auto;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  color:#f05c79;
+  font-style:normal;
+  box-shadow:0 8px 20px rgba(240,92,121,.16);
+}
+.family-tree-trunk{
+  position:absolute;
+  left:50%;
+  top:188px;
+  transform:translateX(-50%);
+  width:4px;
+  height:150px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#bf7d56,#9f5d34);
+  z-index:1;
+}
+.family-tree-branch-row{
+  position:absolute;
+  left:50%;
+  top:304px;
+  transform:translateX(-50%);
+  width:min(420px,84%);
+  height:70px;
+  pointer-events:none;
+  z-index:1;
+}
+.family-tree-branch-row::before,
+.family-tree-branch-row::after{
+  content:"";
+  position:absolute;
+  top:18px;
+  width:44%;
+  height:3px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#c98b61,#b97a55);
+}
+.family-tree-branch-row::before{left:0;transform-origin:right center;transform:rotate(8deg)}
+.family-tree-branch-row::after{right:0;transform-origin:left center;transform:rotate(-8deg)}
+.family-tree-base{
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  width:82%;
+  height:42px;
+  border-radius:50%;
+  background:radial-gradient(circle at center, rgba(179,221,139,.30), rgba(179,221,139,0) 68%);
+  pointer-events:none;
+}
+.family-tree-node{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  max-width:180px;
+  min-width:0;
+}
+.family-tree-avatar-shell{
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+.admin-tree-avatar-wrap{
+  position:relative;
+  width:78px;
+  height:78px;
+  margin:0 auto;
+}
+.admin-tree-avatar{
+  width:78px;
+  height:78px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-weight:800;
+  font-size:22px;
+  object-fit:cover;
+  overflow:hidden;
+  background:#eef2f7;
+}
+.admin-tree-avatar-empty{
+  background:#eef2f7;
+  color:#94a3b8;
+  font-size:30px;
+}
+.admin-tree-avatar-photo{
+  border:0;
+  box-shadow:none;
+  background:#fff;
+}
+.family-tree-camera-badge{
+  position:absolute;
+  right:-2px;
+  bottom:-2px;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  color:#2563eb;
+  box-shadow:0 8px 20px rgba(37,99,235,.16);
+  border:1px solid rgba(37,99,235,.06);
+}
+.family-tree-camera-badge svg{
+  width:15px;
+  height:15px;
+  display:block;
+}
+.family-tree-name-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 16px;
+  min-width:108px;
+  border-radius:999px;
+  background:#fff;
+  color:#1f2a44;
+  font-weight:800;
+  font-size:14px;
+  box-shadow:0 8px 18px rgba(15,23,42,.06);
+}
+.family-tree-node-editable{cursor:pointer}
+.family-tree-stage-editable .family-tree-node:hover .family-tree-name-pill{transform:translateY(-1px)}
+
+@media (max-width: 900px){
+  .family-tree-stage{width:min(100%, 520px);padding:16px 12px 18px}
+  .family-tree-row{gap:18px 14px}
+  .family-tree-row-bottom{margin-top:62px}
+  .family-tree-trunk{top:182px;height:140px}
+  .family-tree-branch-row{top:292px;width:min(360px,86%)}
+  .admin-tree-avatar-wrap{width:72px;height:72px}
+  .admin-tree-avatar{width:72px;height:72px}
+  .family-tree-camera-badge{width:32px;height:32px}
+  .family-tree-name-pill{min-width:96px;font-size:13px;padding:7px 14px}
+}
+
