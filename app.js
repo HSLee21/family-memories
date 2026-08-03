@@ -167,7 +167,7 @@ function navigate(page){
   $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
-  if(page==="admin"){ requestAnimationFrame(()=>{ loadFamilyTree(); loadMembers(); loadInvites(); }); }
+  if(page==="admin"){ loadMembers(); loadInvites(); }
   if(page==="home") loadHomeExperience();
   if(page==="profile") loadProfilePage();
 }
@@ -602,21 +602,16 @@ async function loadMembers(){
 
   $("membersCount").textContent=data.length;
 
-  // Render the member rows immediately with fixed-size avatar placeholders,
-  // then swap in the photos in the background so the layout never shifts.
-  const rows= data.map(m=>{
+  const rows=await Promise.all(data.map(async m=>{
     const [bg,fg]=avatarColorFor(m.id);
-    const initialsText=escapeHtml(initialsOf(m.name,m.email));
-    const labelName=escapeHtml(m.name||m.email||"Unnamed member");
-    const emailText=escapeHtml(m.email||"");
-    const roleText=escapeHtml(m.role||"family");
-    const statusText=m.status!=="approved" ? ` · ${escapeHtml(m.status||"pending")}` : "";
-    return `<div class="admin-member-row" data-member-id="${m.id}">
-      <span class="admin-row-avatar" style="background:${bg};color:${fg}" data-member-avatar-placeholder="${m.id}">${initialsText}</span>
-      <img class="admin-row-avatar admin-row-avatar-photo hidden" data-member-avatar-photo="${m.id}" alt="${labelName}" src=""/>
+    let avatarHtml=`<span class="admin-row-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>`;
+    const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(`${m.id}/profile/profile-photo`,3600);
+    if(signed?.signedUrl) avatarHtml=`<img class="admin-row-avatar admin-row-avatar-photo" src="${signed.signedUrl}" alt="${escapeHtml(m.name||m.email||"")}"/>`;
+    return `<div class="admin-member-row">
+      ${avatarHtml}
       <div class="admin-row-body">
-        <strong>${labelName}</strong>
-        <div class="small muted">${emailText} · ${roleText}${statusText}</div>
+        <strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong>
+        <div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"family")}${m.status!=="approved"?` · ${escapeHtml(m.status||"pending")}`:""}</div>
       </div>
       ${m.status!=="approved"?`<button class="admin-approve-btn approve-member" data-id="${m.id}">Approve</button>`:`
       <div class="admin-row-actions">
@@ -624,37 +619,20 @@ async function loadMembers(){
         <button class="admin-icon-btn admin-icon-btn-danger delete-member" data-id="${m.id}" data-name="${escapeHtml(m.name||m.email||"this member")}" title="Remove">🗑️</button>
       </div>`}
     </div>`;
-  });
-
+  }));
   $("membersList").innerHTML=rows.join("");
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
   document.querySelectorAll(".rename-member").forEach(b=>b.onclick=()=>renameMember(b.dataset.id,b.dataset.name));
   document.querySelectorAll(".delete-member").forEach(b=>b.onclick=()=>deleteMember(b.dataset.id,b.dataset.name));
 
-  Promise.allSettled(data.map(async m=>{
-    if(!m.id) return;
-    try{
-      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(`${m.id}/profile/profile-photo`,3600);
-      const url=signed?.signedUrl||null;
-      if(!url) return;
-      const img=document.querySelector(`[data-member-avatar-photo="${m.id}"]`);
-      const ph=document.querySelector(`[data-member-avatar-placeholder="${m.id}"]`);
-      if(img){
-        img.src=url;
-        img.classList.remove("hidden");
-      }
-      if(ph) ph.classList.add("hidden");
-    }catch(e){}
-  }));
+  // Family avatar header is a fixed Dad/Mum/Daughter/Daughter layout with
+  // real uploaded photos (not tied to actual invited accounts - this app
+  // has no parent/child relationship data, these are just 4 display slots
+  // the admin can put real family photos into).
+  loadFamilyTree();
 }
 
 const FAMILY_TREE_ORDER=["dad","mom","daughter1","daughter2"];
-const FAMILY_TREE_DEFAULT_LABELS = {
-  dad: "Dad",
-  mom: "Mum",
-  daughter1: "Daughter",
-  daughter2: "Daughter"
-};
 const familyTreeStoragePath=(slotKey)=>`${currentUser.id}/app-settings/family-tree-${slotKey}`;
 
 function setFamilyTreeTitle(){
@@ -666,20 +644,23 @@ function setFamilyTreeTitle(){
 async function loadFamilyTree(){
   setFamilyTreeTitle();
   const isAdmin=currentProfile?.role==="admin";
+  const {data,error}=await client.from("family_tree_slots").select("slot_key,label,photo_path");
+  if(error){ $("adminTreeAvatars").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`; return; }
+  const bySlot=Object.fromEntries(data.map(d=>[d.slot_key,d]));
 
-  // Instant first paint: render the full 4-avatar layout right away with
-  // fixed-size placeholders, then fill the real labels/photos in place.
-  $("adminTreeAvatars").innerHTML = FAMILY_TREE_ORDER.map(key=>{
-    const defaultLabel = FAMILY_TREE_DEFAULT_LABELS[key] || key;
+  const cells=await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
+    const slot=bySlot[key]||{label:key,photo_path:null};
+    let avatarHtml=`<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
+    if(slot.photo_path){
+      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
+      if(signed?.signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}"/>`;
+    }
     return `<div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${key}">
-      <div class="admin-tree-avatar-wrap">
-        <span class="admin-tree-avatar admin-tree-avatar-empty" data-tree-avatar-placeholder="${key}">👤</span>
-        <img alt="${escapeHtml(defaultLabel)}" class="admin-tree-avatar admin-tree-avatar-photo hidden" data-tree-avatar-photo="${key}" src=""/>
-        ${isAdmin?'<span class="admin-tree-edit-badge">📷</span>':""}
-      </div>
-      <span class="admin-tree-name" data-tree-label="${key}">${escapeHtml(defaultLabel)}</span>
+      <div class="admin-tree-avatar-wrap">${avatarHtml}${isAdmin?'<span class="admin-tree-edit-badge">📷</span>':""}</div>
+      <span class="admin-tree-name">${escapeHtml(slot.label)}</span>
     </div>`;
-  }).join("");
+  }));
+  $("adminTreeAvatars").innerHTML=cells.join("");
 
   if(isAdmin){
     document.querySelectorAll(".admin-tree-editable").forEach(el=>{
@@ -689,39 +670,6 @@ async function loadFamilyTree(){
       };
     });
   }
-
-  const {data,error}=await client.from("family_tree_slots").select("slot_key,label,photo_path");
-  if(error){
-    toast(error.message);
-    return;
-  }
-
-  const bySlot=Object.fromEntries((data||[]).map(d=>[d.slot_key,d]));
-
-  // Update labels immediately when the DB data returns.
-  FAMILY_TREE_ORDER.forEach(key=>{
-    const slot=bySlot[key]||{label:FAMILY_TREE_DEFAULT_LABELS[key]||key, photo_path:null};
-    const labelEl=document.querySelector(`[data-tree-label="${key}"]`);
-    if(labelEl) labelEl.textContent=slot.label||FAMILY_TREE_DEFAULT_LABELS[key]||key;
-  });
-
-  // Load the avatar photos in the background, one by one, without rebuilding the card.
-  await Promise.allSettled(FAMILY_TREE_ORDER.map(async key=>{
-    const slot=bySlot[key];
-    if(!slot?.photo_path) return;
-    try{
-      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
-      const url=signed?.signedUrl||null;
-      if(!url) return;
-      const img=document.querySelector(`[data-tree-avatar-photo="${key}"]`);
-      const ph=document.querySelector(`[data-tree-avatar-placeholder="${key}"]`);
-      if(img){
-        img.src=url;
-        img.classList.remove("hidden");
-      }
-      if(ph) ph.classList.add("hidden");
-    }catch(e){}
-  }));
 }
 
 if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
