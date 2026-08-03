@@ -167,7 +167,7 @@ function navigate(page){
   $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
-  if(page==="admin"){ loadMembers(); loadInvites(); loadFamilyTree(); }
+  if(page==="admin"){ loadFamilyTree(); loadMembers(); loadInvites(); }
   if(page==="home") loadHomeExperience();
   if(page==="profile") loadProfilePage();
 }
