@@ -417,102 +417,71 @@ body.android .family-space-card{
     max-height:165px !important;
 }
 
-/* ===== Family Admin tree centering fix ===== */
-/* The tree container was sitting inside a 2-column grid cell, which left the
-   whole family-tree panel stuck in the left half of the card. Make it span the
-   full width and center the tree properly. */
-#adminPage .admin-tree-avatars{
-  display:block !important;
-  width:100% !important;
-  padding:0 !important;
-  margin:0 !important;
-}
-
-/* Keep the tree itself compact and centered in the card */
-#adminPage .family-tree-stage{
-  display:block !important;
-  width:min(460px,100%) !important;
-  margin:0 auto !important;
-  padding:14px 10px 16px !important;
-  box-sizing:border-box !important;
-}
-
-#adminPage .family-tree-row{
-  gap:14px 14px !important;
-}
-
-#adminPage .family-tree-row-top{
-  margin-top:2px !important;
-}
-
-#adminPage .family-tree-row-bottom{
-  margin-top:54px !important;
-}
-
-#adminPage .family-tree-heart-link{
-  width:min(320px,86%) !important;
-}
-
-#adminPage .family-tree-trunk{
-  top:178px !important;
-  height:132px !important;
-}
-
-#adminPage .family-tree-branch-row{
-  top:286px !important;
-  width:min(320px,82%) !important;
-}
-
-#adminPage .family-tree-base{
-  width:76% !important;
-}
-
-#adminPage .family-tree-node{
-  max-width:150px !important;
-}
-
-#adminPage .admin-tree-avatar-wrap{
-  width:72px !important;
-  height:72px !important;
-}
-
-#adminPage .admin-tree-avatar{
-  width:72px !important;
-  height:72px !important;
-}
-
-#adminPage .family-tree-name-pill{
-  min-width:100px !important;
-  font-size:13px !important;
-  padding:7px 14px !important;
-}
-
-/* Make the camera badge cleaner and smaller */
-#adminPage .family-tree-camera-badge{
-  width:30px !important;
-  height:30px !important;
-  right:-2px !important;
-  bottom:-2px !important;
-}
-
-#adminPage .family-tree-camera-badge svg{
-  width:13px !important;
-  height:13px !important;
-}
-
+/* ===== Admin page balance + avatar polish ===== */
 @media (max-width: 900px){
-  #adminPage .family-tree-stage{
-    width:min(100%, 440px) !important;
+  #adminPage.utility-page{
+    padding: 12px 12px calc(100px + env(safe-area-inset-bottom)) !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
   }
-  #adminPage .family-tree-row-bottom{
-    margin-top:50px !important;
+
+  #adminPage.admin-page{
+    gap: 14px !important;
   }
-  #adminPage .family-tree-trunk{
-    top:176px !important;
-    height:126px !important;
+
+  #adminPage .admin-tree-card,
+  #adminPage .admin-invite-card,
+  #adminPage .admin-list-card{
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
   }
-  #adminPage .family-tree-branch-row{
-    top:280px !important;
-    width:min(300px,84%) !important;
+
+  #adminPage .admin-tree-card{
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  #adminPage .admin-tree-avatars{
+    width: min(100%, 300px) !important;
+    max-width: 300px !important;
+    margin: 2px auto 0 !important;
+    padding: 0 !important;
+    gap: 16px 18px !important;
+    justify-items: center !important;
+  }
+
+  #adminPage .admin-tree-member{
+    max-width: none !important;
+  }
+
+  #adminPage .admin-tree-avatar-wrap{
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  #adminPage .admin-tree-avatar-photo{
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
+  }
+
+  #adminPage .admin-tree-edit-badge{
+    right: 0 !important;
+    bottom: 0 !important;
+    transform: translate(35%,35%) !important;
+    width: 22px !important;
+    height: 22px !important;
+    border: 2px solid #fff !important;
+    background: #2563eb !important;
+  }
+
+  #adminPage .admin-tree-edit-badge svg{
+    width: 12px !important;
+    height: 12px !important;
+    display: block !important;
   }
 }

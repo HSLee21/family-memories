@@ -1,2 +1,2 @@
-Replace your current styles.css with this file.
-This fixes the Family Admin tree panel so it spans the full width instead of sitting in the left half of the grid.
+Replace your current app.js and styles.css with these files.
+This patch improves the Family Admin avatar badge, keeps the 4-avatar block balanced, and adds more reliable video poster thumbnails.

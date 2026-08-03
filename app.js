@@ -343,6 +343,11 @@ $("addForm").onsubmit = async e => {
         .upload(file_path, uploadFile);
 
       if (uploadError) throw uploadError;
+
+      if (uploadFile.type && uploadFile.type.startsWith("video/")) {
+        const poster = await captureVideoPosterFromFile(uploadFile);
+        if (poster) setVideoPosterCached(file_path, poster);
+      }
     }
 
     // Use file name as title automatically if title is empty
@@ -465,7 +470,7 @@ const cards=items.map(item=>{
       ? isImage
         ? `<img class="content-preview" loading="lazy" decoding="async" data-src="${item.signedUrl}" src="" alt="${escapeHtml(item.title||"Uploaded image")}" data-file="${encodeURIComponent(item.file_path)}">`
         : isVideo
-          ? `<div class="video-wrap"><video class="content-preview" playsinline muted preload="metadata" src="${item.signedUrl}"></video><button type="button" class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
+          ? `<div class="video-wrap"><video class="content-preview" playsinline muted preload="metadata"${getVideoPosterCached(item.file_path)?` poster="${getVideoPosterCached(item.file_path)}"`:""} data-video-path="${encodeURIComponent(item.file_path)}" src="${item.signedUrl}"></video><button type="button" class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
           : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
       : "";
     return `<article class="content-card">
@@ -480,7 +485,7 @@ const cards=items.map(item=>{
 
   setTimeout(()=>{
   document.querySelectorAll(`#${target} [data-file]`).forEach(el=>el.onclick=()=>openPrivateFile(decodeURIComponent(el.dataset.file)));
-  document.querySelectorAll(`#${target} video.content-preview`).forEach(el=>attachVideoPoster(el,el.currentSrc||el.src));
+  document.querySelectorAll(`#${target} video.content-preview`).forEach(el=>attachVideoPoster(el,el.currentSrc||el.src, el.dataset.videoPath ? decodeURIComponent(el.dataset.videoPath) : null));
   document.querySelectorAll(`#${target} .video-play-btn`).forEach(btn=>{
     btn.onclick=(e)=>{
       e.stopPropagation();
@@ -516,6 +521,8 @@ const cards=items.map(item=>{
     if(error){ toast(error.message); return; }
     if(filePath){
       await client.storage.from(cfg.STORAGE_BUCKET).remove([filePath]);
+      videoPosterCache.delete(filePath);
+      persistVideoPosterCache();
     }
     mediaIndexCache.items=null;
     toast("Deleted.");
@@ -528,23 +535,49 @@ const cards=items.map(item=>{
 // hidden probe video and use it as the poster so the preview looks like a
 // real thumbnail. Fails silently (no poster, same as before) if the storage
 // CORS policy blocks canvas reads.
-function attachVideoPoster(videoEl,src){
+
+function attachVideoPoster(videoEl,src,filePath){
   try{
+    if(filePath){
+      const cached = getVideoPosterCached(filePath);
+      if(cached){
+        videoEl.poster = cached;
+        return;
+      }
+    }
     const probe=document.createElement("video");
     probe.crossOrigin="anonymous";
-    probe.preload="metadata";
+    probe.preload="auto";
     probe.muted=true;
     probe.playsInline=true;
     probe.src=src;
-    probe.addEventListener("loadeddata",()=>{
+
+    const tryCapture = ()=>{
       try{
         const canvas=document.createElement("canvas");
         canvas.width=probe.videoWidth||320;
         canvas.height=probe.videoHeight||320;
-        canvas.getContext("2d").drawImage(probe,0,0,canvas.width,canvas.height);
-        videoEl.poster=canvas.toDataURL("image/jpeg",0.7);
+        const ctx = canvas.getContext("2d");
+        if(!ctx) throw new Error("no ctx");
+        ctx.drawImage(probe,0,0,canvas.width,canvas.height);
+        const poster = canvas.toDataURL("image/jpeg",0.78);
+        videoEl.poster = poster;
+        if(filePath) setVideoPosterCached(filePath, poster);
       }catch(e){ /* tainted canvas / decode failure - leave without poster */ }
+    };
+
+    probe.addEventListener("loadedmetadata",()=>{
+      try{
+        const jumpTo = Math.min(0.1, Math.max(0.01, (probe.duration || 1) * 0.02));
+        probe.currentTime = jumpTo;
+      }catch(e){
+        tryCapture();
+      }
     },{once:true});
+
+    probe.addEventListener("seeked",()=>{ tryCapture(); },{once:true});
+    probe.addEventListener("loadeddata",()=>{ tryCapture(); },{once:true});
+    probe.addEventListener("error",()=>{ /* ignore - not critical */ },{once:true});
   }catch(e){ /* ignore - not critical */ }
 }
 async function openPrivateFile(path){
@@ -579,6 +612,86 @@ async function compressImageIfNeeded(file){
 }
 
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+
+const VIDEO_POSTER_CACHE_KEY = "family-memories:video-poster-cache-v1";
+const videoPosterCache = new Map();
+try{
+  const raw = localStorage.getItem(VIDEO_POSTER_CACHE_KEY);
+  if(raw){
+    const parsed = JSON.parse(raw);
+    if(parsed && typeof parsed === "object"){
+      Object.entries(parsed).forEach(([k,v])=>{
+        if(typeof v === "string" && v) videoPosterCache.set(k,v);
+      });
+    }
+  }
+}catch(e){}
+
+function persistVideoPosterCache(){
+  try{
+    const obj = Object.fromEntries(videoPosterCache);
+    localStorage.setItem(VIDEO_POSTER_CACHE_KEY, JSON.stringify(obj));
+  }catch(e){}
+}
+function getVideoPosterCached(path){
+  return path ? (videoPosterCache.get(path) || null) : null;
+}
+function setVideoPosterCached(path, poster){
+  if(!path || !poster) return;
+  if(!videoPosterCache.has(path) && videoPosterCache.size >= 20){
+    const firstKey = videoPosterCache.keys().next().value;
+    if(firstKey) videoPosterCache.delete(firstKey);
+  }
+  videoPosterCache.set(path, poster);
+  persistVideoPosterCache();
+}
+function captureVideoPosterFromFile(file){
+  if(!file || !file.type || !file.type.startsWith("video/")) return Promise.resolve(null);
+  return new Promise(resolve=>{
+    const url = URL.createObjectURL(file);
+    const probe = document.createElement("video");
+    probe.crossOrigin = "anonymous";
+    probe.preload = "auto";
+    probe.muted = true;
+    probe.playsInline = true;
+    probe.src = url;
+
+    const cleanup = () => {
+      try{ URL.revokeObjectURL(url); }catch(e){}
+    };
+
+    const finish = () => {
+      try{
+        const canvas = document.createElement("canvas");
+        canvas.width = probe.videoWidth || 320;
+        canvas.height = probe.videoHeight || 320;
+        const ctx = canvas.getContext("2d");
+        if(!ctx) throw new Error("no canvas ctx");
+        ctx.drawImage(probe, 0, 0, canvas.width, canvas.height);
+        const poster = canvas.toDataURL("image/jpeg", 0.78);
+        cleanup();
+        resolve(poster);
+      }catch(e){
+        cleanup();
+        resolve(null);
+      }
+    };
+
+    probe.addEventListener("loadedmetadata",()=>{
+      try{
+        const jumpTo = Math.min(0.1, Math.max(0.01, (probe.duration || 1) * 0.02));
+        probe.currentTime = jumpTo;
+      }catch(e){
+        finish();
+      }
+    }, {once:true});
+
+    probe.addEventListener("seeked", finish, {once:true});
+    probe.addEventListener("loadeddata", ()=>{ finish(); }, {once:true});
+    probe.addEventListener("error", ()=>{ cleanup(); resolve(null); }, {once:true});
+  });
+}
 
 const AVATAR_COLORS=["#dbeafe:#2563eb","#fde2e7:#db2777","#ede9fe:#7c3aed","#dcfce7:#16a34a","#fef3c7:#d97706","#e0f2fe:#0284c7"];
 function initialsOf(name,email){
@@ -626,9 +739,7 @@ async function loadMembers(){
   document.querySelectorAll(".delete-member").forEach(b=>b.onclick=()=>deleteMember(b.dataset.id,b.dataset.name));
 }
 
-
 const FAMILY_TREE_ORDER=["dad","mom","daughter1","daughter2"];
-const TREE_SLOT_LABELS={dad:"Dad",mom:"Mum",daughter1:"Hansyne",daughter2:"Jaxyne"};
 const familyTreeStoragePath=(slotKey)=>`${currentUser.id}/app-settings/family-tree-${slotKey}`;
 
 function setFamilyTreeTitle(){
@@ -637,63 +748,28 @@ function setFamilyTreeTitle(){
   $("adminTreeTitle").innerHTML=`${surname?escapeHtml(surname)+"'s":"Our"} Family <span class="admin-tree-heart">♥</span>`;
 }
 
-function familyTreeLabelFor(key,slot){
-  return TREE_SLOT_LABELS[key] || slot?.label || key;
-}
-
-function familyTreeNodeHtml({key,label,photoUrl,editable}){
-  const avatar = photoUrl
-    ? `<img alt="${escapeHtml(label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${photoUrl}"/>`
-    : `<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
-  return `<div class="family-tree-node${editable?" family-tree-node-editable":""}${editable?" admin-tree-editable":""}" data-slot="${key}">
-    <div class="family-tree-avatar-shell">
-      <div class="admin-tree-avatar-wrap">${avatar}</div>
-      ${editable?'<span class="family-tree-camera-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 4.5 7.4 6.5H4.8A2.8 2.8 0 0 0 2 9.3v7.2A2.8 2.8 0 0 0 4.8 19.3h14.4A2.8 2.8 0 0 0 22 16.5V9.3a2.8 2.8 0 0 0-2.8-2.8h-2.6L15 4.5H9zm3 12.3a4.2 4.2 0 1 1 0-8.4 4.2 4.2 0 0 1 0 8.4zm0-1.8a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z"/></svg></span>':''}
-    </div>
-    <span class="family-tree-name-pill">${escapeHtml(label)}</span>
-  </div>`;
-}
 
 async function loadFamilyTree(){
   setFamilyTreeTitle();
   const isAdmin=currentProfile?.role==="admin";
   const {data,error}=await client.from("family_tree_slots").select("slot_key,label,photo_path");
   if(error){ $("adminTreeAvatars").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`; return; }
-  const bySlot=Object.fromEntries((data||[]).map(d=>[d.slot_key,d]));
+  const bySlot=Object.fromEntries(data.map(d=>[d.slot_key,d]));
+  const CAMERA_BADGE = '<span class="admin-tree-edit-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 4.5a1.5 1.5 0 0 0-1.27.7L6.8 6.9H4.5A2.5 2.5 0 0 0 2 9.4v8.1A2.5 2.5 0 0 0 4.5 20h15a2.5 2.5 0 0 0 2.5-2.5V9.4a2.5 2.5 0 0 0-2.5-2.5H17.2l-.93-1.7A1.5 1.5 0 0 0 15 4.5H9zm3 12.2A4.2 4.2 0 1 1 12 8.3a4.2 4.2 0 0 1 0 8.4zm0-1.9a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6z"/></svg></span>';
 
-  const items=await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
+  const cells=await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
     const slot=bySlot[key]||{label:key,photo_path:null};
-    const label=familyTreeLabelFor(key,slot);
-    let photoUrl=null;
+    let avatarHtml=`<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
     if(slot.photo_path){
       const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
-      photoUrl=signed?.signedUrl||null;
+      if(signed?.signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}" loading="lazy" decoding="async"/>`;
     }
-    return {key,label,photoUrl};
-  }));
-
-  $("adminTreeAvatars").innerHTML=`
-    <div class="family-tree-stage${isAdmin?" family-tree-stage-editable":""}">
-      <div class="family-tree-title-stack">
-        <div class="family-tree-top-row">
-          ${familyTreeNodeHtml({...items[0],editable:isAdmin})}
-          ${familyTreeNodeHtml({...items[1],editable:isAdmin})}
-        </div>
-
-        <div class="family-tree-connector">
-          <span class="family-tree-line"></span>
-          <span class="family-tree-heart">♥</span>
-          <span class="family-tree-line"></span>
-        </div>
-
-        <div class="family-tree-trunk"></div>
-
-        <div class="family-tree-bottom-row">
-          ${familyTreeNodeHtml({...items[2],editable:isAdmin})}
-          ${familyTreeNodeHtml({...items[3],editable:isAdmin})}
-        </div>
-      </div>
+    return `<div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${key}">
+      <div class="admin-tree-avatar-wrap">${avatarHtml}${isAdmin?CAMERA_BADGE:""}</div>
+      <span class="admin-tree-name">${escapeHtml(slot.label)}</span>
     </div>`;
+  }));
+  $("adminTreeAvatars").innerHTML=cells.join("");
 
   if(isAdmin){
     document.querySelectorAll(".admin-tree-editable").forEach(el=>{
