@@ -416,3 +416,50 @@ body.android .family-space-card{
     min-height:165px !important;
     max-height:165px !important;
 }
+
+/* ===== Admin layout balance fix: equal left/right spacing on mobile ===== */
+@media (max-width: 900px){
+  #adminPage.utility-page{
+    padding: 12px 12px calc(100px + env(safe-area-inset-bottom)) !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  #adminPage.admin-page{
+    gap: 14px !important;
+  }
+
+  #adminPage .admin-tree-card,
+  #adminPage .admin-invite-card,
+  #adminPage .admin-list-card{
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  #adminPage .admin-tree-card{
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  #adminPage .admin-tree-avatars{
+    width: min(100%, 320px) !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  #adminPage .admin-tree-member{
+    max-width: 128px !important;
+  }
+
+  #adminPage .admin-invite-fields,
+  #adminPage .admin-list-card,
+  #adminPage .admin-member-row,
+  #adminPage .admin-invite-row-item{
+    min-width: 0 !important;
+  }
+}
