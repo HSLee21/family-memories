@@ -416,3 +416,60 @@ body.android .family-space-card{
     min-height:165px !important;
     max-height:165px !important;
 }
+
+
+/* Admin avatar shells: keep exact size before and after photos load */
+.admin-tree-avatar-placeholder,
+.admin-row-avatar-placeholder{
+  display:grid;
+  place-items:center;
+}
+.admin-tree-avatar-img,
+.admin-row-avatar-img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.admin-tree-avatar-wrap{
+  overflow:hidden;
+}
+
+/* Better mobile balance for Admin page */
+@media (max-width:900px){
+  .admin-page{gap:14px!important;}
+  .admin-tree-card,.admin-invite-card,.admin-list-card{padding:18px 14px!important;}
+  .admin-tree-card{overflow:hidden!important;}
+  .admin-tree-avatars{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    justify-items:center!important;
+    gap:16px 8px!important;
+    max-width:360px!important;
+    margin:0 auto!important;
+  }
+  .admin-tree-member{
+    width:auto!important;
+    min-width:0!important;
+  }
+  .admin-tree-name{
+    max-width:100%!important;
+  }
+  .admin-row-avatar-shell{
+    position:relative;
+    width:42px;
+    height:42px;
+    flex-shrink:0;
+  }
+  .admin-row-avatar-shell .admin-row-avatar{
+    position:absolute;
+    inset:0;
+  }
+  .admin-row-avatar-photo{
+    position:absolute;
+    inset:0;
+  }
+  .admin-member-row,.admin-invite-row-item{
+    padding:12px 0!important;
+  }
+}

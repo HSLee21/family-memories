@@ -604,14 +604,26 @@ async function loadMembers(){
 
   const rows=await Promise.all(data.map(async m=>{
     const [bg,fg]=avatarColorFor(m.id);
-    let avatarHtml=`<span class="admin-row-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>`;
-    const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(`${m.id}/profile/profile-photo`,3600);
-    if(signed?.signedUrl) avatarHtml=`<img class="admin-row-avatar admin-row-avatar-photo" src="${signed.signedUrl}" alt="${escapeHtml(m.name||m.email||"")}"/>`;
-    return `<div class="admin-member-row">
-      ${avatarHtml}
+    const label=escapeHtml(m.name||m.email||"Unnamed member");
+    const email=escapeHtml(m.email||"");
+    const role=escapeHtml(m.role||"family");
+    const statusExtra=m.status!=="approved"?` · ${escapeHtml(m.status||"pending")}`:"";
+    let photoUrl=null;
+    try{
+      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(`${m.id}/profile/profile-photo`,3600);
+      photoUrl=signed?.signedUrl||null;
+    }catch(e){
+      photoUrl=null;
+    }
+
+    return `<div class="admin-member-row" data-member-id="${m.id}">
+      <div class="admin-row-avatar-shell">
+        <span class="admin-row-avatar admin-row-avatar-placeholder" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>
+        <img class="admin-row-avatar admin-row-avatar-photo admin-row-avatar-img hidden" alt="${escapeHtml(m.name||m.email||"")}" ${photoUrl?`data-src="${photoUrl}"`:''}/>
+      </div>
       <div class="admin-row-body">
-        <strong>${escapeHtml(m.name||m.email||"Unnamed member")}</strong>
-        <div class="small muted">${escapeHtml(m.email||"")} · ${escapeHtml(m.role||"family")}${m.status!=="approved"?` · ${escapeHtml(m.status||"pending")}`:""}</div>
+        <strong>${label}</strong>
+        <div class="small muted">${email} · ${role}${statusExtra}</div>
       </div>
       ${m.status!=="approved"?`<button class="admin-approve-btn approve-member" data-id="${m.id}">Approve</button>`:`
       <div class="admin-row-actions">
@@ -621,11 +633,30 @@ async function loadMembers(){
     </div>`;
   }));
   $("membersList").innerHTML=rows.join("");
+
+  document.querySelectorAll(".admin-row-avatar-img[data-src]").forEach(img=>{
+    const src=img.dataset.src;
+    if(!src) return;
+    const shell=img.previousElementSibling;
+    img.onload=()=>{
+      shell?.classList.add("hidden");
+      img.classList.remove("hidden");
+    };
+    img.onerror=()=>{
+      img.classList.add("hidden");
+      shell?.classList.remove("hidden");
+    };
+    img.src=src;
+    if(img.complete && img.naturalWidth>0){
+      shell?.classList.add("hidden");
+      img.classList.remove("hidden");
+    }
+  });
+
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
   document.querySelectorAll(".rename-member").forEach(b=>b.onclick=()=>renameMember(b.dataset.id,b.dataset.name));
   document.querySelectorAll(".delete-member").forEach(b=>b.onclick=()=>deleteMember(b.dataset.id,b.dataset.name));
 }
-
 const FAMILY_TREE_ORDER=["dad","mom","daughter1","daughter2"];
 const familyTreeStoragePath=(slotKey)=>`${currentUser.id}/app-settings/family-tree-${slotKey}`;
 
@@ -638,23 +669,31 @@ function setFamilyTreeTitle(){
 async function loadFamilyTree(){
   setFamilyTreeTitle();
   const isAdmin=currentProfile?.role==="admin";
-  const {data,error}=await client.from("family_tree_slots").select("slot_key,label,photo_path");
-  if(error){ $("adminTreeAvatars").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`; return; }
-  const bySlot=Object.fromEntries(data.map(d=>[d.slot_key,d]));
+  const treeEl=$("adminTreeAvatars");
+  treeEl.innerHTML='<div class="empty admin-tree-loading">Loading family photos…</div>';
 
-  const cells=await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
+  const {data,error}=await client.from("family_tree_slots").select("slot_key,label,photo_path");
+  if(error){ treeEl.innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`; return; }
+
+  const bySlot=Object.fromEntries(data.map(d=>[d.slot_key,d]));
+  const slots=FAMILY_TREE_ORDER.map(key=>{
     const slot=bySlot[key]||{label:key,photo_path:null};
-    let avatarHtml=`<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
-    if(slot.photo_path){
-      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
-      if(signed?.signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}"/>`;
-    }
-    return `<div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${key}">
-      <div class="admin-tree-avatar-wrap">${avatarHtml}${isAdmin?'<span class="admin-tree-edit-badge">📷</span>':""}</div>
+    return {
+      key,
+      label:slot.label||key,
+      photo_path:slot.photo_path||null
+    };
+  });
+
+  treeEl.innerHTML=slots.map(slot=>`
+    <div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${slot.key}">
+      <div class="admin-tree-avatar-wrap">
+        <span class="admin-tree-avatar admin-tree-avatar-empty admin-tree-avatar-placeholder" data-avatar-placeholder>👤</span>
+        <img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo admin-tree-avatar-img hidden" data-avatar-img/>
+        ${isAdmin?'<span class="admin-tree-edit-badge">📷</span>':""}
+      </div>
       <span class="admin-tree-name">${escapeHtml(slot.label)}</span>
-    </div>`;
-  }));
-  $("adminTreeAvatars").innerHTML=cells.join("");
+    </div>`).join("");
 
   if(isAdmin){
     document.querySelectorAll(".admin-tree-editable").forEach(el=>{
@@ -664,6 +703,35 @@ async function loadFamilyTree(){
       };
     });
   }
+
+  await Promise.all(slots.map(async slot=>{
+    if(!slot.photo_path) return;
+    try{
+      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
+      if(!signed?.signedUrl) return;
+
+      const memberEl=treeEl.querySelector(`[data-slot="${slot.key}"]`);
+      const img=memberEl?.querySelector("[data-avatar-img]");
+      const placeholder=memberEl?.querySelector("[data-avatar-placeholder]");
+      if(!img) return;
+
+      img.onload=()=>{
+        placeholder?.classList.add("hidden");
+        img.classList.remove("hidden");
+      };
+      img.onerror=()=>{
+        img.classList.add("hidden");
+        placeholder?.classList.remove("hidden");
+      };
+      img.src=signed.signedUrl;
+      if(img.complete && img.naturalWidth>0){
+        placeholder?.classList.add("hidden");
+        img.classList.remove("hidden");
+      }
+    }catch(err){
+      /* Leave placeholder in place if the photo cannot be loaded */
+    }
+  }));
 }
 
 if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
@@ -679,7 +747,6 @@ if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
   toast("Photo updated.");
   loadFamilyTree();
 };
-
 async function rejectMember(id){
   if(!confirm("Reject this member?")) return;
   const {error}=await client.from("profiles").delete().eq("id",id);
