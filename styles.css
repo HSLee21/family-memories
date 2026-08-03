@@ -417,7 +417,7 @@ body.android .family-space-card{
     max-height:165px !important;
 }
 
-/* ===== Admin layout balance fix: equal left/right spacing on mobile ===== */
+/* ===== Admin page balance + avatar polish ===== */
 @media (max-width: 900px){
   #adminPage.utility-page{
     padding: 12px 12px calc(100px + env(safe-area-inset-bottom)) !important;
@@ -446,20 +446,42 @@ body.android .family-space-card{
   }
 
   #adminPage .admin-tree-avatars{
-    width: min(100%, 320px) !important;
-    max-width: 320px !important;
-    margin: 0 auto !important;
+    width: min(100%, 300px) !important;
+    max-width: 300px !important;
+    margin: 2px auto 0 !important;
     padding: 0 !important;
+    gap: 16px 18px !important;
+    justify-items: center !important;
   }
 
   #adminPage .admin-tree-member{
-    max-width: 128px !important;
+    max-width: none !important;
   }
 
-  #adminPage .admin-invite-fields,
-  #adminPage .admin-list-card,
-  #adminPage .admin-member-row,
-  #adminPage .admin-invite-row-item{
-    min-width: 0 !important;
+  #adminPage .admin-tree-avatar-wrap{
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  #adminPage .admin-tree-avatar-photo{
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
+  }
+
+  #adminPage .admin-tree-edit-badge{
+    right: 0 !important;
+    bottom: 0 !important;
+    transform: translate(35%,35%) !important;
+    width: 22px !important;
+    height: 22px !important;
+    border: 2px solid #fff !important;
+    background: #2563eb !important;
+  }
+
+  #adminPage .admin-tree-edit-badge svg{
+    width: 12px !important;
+    height: 12px !important;
+    display: block !important;
   }
 }
