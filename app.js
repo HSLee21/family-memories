@@ -167,7 +167,7 @@ function navigate(page){
   $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
-  if(page==="admin"){ loadFamilyTree(); loadMembers(); loadInvites(); }
+  if(page==="admin"){ requestAnimationFrame(()=>{ loadFamilyTree(); loadMembers(); loadInvites(); }); }
   if(page==="home") loadHomeExperience();
   if(page==="profile") loadProfilePage();
 }
@@ -641,29 +641,19 @@ async function loadFamilyTree(){
   const {data,error}=await client.from("family_tree_slots").select("slot_key,label,photo_path");
   if(error){ $("adminTreeAvatars").innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`; return; }
   const bySlot=Object.fromEntries(data.map(d=>[d.slot_key,d]));
-
-  const cells=await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
-    const slot=bySlot[key]||{label:key,photo_path:null};
-    let avatarHtml=`<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
-    if(slot.photo_path){
-      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
-      if(signed?.signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}"/>`;
-    }
+  $("adminTreeAvatars").innerHTML=FAMILY_TREE_ORDER.map(key=>{
+    const slot=bySlot[key]||{label:key};
     return `<div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${key}">
-      <div class="admin-tree-avatar-wrap">${avatarHtml}${isAdmin?'<span class="admin-tree-edit-badge">📷</span>':""}</div>
-      <span class="admin-tree-name">${escapeHtml(slot.label)}</span>
-    </div>`;
-  }));
-  $("adminTreeAvatars").innerHTML=cells.join("");
-
-  if(isAdmin){
-    document.querySelectorAll(".admin-tree-editable").forEach(el=>{
-      el.onclick=()=>{
-        $("familyTreePhotoInput").dataset.slot=el.dataset.slot;
-        $("familyTreePhotoInput").click();
-      };
-    });
-  }
+      <div class="admin-tree-avatar-wrap"><span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>${isAdmin?'<span class="admin-tree-edit-badge">📷</span>':""}</div>
+      <span class="admin-tree-name">${escapeHtml(slot.label)}</span></div>`;}).join("");
+  await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
+    const slot=bySlot[key]; if(!slot?.photo_path)return;
+    const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
+    if(signed?.signedUrl){
+      const w=document.querySelector(`[data-slot="${key}"] .admin-tree-avatar-wrap`);
+      if(w)w.querySelector('.admin-tree-avatar').outerHTML=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}"/>`;
+    }}));
+  if(isAdmin){document.querySelectorAll(".admin-tree-editable").forEach(el=>el.onclick=()=>{$("familyTreePhotoInput").dataset.slot=el.dataset.slot;$("familyTreePhotoInput").click();});}
 }
 
 if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
