@@ -167,7 +167,7 @@ function navigate(page){
   $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
   if(sectionType[page]) { currentFolder=null; loadFolders(page); }
-  if(page==="admin"){ loadMembers(); loadInvites(); }
+  if(page==="admin"){ loadFamilyTree(); loadMembers(); loadInvites(); }
   if(page==="home") loadHomeExperience();
   if(page==="profile") loadProfilePage();
 }
@@ -624,12 +624,6 @@ async function loadMembers(){
   document.querySelectorAll(".approve-member").forEach(b=>b.onclick=()=>approveMember(b.dataset.id));
   document.querySelectorAll(".rename-member").forEach(b=>b.onclick=()=>renameMember(b.dataset.id,b.dataset.name));
   document.querySelectorAll(".delete-member").forEach(b=>b.onclick=()=>deleteMember(b.dataset.id,b.dataset.name));
-
-  // Family avatar header is a fixed Dad/Mum/Daughter/Daughter layout with
-  // real uploaded photos (not tied to actual invited accounts - this app
-  // has no parent/child relationship data, these are just 4 display slots
-  // the admin can put real family photos into).
-  loadFamilyTree();
 }
 
 const FAMILY_TREE_ORDER=["dad","mom","daughter1","daughter2"];
