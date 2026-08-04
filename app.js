@@ -401,6 +401,8 @@ $("addForm").onsubmit = async e => {
 
       if (uploadError) throw uploadError;
 
+      alert("File is uploaded");
+
       if (uploadFile.type && uploadFile.type.startsWith("video/")) {
         const poster = await captureVideoPosterFromFile(uploadFile);
         if (poster) setVideoPosterCached(file_path, poster);
@@ -452,6 +454,7 @@ $("addForm").onsubmit = async e => {
 
   } catch (err) {
     console.error(err);
+    alert("Save failed: " + (err.message || "Could not save item."));
     toast(err.message || "Could not save item.");
   }
 };
