@@ -7,5 +7,5 @@ window.APP_CONFIG = {
   // the only thing holding B2 credentials - the browser only ever talks to
   // the presigned URLs it hands back. Replace with your deployed Worker's
   // URL (e.g. https://family-memories-b2.YOURSUBDOMAIN.workers.dev).
-  WORKER_URL: "PASTE_YOUR_CLOUDFLARE_WORKER_URL_HERE"
+  WORKER_URL: "https://family-memories-b2.hueyshiuan21.workers.dev"
 };
