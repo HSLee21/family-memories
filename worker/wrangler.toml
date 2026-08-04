@@ -1,0 +1,12 @@
+name = "family-memories-b2"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Non-secret settings (safe to commit). Secrets (B2 keys, Supabase service
+# role key) are set separately with `wrangler secret put` - see DEPLOY.md.
+[vars]
+SUPABASE_URL = "https://aekljejbojikghoyujrc.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_iN4x21Ql7nFOuWa3qZ3L4g_XxJZRs90"
+B2_REGION = "us-west-004"
+B2_BUCKET_NAME = "family-media"
+ALLOWED_ORIGIN = "https://hslee21.github.io"

@@ -26,6 +26,64 @@ if (!sessionStorage.getItem(sessionMigrationKey)) {
     .forEach(key => localStorage.removeItem(key));
   sessionStorage.setItem(sessionMigrationKey, "done");
 }
+// --- Backblaze B2 storage, via the Cloudflare Worker (cfg.WORKER_URL) ---
+// Drop-in replacement for the `client.storage.from(bucket)` calls this app
+// used to make against Supabase Storage. Same method names/shapes
+// (upload/createSignedUrl/remove) so the rest of app.js barely changed.
+async function b2Fetch(endpoint, body) {
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) throw new Error("Not signed in.");
+  const res = await fetch(`${cfg.WORKER_URL}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify(body)
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
+  return json;
+}
+
+const b2Storage = {
+  async upload(path, file, opts = {}) {
+    try {
+      const contentType = opts.contentType || file.type || "application/octet-stream";
+      const { url } = await b2Fetch("/sign-upload", { path, contentType });
+      const putRes = await fetch(url, {
+        method: "PUT",
+        headers: { "content-type": contentType },
+        body: file
+      });
+      if (!putRes.ok) throw new Error(`Upload to storage failed (${putRes.status})`);
+      return { error: null };
+    } catch (err) {
+      return { error: err };
+    }
+  },
+
+  async createSignedUrl(path, expiresIn = 3600) {
+    try {
+      const { url } = await b2Fetch("/sign-download", { path, expiresIn });
+      return { data: { signedUrl: url }, error: null };
+    } catch (err) {
+      return { data: null, error: err };
+    }
+  },
+
+  async remove(paths) {
+    try {
+      for (const path of paths) {
+        await b2Fetch("/delete", { path });
+      }
+      return { error: null };
+    } catch (err) {
+      return { error: err };
+    }
+  }
+};
+
 let currentUser = null, currentProfile = null, currentAddType = "memory";
 
 const $ = id => document.getElementById(id);
@@ -338,8 +396,7 @@ $("addForm").onsubmit = async e => {
       const safe = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safe}`;
 
-      const { error: uploadError } = await client.storage
-        .from(cfg.STORAGE_BUCKET)
+      const { error: uploadError } = await b2Storage
         .upload(file_path, uploadFile);
 
       if (uploadError) throw uploadError;
@@ -456,7 +513,7 @@ async function loadFolderItems(type,folderIdOrIds,target){
   const items=await Promise.all(data.map(async item=>{
     let signedUrl=null;
     if(item.file_path){
-      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
+      const {data:signed}=await b2Storage.createSignedUrl(item.file_path,3600);
       signedUrl=signed?.signedUrl||null;
     }
     return {...item,signedUrl};
@@ -520,7 +577,7 @@ const cards=items.map(item=>{
     const {error}=await client.from(table).delete().eq("id",id);
     if(error){ toast(error.message); return; }
     if(filePath){
-      await client.storage.from(cfg.STORAGE_BUCKET).remove([filePath]);
+      await b2Storage.remove([filePath]);
       videoPosterCache.delete(filePath);
       persistVideoPosterCache();
     }
@@ -581,7 +638,7 @@ function attachVideoPoster(videoEl,src,filePath){
   }catch(e){ /* ignore - not critical */ }
 }
 async function openPrivateFile(path){
-  const {data,error}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(path,60);
+  const {data,error}=await b2Storage.createSignedUrl(path,60);
   if(error) return toast(error.message);
   window.open(data.signedUrl,"_blank","noopener");
 }
@@ -718,7 +775,7 @@ async function loadMembers(){
   const rows=await Promise.all(data.map(async m=>{
     const [bg,fg]=avatarColorFor(m.id);
     let avatarHtml=`<span class="admin-row-avatar" style="background:${bg};color:${fg}">${escapeHtml(initialsOf(m.name,m.email))}</span>`;
-    const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(`${m.id}/profile/profile-photo`,3600);
+    const {data:signed}=await b2Storage.createSignedUrl(`${m.id}/profile/profile-photo`,3600);
     if(signed?.signedUrl) avatarHtml=`<img class="admin-row-avatar admin-row-avatar-photo" src="${signed.signedUrl}" alt="${escapeHtml(m.name||m.email||"")}"/>`;
     return `<div class="admin-member-row">
       ${avatarHtml}
@@ -761,7 +818,7 @@ async function loadFamilyTree(){
     const slot=bySlot[key]||{label:key,photo_path:null};
     let avatarHtml=`<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
     if(slot.photo_path){
-      const {data:signed}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(slot.photo_path,3600);
+      const {data:signed}=await b2Storage.createSignedUrl(slot.photo_path,3600);
       if(signed?.signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}" loading="lazy" decoding="async"/>`;
     }
     return `<div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${key}">
@@ -787,7 +844,7 @@ if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
   e.target.value="";
   if(!file||!slotKey) return;
   const path=familyTreeStoragePath(slotKey);
-  const {error:upErr}=await client.storage.from(cfg.STORAGE_BUCKET).upload(path,file,{upsert:true,contentType:file.type});
+  const {error:upErr}=await b2Storage.upload(path,file,{upsert:true,contentType:file.type});
   if(upErr) return toast(upErr.message);
   const {error:dbErr}=await client.from("family_tree_slots").update({photo_path:path,updated_at:new Date().toISOString()}).eq("slot_key",slotKey);
   if(dbErr) return toast(dbErr.message);
@@ -881,7 +938,7 @@ async function loadProfilePhoto(){
   if(!currentUser) return;
   const img=$("profilePhotoImage"), fallback=$("profilePhotoFallback");
   const largeImg=$("profileLargePhoto"), largeFallback=$("profileLargeFallback");
-  const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(profileStoragePath(),3600);
+  const {data}=await b2Storage.createSignedUrl(profileStoragePath(),3600);
   if(data?.signedUrl){
     if(img){ img.src=data.signedUrl; img.classList.remove("hidden"); }
     if(fallback) fallback.classList.add("hidden");
@@ -899,7 +956,7 @@ if($("profilePhotoBtn")) $("profilePhotoBtn").onclick=()=>$("profilePhotoInput")
 if($("profilePhotoInput")) $("profilePhotoInput").onchange=async e=>{
   const file=e.target.files?.[0];
   if(!file || !currentUser) return;
-  const {error}=await client.storage.from(cfg.STORAGE_BUCKET).upload(
+  const {error}=await b2Storage.upload(
     profileStoragePath(), file, {upsert:true,contentType:file.type}
   );
   if(error) return toast(error.message);
@@ -936,7 +993,7 @@ async function loadFamilyCover(){
   // Refresh in the background if the cache is missing/near expiry, so it's ready next time too
   const needsRefresh=!cached || cached.expires<Date.now()+300000; // refresh if <5min left
   if(needsRefresh){
-    const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(coverStoragePath(),3600);
+    const {data}=await b2Storage.createSignedUrl(coverStoragePath(),3600);
     const url=data?.signedUrl||DEFAULT_FAMILY_COVER;
     cover.style.backgroundImage=`url("${url}")`;
     if(data?.signedUrl){
@@ -952,7 +1009,7 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
   const file=e.target.files?.[0];
   if(!file) return;
   if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
-  const {error}=await client.storage.from(cfg.STORAGE_BUCKET).upload(coverStoragePath(),file,{upsert:true,contentType:file.type});
+  const {error}=await b2Storage.upload(coverStoragePath(),file,{upsert:true,contentType:file.type});
   if(error) return toast(error.message);
   try{ localStorage.removeItem("cover_signed_url_cache"); }catch(e){}
   toast("Family cover updated.");
@@ -1008,11 +1065,11 @@ function initCardCameraButtons(){
       reader.readAsDataURL(file);
       if(currentUser){
         try{
-          const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
+          const {error} = await b2Storage.upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
           if(error) toast("Saved locally. Cloud error: "+error.message);
           else {
             toast("Card image updated.");
-            const {data}=await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(cardStoragePath(card),86400);
+            const {data}=await b2Storage.createSignedUrl(cardStoragePath(card),86400);
             if(data?.signedUrl){
               setCardImageDOM(card,data.signedUrl);
               try{ localStorage.setItem(cardCacheKey(card), JSON.stringify({url:data.signedUrl, expires:Date.now()+86400*1000})); }catch(e){}
@@ -1212,7 +1269,7 @@ async function signMediaItems(items){
       if(cached && cached.expiry > Date.now()){
         return {...item, signedUrl: cached.url};
       }
-      const {data} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(item.file_path,3600);
+      const {data} = await b2Storage.createSignedUrl(item.file_path,3600);
       if(data?.signedUrl){
         signedUrlCache.set(item.file_path,{
           url:data.signedUrl,
@@ -1267,7 +1324,7 @@ let slideshowHasMusic = false;
 async function loadSlideshowMusic(key){
   const audio = $("slideshowMusic");
   try{
-    const {data,error} = await client.storage.from(cfg.STORAGE_BUCKET).createSignedUrl(musicStoragePath(key),3600);
+    const {data,error} = await b2Storage.createSignedUrl(musicStoragePath(key),3600);
     if(error || !data?.signedUrl){
       audio.pause();
       audio.removeAttribute("src");
@@ -1330,7 +1387,7 @@ if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   e.target.value="";
   if(!file) return;
   toast("Uploading music…");
-  const {error} = await client.storage.from(cfg.STORAGE_BUCKET).upload(musicStoragePath(slideshowMusicKey),file,{upsert:true,contentType:file.type});
+  const {error} = await b2Storage.upload(musicStoragePath(slideshowMusicKey),file,{upsert:true,contentType:file.type});
   if(error){ toast(error.message); return; }
   toast("Music added — it'll play for this collection's slideshows.");
   slideshowHasMusic = await loadSlideshowMusic(slideshowMusicKey);
@@ -1548,7 +1605,7 @@ $("slideshowDelete").onclick=async()=>{
   const {error} = await client.from(table).delete().eq("id",photo.id);
   if(error){ toast(error.message); return; }
   if(photo.file_path){
-    await client.storage.from(cfg.STORAGE_BUCKET).remove([photo.file_path]);
+    await b2Storage.remove([photo.file_path]);
   }
   slideshowPhotos.splice(slideshowIndex,1);
   mediaIndexCache.items=null;
