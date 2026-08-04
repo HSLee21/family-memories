@@ -341,6 +341,27 @@ function getAwsClient(env) {
     region: env.B2_REGION
   });
 }
+async function handleUpload(request, env, user) {
+  const url = new URL(request.url);
+  const path = url.searchParams.get("path");
+  const contentType = url.searchParams.get("contentType") || request.headers.get("content-type") || "application/octet-stream";
+  if (!path) return json({ error: "path query param is required" }, 400);
+  if (!ownsPath(user.id, path)) {
+    return json({ error: "You can only upload inside your own folder." }, 403);
+  }
+  const body = await request.arrayBuffer();
+  const aws = getAwsClient(env);
+  const res = await aws.fetch(objectUrl(env, path), {
+    method: "PUT",
+    headers: { "content-type": contentType },
+    body
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    return json({ error: `B2 upload failed: ${res.status} ${text}` }, 502);
+  }
+  return json({ ok: true });
+}
 async function handleSignUpload(request, env, user) {
   const { path, contentType } = await request.json();
   if (!path) return json({ error: "path is required" }, 400);
@@ -410,7 +431,8 @@ var index_default = {
         return new Response(JSON.stringify({ error: `Account not approved (status in database: "${profile.status}")` }), { status: 403, headers: { ...JSON_HEADERS, ...cors } });
       }
       let resp;
-      if (pathname === "/sign-upload") resp = await handleSignUpload(request, env, user);
+      if (pathname === "/upload") resp = await handleUpload(request, env, user);
+      else if (pathname === "/sign-upload") resp = await handleSignUpload(request, env, user);
       else if (pathname === "/sign-download") resp = await handleSignDownload(request, env, user);
       else if (pathname === "/delete") resp = await handleDelete(request, env, user, profile);
       else resp = new Response("Not found", { status: 404 });

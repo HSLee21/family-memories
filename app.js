@@ -50,13 +50,19 @@ const b2Storage = {
   async upload(path, file, opts = {}) {
     try {
       const contentType = opts.contentType || file.type || "application/octet-stream";
-      const { url } = await b2Fetch("/sign-upload", { path, contentType });
-      const putRes = await fetch(url, {
-        method: "PUT",
-        headers: { "content-type": contentType },
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) throw new Error("Not signed in.");
+      const url = `${cfg.WORKER_URL}/upload?path=${encodeURIComponent(path)}&contentType=${encodeURIComponent(contentType)}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${session.access_token}`,
+          "content-type": contentType
+        },
         body: file
       });
-      if (!putRes.ok) throw new Error(`Upload to storage failed (${putRes.status})`);
+      const resJson = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(resJson.error || `Upload failed (${res.status})`);
       return { error: null };
     } catch (err) {
       return { error: err };
