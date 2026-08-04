@@ -7,6 +7,6 @@ compatibility_date = "2025-01-01"
 [vars]
 SUPABASE_URL = "https://aekljejbojikghoyujrc.supabase.co"
 SUPABASE_ANON_KEY = "sb_publishable_iN4x21Ql7nFOuWa3qZ3L4g_XxJZRs90"
-B2_REGION = "us-west-004"
-B2_BUCKET_NAME = "family-media"
+B2_REGION = "eu-central-003"
+B2_BUCKET_NAME = "hslee21-family-media"
 ALLOWED_ORIGIN = "https://hslee21.github.io"
