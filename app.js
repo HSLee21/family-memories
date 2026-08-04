@@ -363,9 +363,20 @@ function openAddForFolder(type){
   currentAddType=type;
   $("dialogTitle").textContent=({memory:"Add to Memory Folder",trip:"Add to Family Trip Folder",celebration:"Add to Celebration Folder",study:"Upload Study Material"})[type];
   $("addForm").reset();
+  $("itemFileLabel").textContent="Choose photo or file";
   $("addDialog").showModal();
 }
 $("closeDialog").onclick=$("cancelDialog").onclick=()=>$("addDialog").close();
+
+$("itemFile").onchange = () => {
+  const f = $("itemFile").files[0];
+  if (f) {
+    $("itemFileLabel").textContent = `✅ Selected: ${f.name}`;
+    alert(`Selected: ${f.name}`);
+  } else {
+    $("itemFileLabel").textContent = "Choose photo or file";
+  }
+};
 
 $("addForm").onsubmit = async e => {
   e.preventDefault();
