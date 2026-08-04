@@ -314,9 +314,15 @@ async function getProfile(userId, env) {
       authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`
     }
   });
-  if (!res.ok) return null;
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    return { ok: false, status: res.status, body: body.slice(0, 300) };
+  }
   const rows = await res.json();
-  return rows && rows[0] ? rows[0] : null;
+  if (!rows || !rows[0]) {
+    return { ok: false, status: res.status, body: "Query succeeded but no matching profile row was returned for this user id." };
+  }
+  return { ok: true, profile: rows[0] };
 }
 function ownsPath(userId, path) {
   return typeof path === "string" && (path === userId || path.startsWith(`${userId}/`));
@@ -393,9 +399,15 @@ var index_default = {
     try {
       const user = await getSupabaseUser(request, env);
       if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...JSON_HEADERS, ...cors } });
-      const profile = await getProfile(user.id, env);
-      if (!profile || profile.status !== "approved") {
-        return new Response(JSON.stringify({ error: "Account not approved" }), { status: 403, headers: { ...JSON_HEADERS, ...cors } });
+      const profileResult = await getProfile(user.id, env);
+      if (!profileResult.ok) {
+        return new Response(JSON.stringify({
+          error: `Account not approved (diagnostic: HTTP ${profileResult.status} - ${profileResult.body})`
+        }), { status: 403, headers: { ...JSON_HEADERS, ...cors } });
+      }
+      const profile = profileResult.profile;
+      if (profile.status !== "approved") {
+        return new Response(JSON.stringify({ error: `Account not approved (status in database: "${profile.status}")` }), { status: 403, headers: { ...JSON_HEADERS, ...cors } });
       }
       let resp;
       if (pathname === "/sign-upload") resp = await handleSignUpload(request, env, user);
