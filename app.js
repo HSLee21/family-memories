@@ -1225,12 +1225,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 // Study Tools: 9-icon grid <-> individual tool panel (contained entirely
 // within the existing Study Tools tab; doesn't touch page navigation).
-const studyChromeEls = () => document.querySelectorAll("#studyPage .study-hero-photo, #studyPage .hub-card-row, #studyPage .study-tools-heading");
+const studyChromeEls = () => document.querySelectorAll("#studyPage .page-hero-photo, #studyPage .hub-card-row, #studyPage .study-tools-heading");
 function showToolIconGrid(){
   $("toolPanelsWrap").classList.add("hidden");
   $("toolIconGrid").classList.remove("hidden");
   document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.add("hidden"));
   studyChromeEls().forEach(el=>el.classList.remove("hidden"));
+  const periodicWrap = $("periodicImageWrap");
+  if (periodicWrap) periodicWrap.classList.remove("landscape-view");
+  if ($("periodicExitBtn")) $("periodicExitBtn").classList.add("hidden");
+  document.body.style.overflow = "";
 }
 document.querySelectorAll("#toolIconGrid [data-tool]").forEach(btn=>btn.onclick=()=>{
   $("toolIconGrid").classList.add("hidden");
@@ -1300,6 +1304,23 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
     } catch { out.textContent = "Could not reach the grammar checking service. Check your connection and try again."; }
   };
   $("grammarClear").onclick = () => { $("grammarInput").value = ""; $("grammarResult").textContent = "Suggestions will appear here"; };
+})();
+
+// Periodic table - "landscape view" toggle (rotates via CSS transform,
+// since real orientation-lock APIs aren't supported on iOS Safari)
+(function(){
+  const wrap = $("periodicImageWrap");
+  function exitLandscape(){
+    wrap.classList.remove("landscape-view");
+    $("periodicExitBtn").classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+  $("periodicRotateBtn").onclick = () => {
+    wrap.classList.add("landscape-view");
+    $("periodicExitBtn").classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  };
+  $("periodicExitBtn").onclick = exitLandscape;
 })();
 
 // OCR - Photo to text (Tesseract.js, loaded lazily on first use, runs fully in-browser)
