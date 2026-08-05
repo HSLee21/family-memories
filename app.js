@@ -1952,6 +1952,10 @@ async function openVideoGallery(types,label){
   $("videoGalleryList").querySelectorAll("[data-video-index]").forEach(btn=>{
     btn.onclick = () => playVideoAt(Number(btn.dataset.videoIndex));
   });
+
+  // Jump straight into playback instead of requiring another tap into the list —
+  // "Watch All Videos" should mean exactly that.
+  playVideoAt(0);
 }
 let videoPlayerIndex = 0;
 let videoPlayNext = null;
