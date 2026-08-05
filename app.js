@@ -313,7 +313,7 @@ async function loadFolders(section){
   const orphanCount = orphanIds.length;
 
   const folderCards = (data||[]).map(f=>`<article class="folder-card" data-folder="${f.id}">
-    <div class="folder-icon">📁</div>
+    <div class="folder-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg></div>
     <div class="folder-info"><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.description||"Open folder")}</p></div>
     <button class="folder-menu secondary" data-menu="${f.id}" title="Folder options">•••</button>
   </article>`).join("");
@@ -1512,7 +1512,7 @@ if($("globalSearch")) $("globalSearch").addEventListener("input",async e=>{
   const {data,error}=await client.from("folders").select("*").ilike("name",`%${q}%`).order("created_at",{ascending:false});
   if(error){out.innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return;}
   if(!data?.length){out.innerHTML='<div class="empty">No matching folders found.</div>';return;}
-  out.innerHTML=data.map(f=>`<article class="folder-card search-hit" data-search-section="${f.section}" data-search-id="${f.id}"><div class="folder-icon">📁</div><div class="folder-info"><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.section)} · ${escapeHtml(f.description||"")}</p></div></article>`).join("");
+  out.innerHTML=data.map(f=>`<article class="folder-card search-hit" data-search-section="${f.section}" data-search-id="${f.id}"><div class="folder-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg></div><div class="folder-info"><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.section)} · ${escapeHtml(f.description||"")}</p></div></article>`).join("");
   out.querySelectorAll(".search-hit").forEach(card=>card.onclick=()=>navigate(card.dataset.searchSection));
 });
 
