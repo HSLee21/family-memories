@@ -102,21 +102,27 @@
 <input accept="image/*" hidden="" id="cardFile-celebrations" type="file"/>
 <input accept="image/*" hidden="" id="cardFile-study" type="file"/>
 </section>
-<section class="page hidden section-theme memories-theme" id="memoriesPage">
-<div class="section-hero"><div class="hero-art">🖼️💗</div><div><h1>Our Memories</h1><p>Photos, videos and little moments worth keeping.</p></div></div>
+<section class="page hidden memories-theme" id="memoriesPage">
+<div class="section-hero page-hero-photo"><img alt="Our Memories - Photos, videos and little moments worth keeping." class="hero-photo" src="assets/images/memories-hero.jpg"/></div>
+<div class="section-theme page-body-card">
 <div class="content-heading"><h2>Albums</h2><button class="link-button open-folder" data-section="memories">+ New Album</button></div><div class="folder-grid visual-grid" id="memoriesFolders"></div><div class="folder-browser hidden" id="memoriesBrowser"></div>
+</div>
 </section>
-<section class="page hidden section-theme trips-theme" id="tripsPage">
-<div class="section-hero"><div class="hero-art">🧳📷</div><div><h1>Family Trips</h1><p>Adventures, holidays and places we explored together.</p></div></div>
+<section class="page hidden trips-theme" id="tripsPage">
+<div class="section-hero page-hero-photo"><img alt="Family Trips - Adventures, holidays and places we explored together." class="hero-photo" src="assets/images/trips-hero.jpg"/></div>
+<div class="section-theme page-body-card">
 <div class="content-heading"><h2>Your Trips</h2><button class="link-button open-folder" data-section="trips">+ New Trip</button></div><div class="folder-grid visual-grid" id="tripsFolders"></div><div class="folder-browser hidden" id="tripsBrowser"></div>
+</div>
 </section>
-<section class="page hidden section-theme celebrations-theme" id="celebrationsPage">
-<div class="section-hero"><div class="hero-art">🎈🎉</div><div><h1>Celebrations</h1><p>Birthdays, anniversaries and meaningful milestones.</p></div></div>
+<section class="page hidden celebrations-theme" id="celebrationsPage">
+<div class="section-hero page-hero-photo"><img alt="Celebrations - Birthdays, anniversaries and meaningful milestones." class="hero-photo" src="assets/images/celebrations-hero.jpg"/></div>
+<div class="section-theme page-body-card">
 <div class="content-heading"><h2>Celebrations</h2><button class="link-button open-folder" data-section="celebrations">+ New</button></div><div class="folder-grid visual-grid" id="celebrationsFolders"></div><div class="folder-browser hidden" id="celebrationsBrowser"></div>
+</div>
 </section>
 <section class="page hidden study-theme" id="studyPage">
-<div class="section-hero study-hero-photo"><img alt="Study Hub - Learning materials and useful family study tools" class="hero-photo" src="assets/images/study-hero.jpg"/></div>
-<div class="section-theme study-body-card">
+<div class="section-hero page-hero-photo"><img alt="Study Hub - Learning materials and useful family study tools" class="hero-photo" src="assets/images/study-hero.jpg"/></div>
+<div class="section-theme page-body-card">
 <div class="hub-card-row">
 <button class="hub-select-card hub-blue active" data-study-tab="tools"><span class="hub-select-ico">🧮</span><span class="hub-select-text"><b>Study Tools</b></span><span class="hub-select-arrow">›</span></button>
 <button class="hub-select-card hub-green" data-study-tab="materials"><span class="hub-select-ico">📁</span><span class="hub-select-text"><b>Study Materials</b></span><span class="hub-select-arrow">›</span></button>
@@ -158,22 +164,24 @@
 <div class="tool-card hidden" id="toolPanel-timer"><h3>⏲️ Study Timer</h3><div class="timer-display" id="timerDisplay">05:00</div><div class="timer-preset-row"><button class="secondary" data-timer-preset="1">1 min</button><button class="secondary" data-timer-preset="5">5 min</button><button class="secondary" data-timer-preset="15">15 min</button><button class="secondary" id="timerOtherBtn">Other</button></div><div class="converter-row hidden" id="timerCustomRow"><input id="timerCustomMinutes" min="1" placeholder="Minutes" type="number"/><button class="secondary" id="timerCustomSet">Set</button></div><div class="calc-actions"><button class="primary" id="timerStart">Start</button><button class="secondary" id="timerReset">Reset</button></div></div>
 <div class="tool-card hidden" id="toolPanel-calendar"><h3>📅 Calendar</h3><div class="calendar-header"><button class="secondary" id="calPrevMonth">‹</button><b id="calMonthLabel"></b><button class="secondary" id="calNextMonth">›</button></div><div class="calendar-grid" id="calendarGrid"></div><div class="converter-row"><input id="calEventTitle" placeholder="Event title"/><input id="calEventDate" type="date"/></div><button class="secondary" id="calAddEvent" style="margin-top:8px">+ Add Event</button><div class="result-box" id="calEventList">No events yet.</div></div>
 <div class="tool-card hidden wide-card" id="toolPanel-periodic"><h3>⚛️ Periodic Table</h3><div class="periodic-image-scroll"><img alt="Periodic Table of Elements" src="assets/images/periodic-table.jpg"/></div><p class="small muted" style="margin-top:8px">Scroll sideways to see the full table.</p></div>
-<div class="tool-card hidden" id="toolPanel-dictionary"><h3>🔤 Dictionary</h3><div class="converter-row"><select id="dictLang"><option value="en">English</option><option value="zh-CN">Chinese</option><option value="ms-MY">Malay</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="it">Italian</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="ru">Russian</option><option value="hi">Hindi</option><option value="ar">Arabic</option><option value="tr">Turkish</option><option value="pt-BR">Portuguese (BR)</option></select></div><div class="converter-row"><input id="dictWord" placeholder="Type a word..."/><button class="primary" id="dictRun">Look up</button><button class="secondary" id="dictClear">Clear</button></div><div class="result-box" id="dictResult">Definitions will appear here</div></div>
-<div class="tool-card hidden" id="toolPanel-grammar"><h3>✍️ Grammar Checker</h3><textarea id="grammarInput" placeholder="Paste or type text to check..." rows="4"></textarea><div class="calc-actions"><button class="secondary" id="grammarRun">Check Grammar</button><button class="secondary" id="grammarClear">Clear</button></div><div class="result-box" id="grammarResult">Suggestions will appear here</div></div>
+<div class="tool-card hidden" id="toolPanel-dictionary"><h3>🔤 Dictionary</h3><div class="converter-row"><select id="dictLang"><option value="en">English</option><option value="zh-CN">Chinese</option><option value="ms-MY">Malay</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="it">Italian</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="ru">Russian</option><option value="hi">Hindi</option><option value="ar">Arabic</option><option value="tr">Turkish</option><option value="pt-BR">Portuguese (BR)</option></select></div><div class="converter-row"><input id="dictWord" placeholder="Type a word..."/><button class="primary" id="dictRun">Look up</button><button class="primary" id="dictClear">Clear</button></div><div class="result-box" id="dictResult">Definitions will appear here</div></div>
+<div class="tool-card hidden" id="toolPanel-grammar"><h3>✍️ Grammar Checker</h3><textarea id="grammarInput" placeholder="Paste or type text to check..." rows="4"></textarea><div class="calc-actions"><button class="primary" id="grammarRun">Check Grammar</button><button class="primary" id="grammarClear">Clear</button></div><div class="result-box" id="grammarResult">Suggestions will appear here</div></div>
 <div class="tool-card hidden wide-card" id="toolPanel-ocr"><h3>📸 OCR (Photo → Text)</h3><label class="file-picker" style="display:inline-flex">📎 <span id="ocrFileLabel">Choose a photo</span><input hidden id="ocrFile" type="file" accept="image/*"/></label><div class="result-box" id="ocrResult">Extracted text will appear here</div></div>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section class="page hidden section-theme media-theme" id="mediaHubPage">
-<div class="section-hero"><div class="hero-art">🎞️✨</div><div><h1>Gallery</h1><p>Sit back and enjoy everything you've saved.</p></div></div>
+<section class="page hidden media-theme" id="mediaHubPage">
+<div class="section-hero page-hero-photo"><img alt="Gallery - Sit back and enjoy everything you've saved." class="hero-photo" src="assets/images/gallery-hero.jpg"/></div>
+<div class="section-theme page-body-card">
 <div class="media-hub-grid">
 <button class="media-hub-card hub-blue" data-hub-action="all-photos"><span class="media-hub-ico"><svg fill="currentColor" viewbox="0 0 24 24"><rect height="14" opacity=".35" rx="2" width="14" x="5" y="3"></rect><rect height="14" rx="2" width="14" x="3" y="6"></rect><path d="M5 17l3-3.5 2 2 3-4 4 5.5H5z" fill="#fff"></path><circle cx="7" cy="10" fill="#fff" r="1.3"></circle></svg></span><span>Play All Photos</span></button>
 <button class="media-hub-card hub-orange" data-hub-action="all-videos"><span class="media-hub-ico"><svg fill="currentColor" viewbox="0 0 24 24"><rect height="14" rx="3" width="18" x="3" y="5"></rect><path d="M10 9.3v5.4l4.8-2.7z" fill="#fff"></path></svg></span><span>Watch All Videos</span></button>
 <button class="media-hub-card hub-blue" data-hub-section="memory"><span class="media-hub-ico"><svg fill="currentColor" viewbox="0 0 24 24"><rect height="16" opacity=".18" rx="3" width="18" x="3" y="4"></rect><rect fill="none" height="16" rx="3" stroke="currentColor" stroke-width="1.6" width="18" x="3" y="4"></rect><path d="M12 17.3l-.9-.8C7.9 13.3 5.5 11.2 5.5 8.6 5.5 6.5 7.1 5 9.1 5c1.1 0 2.2.5 2.9 1.4.7-.9 1.8-1.4 2.9-1.4 2 0 3.6 1.5 3.6 3.6 0 2.6-2.4 4.7-5.6 7.9l-.9.8z" fill="#ff2d55" stroke="none"></path></svg></span><span>Our Memories</span></button>
 <button class="media-hub-card hub-pink" data-hub-section="trip"><span class="media-hub-ico"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M22 16v-2l-8.5-5V3.5C13.5 2.7 12.8 2 12 2s-1.5.7-1.5 1.5V9L2 14v2l8.5-2.5V19L8 20.5V22l4-1 4 1v-1.5L13.5 19v-5.5L22 16z"></path></svg></span><span>Family Trips</span></button>
 <button class="media-hub-card hub-purple wide" data-hub-section="celebration"><span class="media-hub-ico"><svg fill="currentColor" viewbox="0 0 24 24"><path d="M20 8h-2.2c.3-.5.4-1 .4-1.5C18.2 4.9 16.8 4 15 4c-1.2 0-2.3.7-3 1.8C11.3 4.7 10.2 4 9 4 7.2 4 5.8 4.9 5.8 6.5c0 .5.1 1 .4 1.5H4a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1zM9 6c.6 0 1.3.6 1.8 1.5H8.5C8.2 7 8.2 6 9 6zm6 0c.8 0 .8 1 .5 1.5h-2.3C13.7 6.6 14.4 6 15 6zM6 12h6v6H6v-6zm12 6h-6v-6h6v6z"></path></svg></span><span>Celebrations</span></button>
+</div>
 </div>
 </section>
 <section class="page hidden section-theme media-theme" id="mediaSectionPage">
