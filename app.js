@@ -1098,20 +1098,200 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-// Scientific calculator
-$("calcRun").onclick=()=>{
-  try{
-    let expr=$("calcDisplay").value.trim().replace(/\^/g,"**");
-    const deg=x=>x*Math.PI/180;
-    const fn=new Function("sin","cos","tan","sqrt","log","ln","PI",`"use strict";return (${expr})`);
-    const result=fn(x=>Math.sin(deg(x)),x=>Math.cos(deg(x)),x=>Math.tan(deg(x)),Math.sqrt,Math.log10,Math.log,Math.PI);
-    if(!Number.isFinite(result)) throw new Error("Invalid result");
-    $("calcResult").textContent=result;
-  }catch{$("calcResult").textContent="Invalid expression"}
-};
-$("calcClear").onclick=()=>{$("calcDisplay").value="";$("calcResult").textContent="Result will appear here"};
+// Scientific calculator (tap-based)
+(function(){
+  const display = $("calcDisplay");
+  const resultBox = $("calcResult");
+  $("calcKeys").addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    if (btn.dataset.act === "clear") { display.value = ""; resultBox.textContent = "Result will appear here"; return; }
+    if (btn.dataset.act === "back") { display.value = display.value.slice(0, -1); return; }
+    if (btn.dataset.act === "eq") {
+      try {
+        let expr = display.value.trim().replace(/\^/g, "**").replace(/%/g, "/100");
+        if (!expr) return;
+        const deg = x => x * Math.PI / 180;
+        const fn = new Function("sin","cos","tan","sqrt","log","ln","PI",`"use strict";return (${expr})`);
+        const result = fn(x=>Math.sin(deg(x)), x=>Math.cos(deg(x)), x=>Math.tan(deg(x)), Math.sqrt, Math.log10, Math.log, Math.PI);
+        if (!Number.isFinite(result)) throw new Error("Invalid result");
+        resultBox.textContent = result;
+        display.value = String(result);
+      } catch { resultBox.textContent = "Invalid expression"; }
+      return;
+    }
+    if (btn.dataset.op) { display.value += btn.dataset.op; return; }
+    if (btn.dataset.k) { display.value += btn.dataset.k; return; }
+  });
+})();
 
-// Converter
+// Currency converter (frankfurter.app - free, no API key, ECB rates)
+(function(){
+  const CURRENCIES = ["USD","EUR","GBP","JPY","MYR","SGD","CNY","AUD","CAD","HKD","KRW","INR","THB","IDR","TWD","CHF","NZD"];
+  const fromSel = $("currFrom"), toSel = $("currTo"), out = $("currResult");
+  fromSel.innerHTML = CURRENCIES.map(c=>`<option ${c==="USD"?"selected":""}>${c}</option>`).join("");
+  toSel.innerHTML = CURRENCIES.map(c=>`<option ${c==="MYR"?"selected":""}>${c}</option>`).join("");
+  $("currRun").onclick = async () => {
+    const v = parseFloat($("currValue").value), from = fromSel.value, to = toSel.value;
+    if (Number.isNaN(v)) { out.textContent = "Enter a valid amount."; return; }
+    out.textContent = "Loading rate...";
+    try {
+      const res = await fetch(`https://api.frankfurter.app/latest?amount=${v}&from=${from}&to=${to}`);
+      if (!res.ok) throw new Error("Rate lookup failed");
+      const data = await res.json();
+      const converted = data.rates[to];
+      out.textContent = `${v} ${from} = ${Number(converted.toFixed(4))} ${to}`;
+    } catch { out.textContent = "Could not fetch exchange rate. Check your connection and try again."; }
+  };
+})();
+
+// Study timer (Pomodoro-style countdown)
+(function(){
+  const disp = $("timerDisplay");
+  let totalSeconds = 25*60, remaining = totalSeconds, tickHandle = null, running = false;
+  function render(){ const m=Math.floor(remaining/60), s=remaining%60; disp.textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`; }
+  render();
+  document.querySelectorAll("[data-timer-preset]").forEach(btn=>{
+    btn.onclick = () => { clearInterval(tickHandle); running=false; $("timerStart").textContent="Start"; totalSeconds=remaining=Number(btn.dataset.timerPreset)*60; render(); };
+  });
+  $("timerStart").onclick = () => {
+    if (running) { clearInterval(tickHandle); running=false; $("timerStart").textContent="Start"; return; }
+    running = true; $("timerStart").textContent="Pause";
+    tickHandle = setInterval(()=>{
+      remaining--;
+      if (remaining <= 0) { clearInterval(tickHandle); running=false; $("timerStart").textContent="Start"; remaining=0; render(); alert("Time's up!"); return; }
+      render();
+    }, 1000);
+  };
+  $("timerReset").onclick = () => { clearInterval(tickHandle); running=false; $("timerStart").textContent="Start"; remaining=totalSeconds; render(); };
+})();
+
+// Periodic table (compact built-in dataset, no network needed)
+(function(){
+  const ELEMENTS = [
+    [1,"H","Hydrogen",1.008],[2,"He","Helium",4.003],[3,"Li","Lithium",6.94],[4,"Be","Beryllium",9.012],[5,"B","Boron",10.81],[6,"C","Carbon",12.011],[7,"N","Nitrogen",14.007],[8,"O","Oxygen",15.999],[9,"F","Fluorine",18.998],[10,"Ne","Neon",20.180],
+    [11,"Na","Sodium",22.990],[12,"Mg","Magnesium",24.305],[13,"Al","Aluminium",26.982],[14,"Si","Silicon",28.085],[15,"P","Phosphorus",30.974],[16,"S","Sulfur",32.06],[17,"Cl","Chlorine",35.45],[18,"Ar","Argon",39.948],
+    [19,"K","Potassium",39.098],[20,"Ca","Calcium",40.078],[21,"Sc","Scandium",44.956],[22,"Ti","Titanium",47.867],[23,"V","Vanadium",50.942],[24,"Cr","Chromium",51.996],[25,"Mn","Manganese",54.938],[26,"Fe","Iron",55.845],[27,"Co","Cobalt",58.933],[28,"Ni","Nickel",58.693],[29,"Cu","Copper",63.546],[30,"Zn","Zinc",65.38],[31,"Ga","Gallium",69.723],[32,"Ge","Germanium",72.630],[33,"As","Arsenic",74.922],[34,"Se","Selenium",78.971],[35,"Br","Bromine",79.904],[36,"Kr","Krypton",83.798],
+    [37,"Rb","Rubidium",85.468],[38,"Sr","Strontium",87.62],[39,"Y","Yttrium",88.906],[40,"Zr","Zirconium",91.224],[41,"Nb","Niobium",92.906],[42,"Mo","Molybdenum",95.95],[43,"Tc","Technetium",98],[44,"Ru","Ruthenium",101.07],[45,"Rh","Rhodium",102.906],[46,"Pd","Palladium",106.42],[47,"Ag","Silver",107.868],[48,"Cd","Cadmium",112.414],[49,"In","Indium",114.818],[50,"Sn","Tin",118.710],[51,"Sb","Antimony",121.760],[52,"Te","Tellurium",127.60],[53,"I","Iodine",126.904],[54,"Xe","Xenon",131.293],
+    [55,"Cs","Caesium",132.905],[56,"Ba","Barium",137.327],[57,"La","Lanthanum",138.905],[72,"Hf","Hafnium",178.49],[73,"Ta","Tantalum",180.948],[74,"W","Tungsten",183.84],[75,"Re","Rhenium",186.207],[76,"Os","Osmium",190.23],[77,"Ir","Iridium",192.217],[78,"Pt","Platinum",195.085],[79,"Au","Gold",196.967],[80,"Hg","Mercury",200.592],[81,"Tl","Thallium",204.38],[82,"Pb","Lead",207.2],[83,"Bi","Bismuth",208.980],[84,"Po","Polonium",209],[85,"At","Astatine",210],[86,"Rn","Radon",222],
+    [87,"Fr","Francium",223],[88,"Ra","Radium",226],[89,"Ac","Actinium",227],[104,"Rf","Rutherfordium",267],[105,"Db","Dubnium",268],[106,"Sg","Seaborgium",269],[107,"Bh","Bohrium",270],[108,"Hs","Hassium",269],[109,"Mt","Meitnerium",278],[110,"Ds","Darmstadtium",281],[111,"Rg","Roentgenium",282],[112,"Cn","Copernicium",285],
+    [58,"Ce","Cerium",140.116],[59,"Pr","Praseodymium",140.908],[60,"Nd","Neodymium",144.242],[61,"Pm","Promethium",145],[62,"Sm","Samarium",150.36],[63,"Eu","Europium",151.964],[64,"Gd","Gadolinium",157.25],[65,"Tb","Terbium",158.925],[66,"Dy","Dysprosium",162.500],[67,"Ho","Holmium",164.930],[68,"Er","Erbium",167.259],[69,"Tm","Thulium",168.934],[70,"Yb","Ytterbium",173.045],[71,"Lu","Lutetium",174.967],
+    [90,"Th","Thorium",232.038],[91,"Pa","Protactinium",231.036],[92,"U","Uranium",238.029],[93,"Np","Neptunium",237],[94,"Pu","Plutonium",244]
+  ];
+  const grid = $("periodicGrid"), detail = $("elementDetail");
+  function renderGrid(list){
+    grid.innerHTML = list.map(([n,sym,name,mass])=>`<button data-n="${n}"><div>${n}</div><b>${sym}</b></button>`).join("");
+  }
+  renderGrid(ELEMENTS);
+  grid.addEventListener("click", e=>{
+    const btn = e.target.closest("button"); if(!btn) return;
+    const el = ELEMENTS.find(x=>x[0]===Number(btn.dataset.n));
+    if(!el) return;
+    detail.classList.remove("hidden");
+    detail.innerHTML = `<b>${el[2]} (${el[1]})</b><br>Atomic number: ${el[0]}<br>Atomic mass: ${el[3]}`;
+  });
+  $("elementSearch").addEventListener("input", e=>{
+    const q = e.target.value.trim().toLowerCase();
+    renderGrid(q ? ELEMENTS.filter(([n,sym,name])=>sym.toLowerCase().includes(q)||name.toLowerCase().includes(q)) : ELEMENTS);
+  });
+})();
+
+// Flash cards (stored locally in this browser)
+(function(){
+  const KEY = "family-memories-flashcards-v1";
+  let cards = []; try { cards = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { cards = []; }
+  let index = 0, showingBack = false;
+  const stage = $("flashStage"), nav = $("flashNav");
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(cards)); } catch {} }
+  function render(){
+    if (!cards.length) { stage.innerHTML = `<div class="empty">No flash cards yet - add one above.</div>`; nav.innerHTML = ""; return; }
+    if (index >= cards.length) index = 0;
+    const card = cards[index];
+    stage.textContent = showingBack ? card.back : card.front;
+    nav.innerHTML = `<button class="secondary" id="flashPrev">◀ Prev</button><span style="align-self:center;font-size:13px;color:var(--muted)">${index+1} / ${cards.length} (tap card to flip)</span><button class="secondary" id="flashNext">Next ▶</button><button class="secondary" id="flashDel" style="color:#dc2626">Delete</button>`;
+    $("flashPrev").onclick = () => { index = (index-1+cards.length)%cards.length; showingBack=false; render(); };
+    $("flashNext").onclick = () => { index = (index+1)%cards.length; showingBack=false; render(); };
+    $("flashDel").onclick = () => { cards.splice(index,1); save(); index=0; showingBack=false; render(); };
+  }
+  stage.onclick = () => { if (cards.length) { showingBack = !showingBack; render(); } };
+  $("flashAdd").onclick = () => {
+    const front = $("flashFront").value.trim(), back = $("flashBack").value.trim();
+    if (!front || !back) { alert("Please fill in both the front and back of the card."); return; }
+    cards.push({front, back}); save();
+    $("flashFront").value = ""; $("flashBack").value = "";
+    index = cards.length - 1; showingBack = false; render();
+  };
+  render();
+})();
+
+// Dictionary (dictionaryapi.dev - free, no API key)
+(function(){
+  $("dictRun").onclick = async () => {
+    const word = $("dictWord").value.trim();
+    const out = $("dictResult");
+    if (!word) { out.textContent = "Type a word first."; return; }
+    out.textContent = "Looking up...";
+    try {
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+      if (!res.ok) throw new Error("Not found");
+      const data = await res.json();
+      const entry = data[0];
+      const parts = entry.meanings.map(m => `<b>${m.partOfSpeech}</b>: ${m.definitions.slice(0,2).map(d=>d.definition).join("; ")}`).join("<br><br>");
+      out.innerHTML = `<b>${entry.word}</b>${entry.phonetic?` (${entry.phonetic})`:""}<br><br>${parts}`;
+    } catch { out.textContent = "No definition found for that word."; }
+  };
+})();
+
+// Grammar checker (LanguageTool public API - free)
+(function(){
+  $("grammarRun").onclick = async () => {
+    const text = $("grammarInput").value.trim();
+    const out = $("grammarResult");
+    if (!text) { out.textContent = "Type or paste some text first."; return; }
+    out.textContent = "Checking...";
+    try {
+      const res = await fetch("https://api.languagetool.org/v2/check", {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: `text=${encodeURIComponent(text)}&language=en-US`
+      });
+      if (!res.ok) throw new Error("Check failed");
+      const data = await res.json();
+      if (!data.matches.length) { out.textContent = "No issues found - looks good!"; return; }
+      out.innerHTML = data.matches.slice(0,10).map(m => `<div style="margin-bottom:8px"><b>"${text.slice(m.offset,m.offset+m.length)}"</b> - ${m.message}${m.replacements.length?` (suggestion: ${m.replacements.slice(0,3).map(r=>r.value).join(", ")})`:""}</div>`).join("");
+    } catch { out.textContent = "Could not reach the grammar checking service. Check your connection and try again."; }
+  };
+})();
+
+// OCR - Photo to text (Tesseract.js, loaded lazily on first use, runs fully in-browser)
+(function(){
+  let tesseractLoaded = false;
+  function loadTesseract(){
+    if (tesseractLoaded) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js";
+      s.onload = () => { tesseractLoaded = true; resolve(); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  $("ocrFile").onchange = async () => {
+    const file = $("ocrFile").files[0];
+    const out = $("ocrResult"), label = $("ocrFileLabel");
+    if (!file) return;
+    label.textContent = `Selected: ${file.name}`;
+    out.textContent = "Loading OCR engine...";
+    try {
+      await loadTesseract();
+      out.textContent = "Reading text from image... this can take a moment.";
+      const { data } = await Tesseract.recognize(file, "eng");
+      out.textContent = data.text.trim() || "No text detected in that image.";
+    } catch (err) {
+      out.textContent = "OCR failed: " + (err.message || "could not process image.");
+    }
+  };
+})();
 const units={
  length:{m:1,km:1000,cm:.01,mm:.001,in:.0254,ft:.3048,mi:1609.344},
  mass:{kg:1,g:.001,mg:.000001,lb:.45359237,oz:.028349523125},

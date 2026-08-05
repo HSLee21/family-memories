@@ -122,7 +122,29 @@
 </div>
 <div class="hidden" id="studyToolsPanel">
 <div class="content-heading"><h2>Study Tools</h2></div>
-<div class="tool-grid"><div class="tool-card"><h3>Scientific Calculator</h3><input class="calc-display" id="calcDisplay" placeholder="e.g. sin(30) + sqrt(16)"/><div class="calc-actions"><button class="primary" id="calcRun">Calculate</button><button class="secondary" id="calcClear">Clear</button></div><div class="result-box" id="calcResult">Result will appear here</div></div><div class="tool-card"><h3>Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="temperature">Temperature</option><option value="volume">Volume</option></select><div class="converter-row"><input id="convertValue" step="any" type="number" value="1"/><select id="convertFrom"></select><span>→</span><select id="convertTo"></select></div><div class="result-box" id="convertResult"></div></div></div>
+<div class="tool-grid">
+<div class="tool-card">
+<h3>🧮 Scientific Calculator</h3>
+<input class="calc-display" id="calcDisplay" readonly/>
+<div class="calc-keys" id="calcKeys">
+<button data-k="sin(">sin</button><button data-k="cos(">cos</button><button data-k="tan(">tan</button><button data-k="(">(</button><button data-k=")">)</button>
+<button data-k="sqrt(">√</button><button data-k="log(">log</button><button data-k="ln(">ln</button><button data-k="^">x^y</button><button data-k="PI">π</button>
+<button class="calc-num" data-k="7">7</button><button class="calc-num" data-k="8">8</button><button class="calc-num" data-k="9">9</button><button data-op="/">÷</button><button data-act="back">⌫</button>
+<button class="calc-num" data-k="4">4</button><button class="calc-num" data-k="5">5</button><button class="calc-num" data-k="6">6</button><button data-op="*">×</button><button data-act="clear">C</button>
+<button class="calc-num" data-k="1">1</button><button class="calc-num" data-k="2">2</button><button class="calc-num" data-k="3">3</button><button data-op="-">−</button><button class="calc-eq" data-act="eq" rowspan="2">=</button>
+<button class="calc-num" data-k="0">0</button><button class="calc-num" data-k=".">.</button><button data-k="%">%</button><button data-op="+">+</button>
+</div>
+<div class="result-box" id="calcResult">Result will appear here</div>
+</div>
+<div class="tool-card"><h3>📏 Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="temperature">Temperature</option><option value="volume">Volume</option></select><div class="converter-row"><input id="convertValue" step="any" type="number" value="1"/><select id="convertFrom"></select><span>→</span><select id="convertTo"></select></div><div class="result-box" id="convertResult"></div></div>
+<div class="tool-card"><h3>🌎 Currency Converter</h3><div class="converter-row"><input id="currValue" step="any" type="number" value="1"/><select id="currFrom"></select><span>→</span><select id="currTo"></select></div><button class="secondary" id="currRun" style="margin-top:10px">Convert</button><div class="result-box" id="currResult">Rates from frankfurter.app (ECB)</div></div>
+<div class="tool-card"><h3>⏲️ Study Timer</h3><div class="timer-display" id="timerDisplay">25:00</div><div class="calc-actions"><button class="secondary" data-timer-preset="25">25 min</button><button class="secondary" data-timer-preset="5">5 min</button><button class="secondary" data-timer-preset="15">15 min</button></div><div class="calc-actions"><button class="primary" id="timerStart">Start</button><button class="secondary" id="timerReset">Reset</button></div></div>
+<div class="tool-card wide-card"><h3>⚛️ Periodic Table</h3><input id="elementSearch" placeholder="Search element name or symbol..."/><div class="periodic-grid" id="periodicGrid"></div><div class="result-box hidden" id="elementDetail"></div></div>
+<div class="tool-card"><h3>🎯 Flash Cards</h3><div class="converter-row"><input id="flashFront" placeholder="Front (question/term)"/></div><div class="converter-row"><input id="flashBack" placeholder="Back (answer/definition)"/></div><button class="secondary" id="flashAdd" style="margin-top:8px">+ Add Card</button><div class="flash-stage" id="flashStage"><div class="empty">No flash cards yet - add one above.</div></div><div class="calc-actions" id="flashNav"></div></div>
+<div class="tool-card"><h3>🔤 Dictionary</h3><div class="converter-row"><input id="dictWord" placeholder="Type a word..."/><button class="primary" id="dictRun">Look up</button></div><div class="result-box" id="dictResult">Definitions will appear here</div></div>
+<div class="tool-card"><h3>✍️ Grammar Checker</h3><textarea id="grammarInput" placeholder="Paste or type text to check..." rows="4"></textarea><button class="secondary" id="grammarRun" style="margin-top:8px">Check Grammar</button><div class="result-box" id="grammarResult">Suggestions will appear here</div></div>
+<div class="tool-card wide-card"><h3>📸 OCR (Photo → Text)</h3><label class="file-picker" style="display:inline-flex">📎 <span id="ocrFileLabel">Choose a photo</span><input hidden id="ocrFile" type="file" accept="image/*"/></label><div class="result-box" id="ocrResult">Extracted text will appear here</div></div>
+</div>
 </div>
 </section>
 <section class="page hidden section-theme media-theme" id="mediaHubPage">
