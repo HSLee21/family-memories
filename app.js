@@ -1,31 +1,21 @@
 console.log("APP.JS v12-1784358136 loaded");
 const cfg = window.APP_CONFIG;
 
-// Keep the Supabase session only for the current browser tab/session.
-// Refreshing the page keeps the login, but opening the app again after the
-// tab/browser session has ended requires a new sign-in.
+// Keep the Supabase session signed in across app restarts, until the user
+// explicitly signs out (or clears the app's storage / reinstalls).
 const client = window.supabase.createClient(
   cfg.SUPABASE_URL,
   cfg.SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
       persistSession: true,
-      storage: window.sessionStorage,
+      storage: window.localStorage,
       autoRefreshToken: true,
       detectSessionInUrl: true
     }
   }
 );
 
-// One-time cleanup of any old persistent Supabase login left in localStorage
-// by earlier versions of this app.
-const sessionMigrationKey = "family-memories-session-storage-v1";
-if (!sessionStorage.getItem(sessionMigrationKey)) {
-  Object.keys(localStorage)
-    .filter(key => key.startsWith("sb-") && key.endsWith("-auth-token"))
-    .forEach(key => localStorage.removeItem(key));
-  sessionStorage.setItem(sessionMigrationKey, "done");
-}
 // --- Backblaze B2 storage, via the Cloudflare Worker (cfg.WORKER_URL) ---
 // Drop-in replacement for the `client.storage.from(bucket)` calls this app
 // used to make against Supabase Storage. Same method names/shapes
