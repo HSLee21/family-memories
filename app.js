@@ -1235,14 +1235,12 @@ function showToolIconGrid(){
   if (periodicWrap) periodicWrap.classList.remove("landscape-view");
   if ($("periodicExitBtn")) $("periodicExitBtn").classList.add("hidden");
   document.body.style.overflow = "";
-  $("studyPage").classList.remove("tool-open");
 }
 document.querySelectorAll("#toolIconGrid [data-tool]").forEach(btn=>btn.onclick=()=>{
   $("toolIconGrid").classList.add("hidden");
   $("toolPanelsWrap").classList.remove("hidden");
   document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.toggle("hidden", p.id !== `toolPanel-${btn.dataset.tool}`));
   studyChromeEls().forEach(el=>el.classList.add("hidden"));
-  $("studyPage").classList.add("tool-open");
   window.scrollTo({top:0,behavior:"smooth"});
 });
 if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
