@@ -12,8 +12,8 @@
 .section-hero.hero-compact .hero-art{font-size:26px}
 .section-hero.hero-compact h1{font-size:20px;margin:0}
 .section-hero.hero-compact p{font-size:12px;margin:2px 0 0}
-.study-theme .section-hero.study-hero-photo{background:none;min-height:0;padding:10px 16px 4px;display:block}
-.hero-photo{width:100%;max-height:150px;object-fit:cover;border-radius:16px;display:block}
+.study-theme .section-hero.study-hero-photo{background:none;min-height:0;padding:0;display:block}
+.hero-photo{width:100%;max-height:170px;object-fit:cover;border-radius:0;display:block}
 .hub-card-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 16px}
 .hub-select-card{display:flex;align-items:center;gap:10px;border:0;border-radius:18px;padding:13px 12px;cursor:pointer;text-align:left}
 .hub-select-card.hub-blue{background:#e7f0ff;color:#1d4ed8}
