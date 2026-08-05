@@ -1125,7 +1125,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 })();
 
-// Currency converter (frankfurter.app - free, no API key, ECB rates)
+// Currency converter (open.er-api.com - free, no API key, ~160 currencies incl. MYR)
 (function(){
   const CURRENCIES = ["USD","EUR","GBP","JPY","MYR","SGD","CNY","AUD","CAD","HKD","KRW","INR","THB","IDR","TWD","CHF","NZD"];
   const fromSel = $("currFrom"), toSel = $("currTo"), out = $("currResult");
@@ -1136,12 +1136,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
     if (Number.isNaN(v)) { out.textContent = "Enter a valid amount."; return; }
     out.textContent = "Loading rate...";
     try {
-      const res = await fetch(`https://api.frankfurter.app/latest?amount=${v}&from=${from}&to=${to}`);
-      if (!res.ok) throw new Error("Rate lookup failed");
+      const res = await fetch(`https://open.er-api.com/v6/latest/${from}`);
+      if (!res.ok) throw new Error(`Rate service returned ${res.status}`);
       const data = await res.json();
-      const converted = data.rates[to];
+      if (data.result !== "success" || !data.rates || !(to in data.rates)) throw new Error("Rate not available for this currency pair.");
+      const converted = v * data.rates[to];
       out.textContent = `${v} ${from} = ${Number(converted.toFixed(4))} ${to}`;
-    } catch { out.textContent = "Could not fetch exchange rate. Check your connection and try again."; }
+    } catch (err) { out.textContent = "Could not fetch exchange rate: " + (err.message || "check your connection and try again."); }
   };
 })();
 
@@ -1266,13 +1267,14 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
     if (!word) { out.textContent = "Type a word first."; return; }
     out.textContent = "Looking up...";
     try {
-      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+      const lang = $("dictLang").value;
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/${lang}/${encodeURIComponent(word)}`);
       if (!res.ok) throw new Error("Not found");
       const data = await res.json();
       const entry = data[0];
       const parts = entry.meanings.map(m => `<b>${m.partOfSpeech}</b>: ${m.definitions.slice(0,2).map(d=>d.definition).join("; ")}`).join("<br><br>");
       out.innerHTML = `<b>${entry.word}</b>${entry.phonetic?` (${entry.phonetic})`:""}<br><br>${parts}`;
-    } catch { out.textContent = "No definition found for that word."; }
+    } catch { out.textContent = "No definition found for that word in this language."; }
   };
 })();
 
