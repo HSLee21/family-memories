@@ -1679,6 +1679,7 @@ async function openSlideshow(types,label){
   }
   slideshowActiveKey = requestedKey;
   const myToken = ++slideshowOpenToken; // invalidates any earlier in-flight call
+  if (typeof closeVideoOverlay === "function") closeVideoOverlay();
   slideshowMusicKey = (types && types.length===1) ? types[0] : "all";
   lockBodyScroll();
   $("slideshowOverlay").classList.remove("hidden");
@@ -1912,6 +1913,7 @@ $("slideshowPlayPause").onclick=()=>{
 
 /* ---- Video gallery + player ---- */
 async function openVideoGallery(types,label){
+  closeSlideshow();
   lockBodyScroll();
   $("videoOverlay").classList.remove("hidden");
   $("videoPlayerWrap").classList.add("hidden");
@@ -1927,21 +1929,30 @@ async function openVideoGallery(types,label){
     return;
   }
   $("videoGalleryList").innerHTML = playable.map((v,i)=>`<button class="video-gallery-item" data-video-index="${i}"><span class="video-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="video-gallery-title">${escapeHtml(v.title||"Untitled video")}</span></button>`).join("");
+
+  function playVideoAt(index){
+    if (index < 0 || index >= playable.length) return;
+    videoPlayerIndex = index;
+    const v = playable[index];
+    $("videoGalleryList").classList.add("hidden");
+    $("videoPlayerWrap").classList.remove("hidden");
+    if($("videoPlayerTitle")) $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"} (${index+1}/${playable.length})`;
+    const el=$("videoPlayerEl");
+    el.src=v.signedUrl;
+    el.load();
+    const tryPlay=()=>el.play().catch(()=>{});
+    tryPlay();
+    el.addEventListener("loadedmetadata",tryPlay,{once:true});
+  }
+  videoPlayNext = () => playVideoAt(videoPlayerIndex + 1);
+
   $("videoGalleryList").querySelectorAll("[data-video-index]").forEach(btn=>{
-    btn.onclick=()=>{
-      const v = playable[Number(btn.dataset.videoIndex)];
-      $("videoGalleryList").classList.add("hidden");
-      $("videoPlayerWrap").classList.remove("hidden");
-      if($("videoPlayerTitle")) $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"}`;
-      const el=$("videoPlayerEl");
-      el.src=v.signedUrl;
-      el.load();
-      const tryPlay=()=>el.play().catch(()=>{});
-      tryPlay();
-      el.addEventListener("loadedmetadata",tryPlay,{once:true});
-    };
+    btn.onclick = () => playVideoAt(Number(btn.dataset.videoIndex));
   });
 }
+let videoPlayerIndex = 0;
+let videoPlayNext = null;
+$("videoPlayerEl").addEventListener("ended", () => { if (videoPlayNext) videoPlayNext(); });
 function closeVideoOverlay(){
   $("videoOverlay").classList.add("hidden");
   const el=$("videoPlayerEl");
