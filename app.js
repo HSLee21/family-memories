@@ -108,7 +108,7 @@ function unlockBodyScroll(){
   window.scrollTo(0, _scrollLockY);
 }
 const views = ["authView","pendingView","appView"];
-const pages = ["home","memories","trips","celebrations","study","mediaHub","mediaSection","search","profile","admin"];
+const pages = ["home","memories","trips","celebrations","study","studyMaterials","studyTools","mediaHub","mediaSection","search","profile","admin"];
 const tableMap = {memory:"memories",trip:"trips",celebration:"celebrations",study:"study_materials"};
 
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
@@ -206,8 +206,8 @@ client.auth.onAuthStateChange((event,session)=>{
 
 
 const sectionType = {memories:"memory",trips:"trip",celebrations:"celebration",study:"study"};
-const folderTarget = {memories:"memoriesFolders",trips:"tripsFolders",celebrations:"celebrationsFolders",study:"studyFolders"};
-const browserTarget = {memories:"memoriesBrowser",trips:"tripsBrowser",celebrations:"celebrationsBrowser",study:"studyBrowser"};
+const folderTarget = {memories:"memoriesFolders",trips:"tripsFolders",celebrations:"celebrationsFolders",study:"studyCategoryGrid"};
+const browserTarget = {memories:"memoriesBrowser",trips:"tripsBrowser",celebrations:"celebrationsBrowser",study:"studyCategoryBrowser"};
 let currentFolderSection = null;
 let currentFolder = null;
 let editingFolderId = null;
@@ -218,9 +218,11 @@ function navigate(page){
   pages.forEach(p=>$(p+"Page").classList.toggle("hidden",p!==page));
   document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   document.querySelectorAll(".mobile-nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
+  $("pageTitle").textContent=({home:"Home",memories:"Our Memories",trips:"Family Trips",celebrations:"Celebrations",study:"Study Hub",studyMaterials:"Study Materials",studyTools:"Study Tools",mediaHub:"Gallery",mediaSection:"Memories",search:"Search",profile:"Profile",admin:"Family Admin"})[page];
   document.querySelector(".sidebar").classList.remove("open");
-  if(sectionType[page]) { currentFolder=null; loadFolders(page); }
+  if(sectionType[page] && page!=="study") { currentFolder=null; loadFolders(page); }
+  if(page==="studyMaterials") showStudyCategoryGrid();
+  if(page==="studyTools") showStudyToolsGrid();
   if(page==="admin"){ loadFamilyTree(); loadMembers(); loadInvites(); }
   if(page==="home") loadHomeExperience();
   if(page==="profile") loadProfilePage();
@@ -349,7 +351,7 @@ async function openFolder(section,folder){
     <div><h2>${escapeHtml(folder.name)}</h2><p class="muted">${escapeHtml(folder.description||"")}</p></div>
     ${isUncategorized ? "" : '<button class="primary upload-folder">+ Add / Upload</button>'}
   </div><div id="${browser}Items" class="content-grid"></div>`;
-  $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
+  $(browser).querySelector(".back-folders").onclick=()=> section==="study" ? showStudyCategoryGrid() : loadFolders(section);
   const uploadBtn=$(browser).querySelector(".upload-folder");
   if(uploadBtn) uploadBtn.onclick=()=>openAddForFolder(type);
   loadFolderItems(type, isUncategorized ? {ids:folder._orphanIds||[]} : folder.id, browser+"Items");
@@ -1196,33 +1198,128 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 })();
 
-// Flash cards (stored locally in this browser)
+// Calendar (stored locally in this browser)
 (function(){
-  const KEY = "family-memories-flashcards-v1";
-  let cards = []; try { cards = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { cards = []; }
-  let index = 0, showingBack = false;
-  const stage = $("flashStage"), nav = $("flashNav");
-  function save(){ try { localStorage.setItem(KEY, JSON.stringify(cards)); } catch {} }
+  const KEY = "family-memories-calendar-events-v1";
+  let events = {}; try { events = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { events = {}; }
+  let viewDate = new Date();
+  const grid = $("calendarGrid"), label = $("calMonthLabel"), list = $("calEventList");
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(events)); } catch {} }
+  function dateKey(y,m,d){ return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`; }
   function render(){
-    if (!cards.length) { stage.innerHTML = `<div class="empty">No flash cards yet - add one above.</div>`; nav.innerHTML = ""; return; }
-    if (index >= cards.length) index = 0;
-    const card = cards[index];
-    stage.textContent = showingBack ? card.back : card.front;
-    nav.innerHTML = `<button class="secondary" id="flashPrev">◀ Prev</button><span style="align-self:center;font-size:13px;color:var(--muted)">${index+1} / ${cards.length} (tap card to flip)</span><button class="secondary" id="flashNext">Next ▶</button><button class="secondary" id="flashDel" style="color:#dc2626">Delete</button>`;
-    $("flashPrev").onclick = () => { index = (index-1+cards.length)%cards.length; showingBack=false; render(); };
-    $("flashNext").onclick = () => { index = (index+1)%cards.length; showingBack=false; render(); };
-    $("flashDel").onclick = () => { cards.splice(index,1); save(); index=0; showingBack=false; render(); };
+    const y = viewDate.getFullYear(), m = viewDate.getMonth();
+    label.textContent = viewDate.toLocaleDateString(undefined, {month:"long", year:"numeric"});
+    const firstDow = new Date(y,m,1).getDay(), daysInMonth = new Date(y,m+1,0).getDate();
+    let html = ["S","M","T","W","T","F","S"].map(d=>`<div class="cal-day empty-cell"><b>${d}</b></div>`).join("");
+    for (let i=0;i<firstDow;i++) html += `<div class="cal-day empty-cell"></div>`;
+    for (let d=1; d<=daysInMonth; d++){
+      const key = dateKey(y,m,d);
+      html += `<div class="cal-day${events[key]?.length ? " has-event" : ""}" data-date="${key}">${d}</div>`;
+    }
+    grid.innerHTML = html;
+    grid.querySelectorAll("[data-date]").forEach(cell => cell.onclick = () => { $("calEventDate").value = cell.dataset.date; renderEventList(); });
+    renderEventList();
   }
-  stage.onclick = () => { if (cards.length) { showingBack = !showingBack; render(); } };
-  $("flashAdd").onclick = () => {
-    const front = $("flashFront").value.trim(), back = $("flashBack").value.trim();
-    if (!front || !back) { alert("Please fill in both the front and back of the card."); return; }
-    cards.push({front, back}); save();
-    $("flashFront").value = ""; $("flashBack").value = "";
-    index = cards.length - 1; showingBack = false; render();
+  function renderEventList(){
+    const allDates = Object.keys(events).filter(k=>events[k].length).sort();
+    if (!allDates.length) { list.textContent = "No events yet."; return; }
+    list.innerHTML = allDates.map(date => `<div style="margin-bottom:8px"><b>${date}</b><br>${events[date].map((title,i)=>`${escapeHtml(title)} <button data-del-date="${date}" data-del-idx="${i}" style="border:0;background:none;color:#dc2626;cursor:pointer">✕</button>`).join("<br>")}</div>`).join("");
+    list.querySelectorAll("[data-del-date]").forEach(btn=>btn.onclick=()=>{
+      events[btn.dataset.delDate].splice(Number(btn.dataset.delIdx),1);
+      if (!events[btn.dataset.delDate].length) delete events[btn.dataset.delDate];
+      save(); render();
+    });
+  }
+  $("calPrevMonth").onclick = () => { viewDate.setMonth(viewDate.getMonth()-1); render(); };
+  $("calNextMonth").onclick = () => { viewDate.setMonth(viewDate.getMonth()+1); render(); };
+  $("calAddEvent").onclick = () => {
+    const title = $("calEventTitle").value.trim(), date = $("calEventDate").value;
+    if (!title || !date) { alert("Please enter both an event title and a date."); return; }
+    (events[date] ||= []).push(title);
+    save(); $("calEventTitle").value = ""; render();
   };
   render();
 })();
+
+// --- Study Hub navigation: fixed category grid + tool tile grid ---
+function showStudyCategoryGrid(){
+  $("studyCategoryBrowser").classList.add("hidden");
+  $("studyCategoryBrowser").innerHTML = "";
+  $("studyCategoryGrid").classList.remove("hidden");
+  currentFolder = null; currentFolderSection = null;
+}
+
+function showStudyToolsGrid(){
+  $("studyToolPanelWrap").classList.add("hidden");
+  $("studyToolTileGrid").classList.remove("hidden");
+  document.querySelectorAll("#studyToolPanel .tool-card").forEach(p=>p.classList.add("hidden"));
+}
+
+document.querySelectorAll("#studyToolTileGrid [data-tool]").forEach(btn=>btn.onclick=()=>{
+  $("studyToolTileGrid").classList.add("hidden");
+  $("studyToolPanelWrap").classList.remove("hidden");
+  document.querySelectorAll("#studyToolPanel .tool-card").forEach(p=>p.classList.toggle("hidden", p.id !== `toolPanel-${btn.dataset.tool}`));
+});
+if ($("studyToolBackBtn")) $("studyToolBackBtn").onclick = showStudyToolsGrid;
+
+// Useful Links / Favorites - simple local link lists (not synced across devices)
+function renderLinkList(container, categoryName, mode){
+  const KEY = `family-memories-${mode}-v1`;
+  let links = []; try { links = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { links = []; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(links)); } catch {} }
+  function draw(){
+    container.innerHTML = `<div class="folder-toolbar">
+      <button class="secondary" id="studyCategoryBackBtn">← All categories</button>
+      <div><h2>${escapeHtml(categoryName)}</h2></div>
+    </div>
+    <div class="tool-card" style="margin-top:12px">
+      <div class="converter-row"><input id="linkTitleInput" placeholder="Title"/></div>
+      <div class="converter-row"><input id="linkUrlInput" placeholder="https://..."/></div>
+      <button class="secondary" id="linkAddBtn" style="margin-top:8px">+ Add</button>
+      <div class="result-box" id="linkListBox">${links.length ? links.map((l,i)=>`<div style="margin-bottom:8px"><a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.title)}</a> <button data-del="${i}" style="border:0;background:none;color:#dc2626;cursor:pointer">✕</button></div>`).join("") : `No ${mode==="links"?"links":"favorites"} yet - add one above.`}</div>
+    </div>`;
+    $("studyCategoryBackBtn").onclick = showStudyCategoryGrid;
+    $("linkAddBtn").onclick = () => {
+      const title = $("linkTitleInput").value.trim();
+      let url = $("linkUrlInput").value.trim();
+      if (!title || !url) { alert("Please enter both a title and a URL."); return; }
+      if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+      links.push({title, url}); save(); draw();
+    };
+    container.querySelectorAll("[data-del]").forEach(btn=>btn.onclick=()=>{ links.splice(Number(btn.dataset.del),1); save(); draw(); });
+  }
+  draw();
+}
+
+async function openStudyCategory(categoryName, mode){
+  if (mode === "links" || mode === "favorites") {
+    $("studyCategoryGrid").classList.add("hidden");
+    const browser = $("studyCategoryBrowser");
+    browser.classList.remove("hidden");
+    renderLinkList(browser, categoryName, mode);
+    return;
+  }
+  // mode === "folder": find-or-create a fixed folder with this name, then reuse
+  // the exact same folder-browser used by memories/trips/celebrations.
+  try {
+    let { data: existing, error: findError } = await client.from("folders").select("*").eq("section","study").eq("name",categoryName).limit(1);
+    if (findError) throw findError;
+    let folder = existing && existing[0];
+    if (!folder) {
+      const { data: created, error: createError } = await client.from("folders").insert({name:categoryName, description:null, section:"study", created_by:currentUser.id}).select().single();
+      if (createError) throw createError;
+      folder = created;
+    }
+    openFolder("study", folder);
+  } catch (err) {
+    toast(err.message || "Could not open this category.");
+  }
+}
+
+document.querySelectorAll("#studyCategoryGrid [data-category]").forEach(btn=>{
+  btn.onclick = () => openStudyCategory(btn.dataset.category, btn.dataset.mode);
+});
+
 
 // Dictionary (dictionaryapi.dev - free, no API key)
 (function(){
@@ -1369,14 +1466,6 @@ function loadProfilePage(){
   $("familyAdminShortcut").classList.toggle("hidden",currentProfile.role!=="admin");
   loadProfilePhoto();
 }
-
-document.querySelectorAll("[data-study-tab]").forEach(btn=>btn.onclick=()=>{
-  document.querySelectorAll("[data-study-tab]").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  const showTools = btn.dataset.studyTab==="tools";
-  $("studyMaterialsPanel").classList.toggle("hidden", showTools);
-  $("studyToolsPanel").classList.toggle("hidden", !showTools);
-});
 
 if($("profileEditPhoto")) $("profileEditPhoto").onclick=()=>$("profilePhotoInput").click();
 if($("profileSignOut")) $("profileSignOut").onclick=signOut;
