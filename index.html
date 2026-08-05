@@ -114,8 +114,9 @@
 <div class="section-hero"><div class="hero-art">🎈🎉</div><div><h1>Celebrations</h1><p>Birthdays, anniversaries and meaningful milestones.</p></div></div>
 <div class="content-heading"><h2>Celebrations</h2><button class="link-button open-folder" data-section="celebrations">+ New</button></div><div class="folder-grid visual-grid" id="celebrationsFolders"></div><div class="folder-browser hidden" id="celebrationsBrowser"></div>
 </section>
-<section class="page hidden section-theme study-theme" id="studyPage">
+<section class="page hidden study-theme" id="studyPage">
 <div class="section-hero study-hero-photo"><img alt="Study Hub - Learning materials and useful family study tools" class="hero-photo" src="assets/images/study-hero.jpg"/></div>
+<div class="section-theme study-body-card">
 <div class="hub-card-row">
 <button class="hub-select-card hub-blue active" data-study-tab="tools"><span class="hub-select-ico">🧮</span><span class="hub-select-text"><b>Study Tools</b></span><span class="hub-select-arrow">›</span></button>
 <button class="hub-select-card hub-green" data-study-tab="materials"><span class="hub-select-ico">📁</span><span class="hub-select-text"><b>Study Materials</b></span><span class="hub-select-arrow">›</span></button>
@@ -160,6 +161,7 @@
 <div class="tool-card hidden" id="toolPanel-dictionary"><h3>🔤 Dictionary</h3><div class="converter-row"><input id="dictWord" placeholder="Type a word..."/><button class="primary" id="dictRun">Look up</button></div><div class="result-box" id="dictResult">Definitions will appear here</div></div>
 <div class="tool-card hidden" id="toolPanel-grammar"><h3>✍️ Grammar Checker</h3><textarea id="grammarInput" placeholder="Paste or type text to check..." rows="4"></textarea><button class="secondary" id="grammarRun" style="margin-top:8px">Check Grammar</button><div class="result-box" id="grammarResult">Suggestions will appear here</div></div>
 <div class="tool-card hidden wide-card" id="toolPanel-ocr"><h3>📸 OCR (Photo → Text)</h3><label class="file-picker" style="display:inline-flex">📎 <span id="ocrFileLabel">Choose a photo</span><input hidden id="ocrFile" type="file" accept="image/*"/></label><div class="result-box" id="ocrResult">Extracted text will appear here</div></div>
+</div>
 </div>
 </div>
 </div>
