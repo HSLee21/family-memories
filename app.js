@@ -1271,15 +1271,32 @@ document.querySelectorAll("#toolIconGrid [data-tool]").forEach(btn=>btn.onclick=
 if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
 
 
-// Dictionary (dictionaryapi.dev - free, no API key)
+// Dictionary - dictionaryapi.dev (free, no key) for languages it supports;
+// Chinese and Malay aren't in its coverage, so those two fall back to a
+// free translation lookup (MyMemory) showing an English translation
+// instead of a full definition.
 (function(){
+  const TRANSLATE_ONLY = { zh: "Chinese", ms: "Malay" };
   $("dictRun").onclick = async () => {
     const word = $("dictWord").value.trim();
     const out = $("dictResult");
+    const lang = $("dictLang").value;
     if (!word) { out.textContent = "Type a word first."; return; }
     out.textContent = "Looking up...";
+
+    if (TRANSLATE_ONLY[lang]) {
+      try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=${lang}|en`);
+        if (!res.ok) throw new Error("Translation failed");
+        const data = await res.json();
+        const translated = data?.responseData?.translatedText;
+        if (!translated) throw new Error("No translation found");
+        out.innerHTML = `<b>${escapeHtml(word)}</b> (${TRANSLATE_ONLY[lang]}) →<br><br>${escapeHtml(translated)}<br><br><span style="font-size:12px;color:var(--muted)">Full dictionary definitions aren't available for this language yet - showing an English translation instead.</span>`;
+      } catch { out.textContent = "Could not translate that word. Check your connection and try again."; }
+      return;
+    }
+
     try {
-      const lang = $("dictLang").value;
       const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/${lang}/${encodeURIComponent(word)}`);
       if (!res.ok) throw new Error("Not found");
       const data = await res.json();
