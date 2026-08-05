@@ -1105,7 +1105,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   $("calcKeys").addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
-    if (btn.dataset.act === "clear") { display.value = ""; resultBox.textContent = "Result will appear here"; return; }
+    if (btn.dataset.act === "clear") { display.value = ""; resultBox.classList.add("hidden"); resultBox.textContent = ""; return; }
     if (btn.dataset.act === "back") { display.value = display.value.slice(0, -1); return; }
     if (btn.dataset.act === "eq") {
       try {
@@ -1115,9 +1115,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
         const fn = new Function("sin","cos","tan","sqrt","log","ln","PI",`"use strict";return (${expr})`);
         const result = fn(x=>Math.sin(deg(x)), x=>Math.cos(deg(x)), x=>Math.tan(deg(x)), Math.sqrt, Math.log10, Math.log, Math.PI);
         if (!Number.isFinite(result)) throw new Error("Invalid result");
+        resultBox.classList.remove("hidden");
         resultBox.textContent = result;
         display.value = String(result);
-      } catch { resultBox.textContent = "Invalid expression"; }
+      } catch { resultBox.classList.remove("hidden"); resultBox.textContent = "Invalid expression"; }
       return;
     }
     if (btn.dataset.op) { display.value += btn.dataset.op; return; }
@@ -1149,12 +1150,23 @@ document.addEventListener("DOMContentLoaded", ()=>{
 // Study timer (Pomodoro-style countdown)
 (function(){
   const disp = $("timerDisplay");
-  let totalSeconds = 25*60, remaining = totalSeconds, tickHandle = null, running = false;
+  let totalSeconds = 5*60, remaining = totalSeconds, tickHandle = null, running = false;
   function render(){ const m=Math.floor(remaining/60), s=remaining%60; disp.textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`; }
+  function setMinutes(mins){
+    clearInterval(tickHandle); running=false; $("timerStart").textContent="Start";
+    totalSeconds=remaining=mins*60; render();
+  }
   render();
   document.querySelectorAll("[data-timer-preset]").forEach(btn=>{
-    btn.onclick = () => { clearInterval(tickHandle); running=false; $("timerStart").textContent="Start"; totalSeconds=remaining=Number(btn.dataset.timerPreset)*60; render(); };
+    btn.onclick = () => { $("timerCustomRow").classList.add("hidden"); setMinutes(Number(btn.dataset.timerPreset)); };
   });
+  $("timerOtherBtn").onclick = () => { $("timerCustomRow").classList.toggle("hidden"); };
+  $("timerCustomSet").onclick = () => {
+    const mins = parseInt($("timerCustomMinutes").value, 10);
+    if (!mins || mins < 1) { alert("Enter a whole number of minutes (1 or more)."); return; }
+    setMinutes(mins);
+    $("timerCustomRow").classList.add("hidden");
+  };
   $("timerStart").onclick = () => {
     if (running) { clearInterval(tickHandle); running=false; $("timerStart").textContent="Start"; return; }
     running = true; $("timerStart").textContent="Pause";
