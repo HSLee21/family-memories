@@ -115,15 +115,28 @@
 <div class="content-heading"><h2>Celebrations</h2><button class="link-button open-folder" data-section="celebrations">+ New</button></div><div class="folder-grid visual-grid" id="celebrationsFolders"></div><div class="folder-browser hidden" id="celebrationsBrowser"></div>
 </section>
 <section class="page hidden section-theme study-theme" id="studyPage">
-<div class="section-hero"><div class="hero-art">📚🌱</div><div><h1>Study Hub</h1><p>Learning materials and useful family study tools.</p></div></div>
-<div class="filter-row"><button class="filter active" data-study-tab="materials">📁<span>Study Materials</span></button><button class="filter" data-study-tab="tools">🧮<span>Study Tools</span></button></div>
+<div class="section-hero hero-compact"><div class="hero-art">📚🌱</div><div><h1>Study Hub</h1><p>Learning materials and useful family study tools.</p></div></div>
+<div class="filter-row"><button class="filter" data-study-tab="tools">🧮<span>Study Tools</span></button><button class="filter active" data-study-tab="materials">📁<span>Study Materials</span></button></div>
 <div id="studyMaterialsPanel">
 <div class="content-heading"><h2>Quick Access</h2><button class="link-button open-folder" data-section="study">+ New Folder</button></div><div class="folder-grid list-grid" id="studyFolders"></div><div class="folder-browser hidden" id="studyBrowser"></div>
 </div>
 <div class="hidden" id="studyToolsPanel">
 <div class="content-heading"><h2>Study Tools</h2></div>
+<div class="tool-icon-grid" id="toolIconGrid">
+<button class="tool-icon-tile" data-tool="calculator"><span class="tool-icon-emoji">🧮</span>Scientific Calculator</button>
+<button class="tool-icon-tile" data-tool="converter"><span class="tool-icon-emoji">📏</span>Unit Converter</button>
+<button class="tool-icon-tile" data-tool="currency"><span class="tool-icon-emoji">🌎</span>Currency Converter</button>
+<button class="tool-icon-tile" data-tool="timer"><span class="tool-icon-emoji">⏱️</span>Study Timer</button>
+<button class="tool-icon-tile" data-tool="calendar"><span class="tool-icon-emoji">📅</span>Calendar</button>
+<button class="tool-icon-tile" data-tool="periodic"><span class="tool-icon-emoji">⚗️</span>Periodic Table</button>
+<button class="tool-icon-tile" data-tool="dictionary"><span class="tool-icon-emoji">📘</span>Dictionary</button>
+<button class="tool-icon-tile" data-tool="grammar"><span class="tool-icon-emoji">✅</span>Grammar Checker</button>
+<button class="tool-icon-tile" data-tool="ocr"><span class="tool-icon-emoji">📸</span>OCR (Photo → Text)</button>
+</div>
+<div class="hidden" id="toolPanelsWrap">
+<button class="tool-panel-back" id="toolPanelBackBtn">‹ Back to tools</button>
 <div class="tool-grid">
-<div class="tool-card">
+<div class="tool-card hidden" id="toolPanel-calculator">
 <h3>🧮 Scientific Calculator</h3>
 <input class="calc-display" id="calcDisplay" readonly/>
 <div class="calc-keys" id="calcKeys">
@@ -136,14 +149,15 @@
 </div>
 <div class="result-box" id="calcResult">Result will appear here</div>
 </div>
-<div class="tool-card"><h3>📏 Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="temperature">Temperature</option><option value="volume">Volume</option></select><div class="converter-row"><input id="convertValue" step="any" type="number" value="1"/><select id="convertFrom"></select><span>→</span><select id="convertTo"></select></div><div class="result-box" id="convertResult"></div></div>
-<div class="tool-card"><h3>🌎 Currency Converter</h3><div class="converter-row"><input id="currValue" step="any" type="number" value="1"/><select id="currFrom"></select><span>→</span><select id="currTo"></select></div><button class="secondary" id="currRun" style="margin-top:10px">Convert</button><div class="result-box" id="currResult">Rates from frankfurter.app (ECB)</div></div>
-<div class="tool-card"><h3>⏲️ Study Timer</h3><div class="timer-display" id="timerDisplay">25:00</div><div class="calc-actions"><button class="secondary" data-timer-preset="25">25 min</button><button class="secondary" data-timer-preset="5">5 min</button><button class="secondary" data-timer-preset="15">15 min</button></div><div class="calc-actions"><button class="primary" id="timerStart">Start</button><button class="secondary" id="timerReset">Reset</button></div></div>
-<div class="tool-card wide-card"><h3>⚛️ Periodic Table</h3><input id="elementSearch" placeholder="Search element name or symbol..."/><div class="periodic-grid" id="periodicGrid"></div><div class="result-box hidden" id="elementDetail"></div></div>
-<div class="tool-card"><h3>🎯 Flash Cards</h3><div class="converter-row"><input id="flashFront" placeholder="Front (question/term)"/></div><div class="converter-row"><input id="flashBack" placeholder="Back (answer/definition)"/></div><button class="secondary" id="flashAdd" style="margin-top:8px">+ Add Card</button><div class="flash-stage" id="flashStage"><div class="empty">No flash cards yet - add one above.</div></div><div class="calc-actions" id="flashNav"></div></div>
-<div class="tool-card"><h3>🔤 Dictionary</h3><div class="converter-row"><input id="dictWord" placeholder="Type a word..."/><button class="primary" id="dictRun">Look up</button></div><div class="result-box" id="dictResult">Definitions will appear here</div></div>
-<div class="tool-card"><h3>✍️ Grammar Checker</h3><textarea id="grammarInput" placeholder="Paste or type text to check..." rows="4"></textarea><button class="secondary" id="grammarRun" style="margin-top:8px">Check Grammar</button><div class="result-box" id="grammarResult">Suggestions will appear here</div></div>
-<div class="tool-card wide-card"><h3>📸 OCR (Photo → Text)</h3><label class="file-picker" style="display:inline-flex">📎 <span id="ocrFileLabel">Choose a photo</span><input hidden id="ocrFile" type="file" accept="image/*"/></label><div class="result-box" id="ocrResult">Extracted text will appear here</div></div>
+<div class="tool-card hidden" id="toolPanel-converter"><h3>📏 Unit Converter</h3><select id="convertType"><option value="length">Length</option><option value="mass">Mass</option><option value="temperature">Temperature</option><option value="volume">Volume</option></select><div class="converter-row"><input id="convertValue" step="any" type="number" value="1"/><select id="convertFrom"></select><span>→</span><select id="convertTo"></select></div><div class="result-box" id="convertResult"></div></div>
+<div class="tool-card hidden" id="toolPanel-currency"><h3>🌎 Currency Converter</h3><div class="converter-row"><input id="currValue" step="any" type="number" value="1"/><select id="currFrom"></select><span>→</span><select id="currTo"></select></div><button class="secondary" id="currRun" style="margin-top:10px">Convert</button><div class="result-box" id="currResult">Rates from frankfurter.app (ECB)</div></div>
+<div class="tool-card hidden" id="toolPanel-timer"><h3>⏲️ Study Timer</h3><div class="timer-display" id="timerDisplay">25:00</div><div class="calc-actions"><button class="secondary" data-timer-preset="25">25 min</button><button class="secondary" data-timer-preset="5">5 min</button><button class="secondary" data-timer-preset="15">15 min</button></div><div class="calc-actions"><button class="primary" id="timerStart">Start</button><button class="secondary" id="timerReset">Reset</button></div></div>
+<div class="tool-card hidden" id="toolPanel-calendar"><h3>📅 Calendar</h3><div class="calendar-header"><button class="secondary" id="calPrevMonth">‹</button><b id="calMonthLabel"></b><button class="secondary" id="calNextMonth">›</button></div><div class="calendar-grid" id="calendarGrid"></div><div class="converter-row"><input id="calEventTitle" placeholder="Event title"/><input id="calEventDate" type="date"/></div><button class="secondary" id="calAddEvent" style="margin-top:8px">+ Add Event</button><div class="result-box" id="calEventList">No events yet.</div></div>
+<div class="tool-card hidden wide-card" id="toolPanel-periodic"><h3>⚛️ Periodic Table</h3><input id="elementSearch" placeholder="Search element name or symbol..."/><div class="periodic-grid" id="periodicGrid"></div><div class="result-box hidden" id="elementDetail"></div></div>
+<div class="tool-card hidden" id="toolPanel-dictionary"><h3>🔤 Dictionary</h3><div class="converter-row"><input id="dictWord" placeholder="Type a word..."/><button class="primary" id="dictRun">Look up</button></div><div class="result-box" id="dictResult">Definitions will appear here</div></div>
+<div class="tool-card hidden" id="toolPanel-grammar"><h3>✍️ Grammar Checker</h3><textarea id="grammarInput" placeholder="Paste or type text to check..." rows="4"></textarea><button class="secondary" id="grammarRun" style="margin-top:8px">Check Grammar</button><div class="result-box" id="grammarResult">Suggestions will appear here</div></div>
+<div class="tool-card hidden wide-card" id="toolPanel-ocr"><h3>📸 OCR (Photo → Text)</h3><label class="file-picker" style="display:inline-flex">📎 <span id="ocrFileLabel">Choose a photo</span><input hidden id="ocrFile" type="file" accept="image/*"/></label><div class="result-box" id="ocrResult">Extracted text will appear here</div></div>
+</div>
 </div>
 </div>
 </section>

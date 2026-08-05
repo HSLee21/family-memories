@@ -1196,33 +1196,63 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 })();
 
-// Flash cards (stored locally in this browser)
+// Calendar (stored locally in this browser)
 (function(){
-  const KEY = "family-memories-flashcards-v1";
-  let cards = []; try { cards = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { cards = []; }
-  let index = 0, showingBack = false;
-  const stage = $("flashStage"), nav = $("flashNav");
-  function save(){ try { localStorage.setItem(KEY, JSON.stringify(cards)); } catch {} }
+  const KEY = "family-memories-calendar-events-v1";
+  let events = {}; try { events = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { events = {}; }
+  let viewDate = new Date();
+  const grid = $("calendarGrid"), label = $("calMonthLabel"), list = $("calEventList");
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(events)); } catch {} }
+  function dateKey(y,m,d){ return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`; }
   function render(){
-    if (!cards.length) { stage.innerHTML = `<div class="empty">No flash cards yet - add one above.</div>`; nav.innerHTML = ""; return; }
-    if (index >= cards.length) index = 0;
-    const card = cards[index];
-    stage.textContent = showingBack ? card.back : card.front;
-    nav.innerHTML = `<button class="secondary" id="flashPrev">◀ Prev</button><span style="align-self:center;font-size:13px;color:var(--muted)">${index+1} / ${cards.length} (tap card to flip)</span><button class="secondary" id="flashNext">Next ▶</button><button class="secondary" id="flashDel" style="color:#dc2626">Delete</button>`;
-    $("flashPrev").onclick = () => { index = (index-1+cards.length)%cards.length; showingBack=false; render(); };
-    $("flashNext").onclick = () => { index = (index+1)%cards.length; showingBack=false; render(); };
-    $("flashDel").onclick = () => { cards.splice(index,1); save(); index=0; showingBack=false; render(); };
+    const y = viewDate.getFullYear(), m = viewDate.getMonth();
+    label.textContent = viewDate.toLocaleDateString(undefined, {month:"long", year:"numeric"});
+    const firstDow = new Date(y,m,1).getDay(), daysInMonth = new Date(y,m+1,0).getDate();
+    let html = ["S","M","T","W","T","F","S"].map(d=>`<div class="cal-day empty-cell"><b>${d}</b></div>`).join("");
+    for (let i=0;i<firstDow;i++) html += `<div class="cal-day empty-cell"></div>`;
+    for (let d=1; d<=daysInMonth; d++){
+      const key = dateKey(y,m,d);
+      html += `<div class="cal-day${events[key]?.length ? " has-event" : ""}" data-date="${key}">${d}</div>`;
+    }
+    grid.innerHTML = html;
+    grid.querySelectorAll("[data-date]").forEach(cell => cell.onclick = () => { $("calEventDate").value = cell.dataset.date; renderEventList(); });
+    renderEventList();
   }
-  stage.onclick = () => { if (cards.length) { showingBack = !showingBack; render(); } };
-  $("flashAdd").onclick = () => {
-    const front = $("flashFront").value.trim(), back = $("flashBack").value.trim();
-    if (!front || !back) { alert("Please fill in both the front and back of the card."); return; }
-    cards.push({front, back}); save();
-    $("flashFront").value = ""; $("flashBack").value = "";
-    index = cards.length - 1; showingBack = false; render();
+  function renderEventList(){
+    const allDates = Object.keys(events).filter(k=>events[k].length).sort();
+    if (!allDates.length) { list.textContent = "No events yet."; return; }
+    list.innerHTML = allDates.map(date => `<div style="margin-bottom:8px"><b>${date}</b><br>${events[date].map((title,i)=>`${escapeHtml(title)} <button data-del-date="${date}" data-del-idx="${i}" style="border:0;background:none;color:#dc2626;cursor:pointer">✕</button>`).join("<br>")}</div>`).join("");
+    list.querySelectorAll("[data-del-date]").forEach(btn=>btn.onclick=()=>{
+      events[btn.dataset.delDate].splice(Number(btn.dataset.delIdx),1);
+      if (!events[btn.dataset.delDate].length) delete events[btn.dataset.delDate];
+      save(); render();
+    });
+  }
+  $("calPrevMonth").onclick = () => { viewDate.setMonth(viewDate.getMonth()-1); render(); };
+  $("calNextMonth").onclick = () => { viewDate.setMonth(viewDate.getMonth()+1); render(); };
+  $("calAddEvent").onclick = () => {
+    const title = $("calEventTitle").value.trim(), date = $("calEventDate").value;
+    if (!title || !date) { alert("Please enter both an event title and a date."); return; }
+    (events[date] ||= []).push(title);
+    save(); $("calEventTitle").value = ""; render();
   };
   render();
 })();
+
+// Study Tools: 9-icon grid <-> individual tool panel (contained entirely
+// within the existing Study Tools tab; doesn't touch page navigation).
+function showToolIconGrid(){
+  $("toolPanelsWrap").classList.add("hidden");
+  $("toolIconGrid").classList.remove("hidden");
+  document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.add("hidden"));
+}
+document.querySelectorAll("#toolIconGrid [data-tool]").forEach(btn=>btn.onclick=()=>{
+  $("toolIconGrid").classList.add("hidden");
+  $("toolPanelsWrap").classList.remove("hidden");
+  document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.toggle("hidden", p.id !== `toolPanel-${btn.dataset.tool}`));
+});
+if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
+
 
 // Dictionary (dictionaryapi.dev - free, no API key)
 (function(){
@@ -1376,6 +1406,7 @@ document.querySelectorAll("[data-study-tab]").forEach(btn=>btn.onclick=()=>{
   const showTools = btn.dataset.studyTab==="tools";
   $("studyMaterialsPanel").classList.toggle("hidden", showTools);
   $("studyToolsPanel").classList.toggle("hidden", !showTools);
+  if (showTools) showToolIconGrid();
 });
 
 if($("profileEditPhoto")) $("profileEditPhoto").onclick=()=>$("profilePhotoInput").click();
