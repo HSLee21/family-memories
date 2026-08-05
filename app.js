@@ -165,6 +165,7 @@ $("newPasswordForm").onsubmit=async e=>{
   if(error) return toast(error.message);
   toast("Password updated successfully.");
   history.replaceState({},document.title,window.location.pathname);
+  inPasswordRecovery=false;
   showAuthForm("signin");
 };
 async function signOut(){
@@ -189,14 +190,21 @@ function hideLoader(){
   if(l){ l.style.opacity="0"; setTimeout(()=>l.remove(),300); }
 }
 async function handleSession(session){
+  if(inPasswordRecovery) return; // don't let a late-resolving getSession() yank the user off the reset-password form
   currentUser=session?.user||null;
   if(!currentUser){ hideLoader();currentProfile=null;showView("authView");return}
   await loadProfile();
 }
+// Belt-and-suspenders: if the URL itself says this is a recovery link, mark it
+// synchronously right away, before either getSession() or onAuthStateChange
+// has a chance to race us to the home screen.
+let inPasswordRecovery = /type=recovery/.test(window.location.hash) || /type=recovery/.test(window.location.search);
 client.auth.getSession().then(({data})=>handleSession(data.session));
 client.auth.onAuthStateChange((event,session)=>{
   if(event==="PASSWORD_RECOVERY"){
+    inPasswordRecovery=true;
     currentUser=session?.user||null;
+    hideLoader();
     showView("authView");
     showAuthForm("newpassword");
     return;
