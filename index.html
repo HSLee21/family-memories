@@ -115,23 +115,26 @@
 <div class="content-heading"><h2>Celebrations</h2><button class="link-button open-folder" data-section="celebrations">+ New</button></div><div class="folder-grid visual-grid" id="celebrationsFolders"></div><div class="folder-browser hidden" id="celebrationsBrowser"></div>
 </section>
 <section class="page hidden section-theme study-theme" id="studyPage">
-<div class="section-hero hero-compact"><div class="hero-art">📚🌱</div><div><h1>Study Hub</h1><p>Learning materials and useful family study tools.</p></div></div>
-<div class="filter-row"><button class="filter" data-study-tab="tools">🧮<span>Study Tools</span></button><button class="filter active" data-study-tab="materials">📁<span>Study Materials</span></button></div>
-<div id="studyMaterialsPanel">
+<div class="section-hero study-hero-photo"><img alt="Study Hub - Learning materials and useful family study tools" class="hero-photo" src="assets/images/study-hero.jpg"/></div>
+<div class="hub-card-row">
+<button class="hub-select-card hub-blue active" data-study-tab="tools"><span class="hub-select-ico">🧮</span><span class="hub-select-text"><b>Study Tools</b></span><span class="hub-select-arrow">›</span></button>
+<button class="hub-select-card hub-green" data-study-tab="materials"><span class="hub-select-ico">📁</span><span class="hub-select-text"><b>Study Materials</b></span><span class="hub-select-arrow">›</span></button>
+</div>
+<div class="hidden" id="studyMaterialsPanel">
 <div class="content-heading"><h2>Quick Access</h2><button class="link-button open-folder" data-section="study">+ New Folder</button></div><div class="folder-grid list-grid" id="studyFolders"></div><div class="folder-browser hidden" id="studyBrowser"></div>
 </div>
-<div class="hidden" id="studyToolsPanel">
-<div class="content-heading"><h2>Study Tools</h2></div>
+<div id="studyToolsPanel">
+<div class="content-heading study-tools-heading"><h2>🛠️ Study Tools</h2><p>Useful tools to help your learning journey</p></div>
 <div class="tool-icon-grid" id="toolIconGrid">
-<button class="tool-icon-tile" data-tool="calculator"><span class="tool-icon-emoji">🧮</span>Scientific Calculator</button>
-<button class="tool-icon-tile" data-tool="converter"><span class="tool-icon-emoji">📏</span>Unit Converter</button>
-<button class="tool-icon-tile" data-tool="currency"><span class="tool-icon-emoji">🌎</span>Currency Converter</button>
-<button class="tool-icon-tile" data-tool="timer"><span class="tool-icon-emoji">⏱️</span>Study Timer</button>
-<button class="tool-icon-tile" data-tool="calendar"><span class="tool-icon-emoji">📅</span>Calendar</button>
-<button class="tool-icon-tile" data-tool="periodic"><span class="tool-icon-emoji">⚗️</span>Periodic Table</button>
-<button class="tool-icon-tile" data-tool="dictionary"><span class="tool-icon-emoji">📘</span>Dictionary</button>
-<button class="tool-icon-tile" data-tool="grammar"><span class="tool-icon-emoji">✅</span>Grammar Checker</button>
-<button class="tool-icon-tile" data-tool="ocr"><span class="tool-icon-emoji">📸</span>OCR (Photo → Text)</button>
+<button class="tool-icon-tile" data-tool="calculator"><span class="tool-icon-badge badge-1"><span class="tool-icon-emoji">🧮</span></span><span>Scientific Calculator</span></button>
+<button class="tool-icon-tile" data-tool="converter"><span class="tool-icon-badge badge-2"><span class="tool-icon-emoji">📏</span></span><span>Unit Converter</span></button>
+<button class="tool-icon-tile" data-tool="currency"><span class="tool-icon-badge badge-3"><span class="tool-icon-emoji">🌎</span></span><span>Currency Converter</span></button>
+<button class="tool-icon-tile" data-tool="timer"><span class="tool-icon-badge badge-4"><span class="tool-icon-emoji">⏱️</span></span><span>Study Timer</span></button>
+<button class="tool-icon-tile" data-tool="calendar"><span class="tool-icon-badge badge-5"><span class="tool-icon-emoji">📅</span></span><span>Calendar</span></button>
+<button class="tool-icon-tile" data-tool="periodic"><span class="tool-icon-badge badge-6"><span class="tool-icon-emoji">⚗️</span></span><span>Periodic Table</span></button>
+<button class="tool-icon-tile" data-tool="dictionary"><span class="tool-icon-badge badge-7"><span class="tool-icon-emoji">📘</span></span><span>Dictionary</span></button>
+<button class="tool-icon-tile" data-tool="grammar"><span class="tool-icon-badge badge-8"><span class="tool-icon-emoji">✅</span></span><span>Grammar Checker</span></button>
+<button class="tool-icon-tile" data-tool="ocr"><span class="tool-icon-badge badge-9"><span class="tool-icon-emoji">📸</span></span><span>OCR (Photo → Text)</span></button>
 </div>
 <div class="hidden" id="toolPanelsWrap">
 <button class="tool-panel-back" id="toolPanelBackBtn">‹ Back to tools</button>
