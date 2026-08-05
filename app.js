@@ -364,15 +364,61 @@ function openAddForFolder(type){
 }
 $("closeDialog").onclick=$("cancelDialog").onclick=()=>$("addDialog").close();
 
+const MAX_UPLOAD_FILES = 20;
+
 $("itemFile").onchange = () => {
-  const f = $("itemFile").files[0];
-  if (f) {
-    $("itemFileLabel").textContent = `✅ Selected: ${f.name}`;
-    alert(`Selected: ${f.name}`);
+  const input = $("itemFile");
+  let files = [...input.files];
+  if (files.length > MAX_UPLOAD_FILES) {
+    toast(`You can upload up to ${MAX_UPLOAD_FILES} files at once — only the first ${MAX_UPLOAD_FILES} will be used.`);
+    files = files.slice(0, MAX_UPLOAD_FILES);
+    // Re-assign a trimmed FileList so submit only sees the allowed files.
+    const dt = new DataTransfer();
+    files.forEach(f => dt.items.add(f));
+    input.files = dt.files;
+  }
+  if (files.length === 1) {
+    $("itemFileLabel").textContent = `✅ Selected: ${files[0].name}`;
+  } else if (files.length > 1) {
+    $("itemFileLabel").textContent = `✅ ${files.length} files selected`;
   } else {
     $("itemFileLabel").textContent = "Choose photo or file";
   }
 };
+
+// Uploads and saves a single file as one item row. Shared title/description/date
+// (from the dialog) are applied to every file in a multi-file batch; each file still
+// gets its own auto-title from its filename when no title was typed in.
+async function uploadAndSaveOneItem(rawFile, {table, title, description, eventDate}) {
+  const uploadFile = await compressImageIfNeeded(rawFile);
+  const safe = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safe}`;
+
+  const { error: uploadError } = await b2Storage.upload(file_path, uploadFile);
+  if (uploadError) throw uploadError;
+
+  if (uploadFile.type && uploadFile.type.startsWith("video/")) {
+    const poster = await captureVideoPosterFromFile(uploadFile);
+    if (poster) setVideoPosterCached(file_path, poster);
+  }
+
+  const autoTitle = uploadFile.name.replace(/\.[^/.]+$/, "");
+  const payload = {
+    title: title || autoTitle,
+    description: description || null,
+    user_id: currentUser.id,
+    folder_id: currentFolder.id,
+    file_path
+  };
+  if (eventDate) payload.event_date = eventDate;
+  if (currentAddType === "trip") {
+    payload.trip_name = title || autoTitle;
+    payload.created_by = currentUser.id;
+  }
+
+  const { error } = await client.from(table).insert(payload);
+  if (error) throw error;
+}
 
 $("addForm").onsubmit = async e => {
   e.preventDefault();
@@ -393,76 +439,62 @@ $("addForm").onsubmit = async e => {
     return toast("Please add a file, photo, or some information.");
   }
 
+  const submitBtn = $("addForm").querySelector(".primary");
+  if (submitBtn) submitBtn.disabled = true;
+
   try {
-    let file_path = null;
-    let uploadFile = null;
-
-    // Upload file/photo if selected
-    if (files[0]) {
-      uploadFile = await compressImageIfNeeded(files[0]);
-      const safe = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safe}`;
-
-      const { error: uploadError } = await b2Storage
-        .upload(file_path, uploadFile);
-
-      if (uploadError) throw uploadError;
-
-      alert("File is uploaded");
-
-      if (uploadFile.type && uploadFile.type.startsWith("video/")) {
-        const poster = await captureVideoPosterFromFile(uploadFile);
-        if (poster) setVideoPosterCached(file_path, poster);
+    if (!files.length) {
+      // Text-only item, no file attached.
+      const payload = {
+        title: title || "Untitled",
+        description: description || null,
+        user_id: currentUser.id,
+        folder_id: currentFolder.id
+      };
+      if (eventDate) payload.event_date = eventDate;
+      if (currentAddType === "trip") {
+        payload.trip_name = title || "Untitled";
+        payload.created_by = currentUser.id;
+      }
+      const { error } = await client.from(table).insert(payload);
+      if (error) throw error;
+      toast("Saved successfully!");
+    } else {
+      // One or many files: upload+save each sequentially, tracking any failures
+      // so one bad file doesn't lose progress on the rest of the batch.
+      let successCount = 0;
+      const failed = [];
+      for (let i = 0; i < files.length; i++) {
+        if (files.length > 1) toast(`Uploading ${i + 1} of ${files.length}…`);
+        try {
+          await uploadAndSaveOneItem(files[i], {table, title, description, eventDate});
+          successCount++;
+        } catch (fileErr) {
+          console.error(fileErr);
+          failed.push(files[i].name);
+        }
+      }
+      mediaIndexCache.items = null;
+      if (failed.length) {
+        toast(`Saved ${successCount} of ${files.length}. Failed: ${failed.join(", ")}`);
+      } else {
+        toast(files.length > 1 ? `Saved ${successCount} items!` : "Saved successfully!");
       }
     }
 
-    // Use file name as title automatically if title is empty
-    const autoTitle = uploadFile
-      ? uploadFile.name.replace(/\.[^/.]+$/, "")
-      : "Untitled";
-
-    const payload = {
-      title: title || autoTitle,
-      description: description || null,
-      user_id: currentUser.id,
-      folder_id: currentFolder.id
-    };
-
-    // Add date only if user entered one
-    if (eventDate) {
-      payload.event_date = eventDate;
-    }
-
-    // Add file path only if a file was uploaded
-    if (file_path) {
-      payload.file_path = file_path;
-    }
-
-    // Compatibility with your existing trips table
-    if (currentAddType === "trip") {
-      payload.trip_name = title || autoTitle;
-      payload.created_by = currentUser.id;
-    }
-
-    const { error } = await client
-      .from(table)
-      .insert(payload);
-
-    if (error) throw error;
-
     $("addDialog").close();
     $("addForm").reset();
-
-    mediaIndexCache.items=null;
-    toast("Saved successfully!");
+    $("itemFileLabel").textContent = "Choose photo or file";
+    mediaIndexCache.items = null;
 
     // Refresh folder immediately
     openFolder(currentFolderSection, currentFolder);
 
   } catch (err) {
     console.error(err);
-    alert("Save failed: " + (err.message || "Could not save item."));
     toast(err.message || "Could not save item.");
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
   }
 };
 
@@ -1681,6 +1713,9 @@ async function openSlideshow(types,label){
   const myToken = ++slideshowOpenToken; // invalidates any earlier in-flight call
   if (typeof closeVideoOverlay === "function") closeVideoOverlay();
   slideshowMusicKey = (types && types.length===1) ? types[0] : "all";
+  // Kick off the music fetch immediately, in parallel with the photo-list fetch below,
+  // instead of waiting until after photos finish loading — that's what made music start late.
+  const musicPromise = loadSlideshowMusic(slideshowMusicKey);
   lockBodyScroll();
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
@@ -1719,9 +1754,6 @@ async function openSlideshow(types,label){
   }
   lastSlideUrl = "";
   showSlide(0);
-
-  // Start loading music in parallel.
-  const musicPromise = loadSlideshowMusic(slideshowMusicKey);
 
   // Wait until the first image is actually visible before starting the timer.
   while(!slideshowImageReady){
