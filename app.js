@@ -1938,19 +1938,11 @@ async function openVideoGallery(types,label){
     $("videoPlayerWrap").classList.remove("hidden");
     if($("videoPlayerTitle")) $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"} (${index+1}/${playable.length})`;
     const el=$("videoPlayerEl");
-    el.muted=false;
+    el.setAttribute("muted","");
+    el.muted=true; // start muted so autoplay is never blocked by the browser (spec-guaranteed on all browsers/iOS)
     el.src=v.signedUrl;
     el.load();
-    const tryPlay=()=>{
-      const p=el.play();
-      if(p&&p.catch){
-        p.catch(()=>{
-          // Browser blocked unmuted autoplay (common on iOS/Safari) — retry muted so playback still starts.
-          el.muted=true;
-          el.play().catch(()=>{});
-        });
-      }
-    };
+    const tryPlay=()=>{ el.play().catch(()=>{}); };
     tryPlay();
     el.addEventListener("loadedmetadata",tryPlay,{once:true});
     el.addEventListener("canplay",tryPlay,{once:true});
