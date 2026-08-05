@@ -1241,15 +1241,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 // Study Tools: 9-icon grid <-> individual tool panel (contained entirely
 // within the existing Study Tools tab; doesn't touch page navigation).
+const studyChromeEls = () => document.querySelectorAll("#studyPage .study-hero-photo, #studyPage .hub-card-row, #studyPage .study-tools-heading");
 function showToolIconGrid(){
   $("toolPanelsWrap").classList.add("hidden");
   $("toolIconGrid").classList.remove("hidden");
   document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.add("hidden"));
+  studyChromeEls().forEach(el=>el.classList.remove("hidden"));
 }
 document.querySelectorAll("#toolIconGrid [data-tool]").forEach(btn=>btn.onclick=()=>{
   $("toolIconGrid").classList.add("hidden");
   $("toolPanelsWrap").classList.remove("hidden");
   document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.toggle("hidden", p.id !== `toolPanel-${btn.dataset.tool}`));
+  studyChromeEls().forEach(el=>el.classList.add("hidden"));
+  window.scrollTo({top:0,behavior:"smooth"});
 });
 if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
 
