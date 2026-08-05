@@ -257,9 +257,12 @@ html,body{overflow-x:hidden}
   .main>.page{ flex:0 0 auto!important; }
 
   /* Home & Gallery: fixed one-screen layouts that fill the available
-     height instead of leaving blank space below them. */
+     height instead of leaving blank space below them. Study Hub joins
+     this group only while showing the 9-tool grid (not while a specific
+     tool like the calculator is open, since that needs its own scroll). */
   #homePage.page:not(.hidden),
-  #mediaHubPage.page:not(.hidden){
+  #mediaHubPage.page:not(.hidden),
+  #studyPage.page:not(.hidden):not(.tool-open){
     flex:1 1 auto!important;
     display:flex!important; flex-direction:column!important;
     min-height:0!important; gap:8px!important;
@@ -310,6 +313,8 @@ html,body{overflow-x:hidden}
 
   /* ---------- Gallery hub (mediaHub) ---------- */
   #mediaHubPage .section-hero{ flex:0 0 auto!important; min-height:0!important; margin-bottom:12px!important; padding:22px 18px!important; gap:16px!important; }
+  #mediaHubPage .section-hero.page-hero-photo{ padding:0!important; margin:0 0 10px!important; width:100%!important; height:130px!important; }
+  #mediaHubPage .section-hero.page-hero-photo .hero-photo{ height:100%!important; width:100%!important; object-fit:contain!important; }
   #mediaHubPage .section-hero .hero-art{ font-size:54px!important; }
   #mediaHubPage .section-hero h1{ font-size:27px!important; margin:0 0 5px!important; }
   #mediaHubPage .section-hero p{ font-size:13.5px!important; line-height:1.3!important; }
@@ -321,11 +326,29 @@ html,body{overflow-x:hidden}
     flex:1 1 0!important;
     display:grid!important; grid-template-columns:1fr 1fr!important;
     grid-auto-rows:minmax(0,1fr)!important; align-content:stretch!important;
-    gap:12px!important; padding:0!important; min-height:0!important;
+    gap:10px!important; padding:0!important; min-height:0!important;
   }
-  #mediaHubPage .media-hub-card{ padding:16px 12px!important; border-radius:18px!important; gap:10px!important; font-size:15px!important; min-height:0!important; justify-content:center!important; }
-  #mediaHubPage .media-hub-card.wide{ grid-column:1/-1!important; flex-direction:row!important; padding:18px!important; }
-  #mediaHubPage .media-hub-ico{ width:46px!important; height:46px!important; }
+  #mediaHubPage .media-hub-card{ padding:10px 10px!important; border-radius:16px!important; gap:6px!important; font-size:13px!important; min-height:0!important; justify-content:center!important; }
+  #mediaHubPage .media-hub-card.wide{ grid-column:1/-1!important; flex-direction:row!important; padding:14px!important; }
+  #mediaHubPage .media-hub-ico{ width:36px!important; height:36px!important; }
+
+  /* ---------- Study Hub (tools-grid view only) ---------- */
+  #studyPage:not(.tool-open) .section-hero.page-hero-photo{ flex:0 0 auto!important; padding:0!important; margin:0 0 8px!important; width:100%!important; height:100px!important; }
+  #studyPage:not(.tool-open) .section-hero.page-hero-photo .hero-photo{ height:100%!important; width:100%!important; object-fit:contain!important; }
+  #studyPage:not(.tool-open) .page-body-card{ flex:1 1 auto!important; display:flex!important; flex-direction:column!important; min-height:0!important; overflow:hidden!important; padding-bottom:0!important; }
+  #studyPage:not(.tool-open) .hub-card-row{ flex:0 0 auto!important; margin:8px 16px!important; }
+  #studyPage:not(.tool-open) .study-tools-heading{ flex:0 0 auto!important; padding:6px 16px 0!important; }
+  #studyPage:not(.tool-open) .study-tools-heading h2{ font-size:15px!important; margin:0!important; }
+  #studyPage:not(.tool-open) #toolIconGrid{
+    flex:1 1 0!important; min-height:0!important;
+    display:grid!important; grid-template-columns:repeat(3,1fr)!important;
+    grid-auto-rows:minmax(0,1fr)!important; align-content:stretch!important;
+    gap:8px!important; margin:8px 16px!important;
+  }
+  #studyPage:not(.tool-open) .tool-icon-tile{ padding:4px!important; }
+  #studyPage:not(.tool-open) .tool-icon-badge{ width:34px!important; height:34px!important; }
+  #studyPage:not(.tool-open) .tool-icon-badge .tool-icon-emoji{ font-size:16px!important; }
+  #studyPage:not(.tool-open) .tool-icon-tile{ font-size:10.5px!important; }
   .video-fs-btn{ top:6px!important; right:6px!important; bottom:auto!important; }
   .video-play-btn{ width:30px!important; height:30px!important; }
   .video-play-btn svg{ width:14px!important; height:14px!important; }
