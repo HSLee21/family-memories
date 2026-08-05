@@ -259,14 +259,25 @@ html,body{overflow-x:hidden}
   .main>.page{ flex:0 0 auto!important; }
 
   /* Home & Gallery: fixed one-screen layouts that fill the available
-     height instead of leaving blank space below them. */
-  #homePage.page:not(.hidden),
-  #mediaHubPage.page:not(.hidden){
+     height instead of leaving blank space below them. Gallery's
+     overflow:hidden lives on its inner body-card (not the page itself)
+     so the hero photo's edge-to-edge negative margin isn't clipped. */
+  #homePage.page:not(.hidden){
     flex:1 1 auto!important;
     display:flex!important; flex-direction:column!important;
     min-height:0!important; gap:8px!important;
     padding-bottom:0!important; margin-bottom:0!important;
     overflow:hidden!important;
+  }
+  #mediaHubPage.page:not(.hidden){
+    flex:1 1 auto!important;
+    display:flex!important; flex-direction:column!important;
+    min-height:0!important; gap:8px!important;
+    padding-bottom:0!important; margin-bottom:0!important;
+  }
+  #mediaHubPage.page:not(.hidden) .page-body-card{
+    flex:1 1 auto!important; display:flex!important; flex-direction:column!important;
+    min-height:0!important; overflow:hidden!important;
   }
 
   /* ---------- Home ---------- */
