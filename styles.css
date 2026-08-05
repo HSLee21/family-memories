@@ -29,7 +29,7 @@
 .section-hero.page-hero-photo{background:none!important;min-height:0;padding:0;display:block;margin:0 -18px 12px;width:calc(100% + 36px)}
 .hero-photo{width:100%;height:auto;max-height:320px;object-fit:contain;background:#fff;border-radius:0;display:block}
 #studyPage .hero-photo{height:170px;max-height:170px;object-fit:cover}
-#memoriesPage .hero-photo,#tripsPage .hero-photo,#celebrationsPage .hero-photo{height:190px;max-height:190px;object-fit:cover}
+#memoriesPage .hero-photo,#tripsPage .hero-photo,#celebrationsPage .hero-photo{height:220px;max-height:220px;object-fit:cover}
 .page-body-card{padding-bottom:8px}
 .hub-card-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 16px 0}
 .hub-select-card{display:flex;align-items:center;gap:10px;border:0;border-radius:18px;padding:13px 12px;cursor:pointer;text-align:left}
