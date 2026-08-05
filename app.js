@@ -1276,7 +1276,7 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
 // free translation lookup (MyMemory) showing an English translation
 // instead of a full definition.
 (function(){
-  const TRANSLATE_ONLY = { zh: "Chinese", ms: "Malay" };
+  const TRANSLATE_ONLY = { "zh-CN": "Chinese", "ms-MY": "Malay" };
   $("dictRun").onclick = async () => {
     const word = $("dictWord").value.trim();
     const out = $("dictResult");
@@ -1287,12 +1287,13 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
     if (TRANSLATE_ONLY[lang]) {
       try {
         const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=${lang}|en`);
-        if (!res.ok) throw new Error("Translation failed");
+        if (!res.ok) throw new Error(`Translation service returned ${res.status}`);
         const data = await res.json();
+        if (data.responseStatus && Number(data.responseStatus) !== 200) throw new Error(data.responseDetails || `Translation service returned status ${data.responseStatus}`);
         const translated = data?.responseData?.translatedText;
         if (!translated) throw new Error("No translation found");
         out.innerHTML = `<b>${escapeHtml(word)}</b> (${TRANSLATE_ONLY[lang]}) →<br><br>${escapeHtml(translated)}<br><br><span style="font-size:12px;color:var(--muted)">Full dictionary definitions aren't available for this language yet - showing an English translation instead.</span>`;
-      } catch { out.textContent = "Could not translate that word. Check your connection and try again."; }
+      } catch (err) { out.textContent = "Could not translate that word: " + (err.message || "check your connection and try again."); }
       return;
     }
 
