@@ -267,7 +267,6 @@ html,body{overflow-x:hidden}
     display:flex!important; flex-direction:column!important;
     min-height:0!important; gap:8px!important;
     padding-bottom:0!important; margin-bottom:0!important;
-    overflow:hidden!important;
   }
   #mediaHubPage.page:not(.hidden){
     flex:1 1 auto!important;
@@ -286,8 +285,9 @@ html,body{overflow-x:hidden}
     height:230px!important;
     min-height:230px!important;
     max-height:230px!important;
-    border-radius:16px!important;
-    margin:0 0 12px 0!important;
+    border-radius:0!important;
+    margin:0 -18px 12px!important;
+    width:calc(100% + 36px)!important;
     position:relative!important;
     overflow:hidden!important;
   }
@@ -302,7 +302,7 @@ html,body{overflow-x:hidden}
     /* Flexible: grows/shrinks to exactly fill whatever space is left
        after the fixed-height cover above, instead of a guessed fixed
        size that either clips (too tall) or leaves a gap (too short). */
-    flex:1 1 0!important; min-height:0!important;
+    flex:1 1 0!important; min-height:0!important; overflow:hidden!important;
     display:grid!important; grid-template-columns:1fr 1fr!important; grid-template-rows:1fr 1fr!important;
     gap:8px!important; margin:0!important;
   }
