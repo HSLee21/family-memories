@@ -26,10 +26,11 @@
 .section-hero.hero-compact .hero-art{font-size:26px}
 .section-hero.hero-compact h1{font-size:20px;margin:0}
 .section-hero.hero-compact p{font-size:12px;margin:2px 0 0}
-.section-hero.page-hero-photo{background:none!important;min-height:0;padding:0;display:block;margin:0 -18px 12px;width:calc(100% + 36px)}
+.section-hero.page-hero-photo{background:none!important;min-height:0;padding:0;display:block;margin:0 -18px 12px;width:calc(100% + 36px);overflow:hidden}
 .hero-photo{width:100%;height:auto;max-height:320px;object-fit:contain;background:#fff;border-radius:0;display:block}
 #studyPage .hero-photo{height:170px;max-height:170px;object-fit:cover}
 #memoriesPage .hero-photo,#tripsPage .hero-photo,#celebrationsPage .hero-photo,#mediaHubPage .hero-photo{height:230px;max-height:230px;object-fit:cover}
+#memoriesPage .hero-photo,#celebrationsPage .hero-photo,#mediaHubPage .hero-photo{transform:scale(1.1) translateX(2%);transform-origin:center}
 .page-body-card{padding-bottom:8px}
 .hub-card-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 16px 0}
 .hub-select-card{display:flex;align-items:center;gap:10px;border:0;border-radius:18px;padding:13px 12px;cursor:pointer;text-align:left}
