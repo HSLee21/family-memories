@@ -359,12 +359,12 @@ html,body{overflow-x:hidden}
      .main using the default flex:0 0 auto + the reserved bottom
      clearance set on .main above ---------- */
   .section-theme{ background:transparent!important; border-radius:0!important; box-shadow:none!important; }
-  .folder-grid{ padding:8px 14px 16px!important; }
-  .visual-grid{ grid-template-columns:1fr 1fr!important; gap:16px!important; }
+  .folder-grid{ padding:8px 18px 16px!important; }
+  .visual-grid{ grid-template-columns:1fr 1fr!important; gap:22px!important; }
   .folder-card{ padding:10px!important; gap:8px!important; min-height:0!important; border-radius:14px!important; }
   .folder-icon{ font-size:22px!important; }
-  .folder-info h3{ font-size:14px!important; margin:0 0 2px!important; }
-  .folder-info p{ font-size:13px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
+  .folder-info h3{ font-size:13px!important; margin:0 0 2px!important; }
+  .folder-info p{ font-size:11px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
   .folder-menu{ padding:4px!important; }
   .content-grid{ grid-template-columns:repeat(4,1fr)!important; gap:6px!important; }
   .content-card{ padding:5px!important; border-radius:12px!important; }
