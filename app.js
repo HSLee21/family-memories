@@ -1086,85 +1086,93 @@ async function loadUpcomingEvents(){
 function renderEventCard(){
   const card = $("upcomingEventCard");
   if(!card) return;
-  const calendarSvg = `<svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect height="17" rx="3" width="18" x="3" y="4"></rect><path d="M3 9h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path><circle cx="8" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="12" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="16" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="8" cy="17" fill="currentColor" r="1" stroke="none"></circle><circle cx="12" cy="17" fill="currentColor" r="1" stroke="none"></circle></svg>`;
 
-  const openAdd = (e) => {
-    if (e) e.stopPropagation();
-    openEventDialog();
-  };
+  const calendarSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect height="17" rx="3" width="18" x="3" y="4"></rect><path d="M3 9h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path></svg>`;
+  const headerIcon = `<span class="event-card-header-icon">${calendarSvg}</span>`;
+  const plusButton = `<button class="event-card-add" type="button" aria-label="Add event">+</button>`;
 
-  const openList = (e) => {
-    if (e) e.stopPropagation();
-    openEventListDialog();
-  };
+  const bindActions = (mode) => {
+    card.onclick = () => {
+      if (mode === "empty") {
+        openEventDialog();
+      } else {
+        openEventListDialog();
+      }
+    };
 
-  if(!upcomingEventsCache.length){
-    card.classList.add("event-card-empty");
-    card.innerHTML = `
-      <div class="event-card-header">
-        <div class="event-card-header-left">
-          <span class="event-card-icon">${calendarSvg}</span>
-          <span class="event-card-title">Upcoming Event</span>
-        </div>
-        <button class="event-add-btn" type="button" aria-label="Add event">+</button>
-      </div>
-      <div class="event-card-body event-card-body-empty">
-        <div class="event-card-event-copy">
-          <p class="event-card-empty-main">No upcoming event</p>
-          <p class="event-card-empty-sub">Tap the + to add your first family event.</p>
-        </div>
-      </div>
-    `;
-    card.onclick = openAdd;
     card.onkeydown = (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        openAdd(e);
+        if (mode === "empty") openEventDialog();
+        else openEventListDialog();
       }
     };
-    const addBtn = card.querySelector(".event-add-btn");
-    if (addBtn) addBtn.onclick = openAdd;
+
+    const addBtn = card.querySelector(".event-card-add");
+    if (addBtn) {
+      addBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openEventDialog();
+      };
+    }
+  };
+
+  if(!upcomingEventsCache.length){
+    card.className = "event-card event-card-empty";
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.setAttribute("aria-label","Upcoming Event");
+    card.innerHTML = `
+      <div class="event-card-header">
+        <div class="event-card-header-left">
+          ${headerIcon}
+          <span class="event-card-title">Upcoming Event</span>
+        </div>
+        ${plusButton}
+      </div>
+      <div class="event-card-body event-card-body-empty">
+        <div class="event-card-event-copy">
+          <p class="event-card-empty-main">No upcoming events</p>
+          <p class="event-card-empty-sub">Tap + to add your first family event.</p>
+        </div>
+      </div>
+    `;
+    bindActions("empty");
     return;
   }
 
-  card.classList.remove("event-card-empty");
+  card.className = "event-card";
+  card.setAttribute("role","button");
+  card.setAttribute("tabindex","0");
+  card.setAttribute("aria-label","Upcoming Events");
   const ev = upcomingEventsCache[0];
   const cd = countdownLabel(ev._next);
   const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"🎉";
-  const dateSuffix = cd.big === "Today"
-    ? `<span class="event-card-date-dot">•</span><span class="event-card-date-today">Today</span>`
-    : `<span class="event-card-date-dot">•</span><span class="event-card-date-count">${escapeHtml(cd.big + (cd.small ? " " + cd.small : ""))}</span>`;
+  const dateStatus = cd.big === "Today"
+    ? `<span class="event-card-date-dot">•</span> <span class="event-card-date-today">Today</span>`
+    : cd.small
+      ? `<span class="event-card-date-dot">•</span> ${escapeHtml(cd.big)} ${escapeHtml(cd.small)}`
+      : ``;
 
   card.innerHTML = `
     <div class="event-card-header">
       <div class="event-card-header-left">
-        <span class="event-card-icon">${calendarSvg}</span>
+        ${headerIcon}
         <span class="event-card-title">Upcoming Event</span>
       </div>
-      <button class="event-add-btn" type="button" aria-label="Add event">+</button>
+      ${plusButton}
     </div>
+
     <div class="event-card-body">
-      <span class="event-card-event-emoji" aria-hidden="true">${emoji}</span>
+      <div class="event-card-event-icon">${emoji}</div>
       <div class="event-card-event-copy">
         <h3>${escapeHtml(ev.title)}</h3>
-        <p class="event-card-date">
-          <span class="event-card-date-main">${escapeHtml(formatEventDate(ev._next))}</span>
-          ${dateSuffix}
-        </p>
+        <p class="event-card-date">${formatEventDate(ev._next)}${dateStatus}</p>
       </div>
     </div>
   `;
-
-  card.onclick = openList;
-  card.onkeydown = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      openList(e);
-    }
-  };
-
-  const addBtn = card.querySelector(".event-add-btn");
-  if (addBtn) addBtn.onclick = openAdd;
+  bindActions("list");
 }
 
 function openEventListDialog(){
