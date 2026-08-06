@@ -988,29 +988,13 @@ async function loadProfilePhoto(){
   if(!currentUser) return;
   const img=$("profilePhotoImage"), fallback=$("profilePhotoFallback");
   const largeImg=$("profileLargePhoto"), largeFallback=$("profileLargeFallback");
-
-  const cacheKey="profile_signed_url_cache_"+currentUser.id;
-  let cached=null;
-  try{ cached=JSON.parse(localStorage.getItem(cacheKey)||"null"); }catch(e){ cached=null; }
-
-  // Show cached photo immediately (no flash of the blank placeholder while we wait)
-  if(cached && cached.url && cached.expires>Date.now()){
-    if(img){ img.src=cached.url; img.classList.remove("hidden"); }
-    if(fallback) fallback.classList.add("hidden");
-    if(largeImg){ largeImg.src=cached.url; largeImg.classList.remove("hidden"); }
-    if(largeFallback) largeFallback.classList.add("hidden");
-  }
-
   const {data}=await b2Storage.createSignedUrl(profileStoragePath(),3600);
   if(data?.signedUrl){
     if(img){ img.src=data.signedUrl; img.classList.remove("hidden"); }
     if(fallback) fallback.classList.add("hidden");
     if(largeImg){ largeImg.src=data.signedUrl; largeImg.classList.remove("hidden"); }
     if(largeFallback) largeFallback.classList.add("hidden");
-    try{
-      localStorage.setItem(cacheKey, JSON.stringify({url:data.signedUrl, expires: Date.now()+3600*1000}));
-    }catch(e){ /* localStorage full or unavailable - ignore, just skip caching */ }
-  }else if(!cached){
+  }else{
     if(img) img.classList.add("hidden");
     if(fallback) fallback.classList.remove("hidden");
     if(largeImg) largeImg.classList.add("hidden");
@@ -1036,10 +1020,15 @@ const coverStoragePath = () => `${currentUser.id}/app-settings/family-cover`;
 async function loadHomeExperience(){
   const changeBtn=$("changeCoverBtn");
   if(changeBtn) changeBtn.classList.toggle("hidden",currentProfile?.role!=="admin");
-  await loadFamilyCover();
-  await loadProfilePhoto();
-  await loadCardImages();
-  loadUpcomingEvents();
+  // Run independent fetches in parallel instead of one after another -
+  // they don't depend on each other, so there's no reason to make the
+  // person wait for the sum of all four instead of just the slowest one.
+  await Promise.all([
+    loadFamilyCover(),
+    loadProfilePhoto(),
+    loadCardImages(),
+    loadUpcomingEvents()
+  ]);
   setTimeout(()=>warmSlideshowCache(),1000);
 }
 
@@ -1080,29 +1069,15 @@ function countdownLabel(d){
 async function loadUpcomingEvents(){
   const card = $("upcomingEventCard");
   if(!card) return;
-
-  const cacheKey="events_cache_"+(currentUser?.id||"");
-  let cachedRows=null;
-  try{ cachedRows=JSON.parse(localStorage.getItem(cacheKey)||"null"); }catch(e){ cachedRows=null; }
-
-  // Show the last-known events immediately (no blank flash while we fetch fresh data)
-  if(cachedRows){
-    const withNext = cachedRows.map(ev=>({...ev,_next:nextOccurrence(ev)})).filter(ev=>ev._next);
-    withNext.sort((a,b)=>a._next-b._next);
-    upcomingEventsCache = withNext;
-    renderEventCard();
-  }
-
   try{
     const {data,error} = await client.from("events").select("*");
     if(error) throw error;
     const withNext = (data||[]).map(ev=>({...ev,_next:nextOccurrence(ev)})).filter(ev=>ev._next);
     withNext.sort((a,b)=>a._next-b._next);
     upcomingEventsCache = withNext;
-    try{ localStorage.setItem(cacheKey, JSON.stringify(data||[])); }catch(e){ /* ignore */ }
   }catch(err){
     console.error(err);
-    if(!cachedRows) upcomingEventsCache = [];
+    upcomingEventsCache = [];
   }
   renderEventCard();
 }
