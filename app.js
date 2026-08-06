@@ -1033,6 +1033,7 @@ async function loadHomeExperience(){
 }
 
 
+
 /* ---------- Upcoming Events ---------- */
 const EVENT_TYPE_EMOJI = {Birthday:"🎂",Anniversary:"💍","Family Trip":"✈️",Holiday:"🎉",Other:"📌"};
 let upcomingEventsCache = [];
@@ -1082,43 +1083,96 @@ async function loadUpcomingEvents(){
   renderEventCard();
 }
 
+
 function renderEventCard(){
   const card = $("upcomingEventCard");
   if(!card) return;
-  const calendarSvg = `<svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect height="17" rx="3" width="18" x="3" y="4"></rect><path d="M3 9h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path><circle cx="8" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="12" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="16" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="8" cy="17" fill="currentColor" r="1" stroke="none"></circle><circle cx="12" cy="17" fill="currentColor" r="1" stroke="none"></circle></svg>`;
+
+  const openAdd = (e) => {
+    if(e) e.stopPropagation();
+    openEventDialog();
+  };
+  const openList = () => openEventListDialog();
+
+  const headerHtml = `
+    <div class="event-card-header">
+      <div class="event-card-header-left">
+        <img src="assets/images/upcoming event.jpg" class="event-card-header-icon" alt="Upcoming Event" loading="eager" decoding="async"/>
+        <span class="event-card-title">Upcoming Event</span>
+      </div>
+      <button type="button" class="event-add-btn" aria-label="Add event">+</button>
+    </div>
+  `;
+
+  card.classList.toggle("event-card-empty", !upcomingEventsCache.length);
 
   if(!upcomingEventsCache.length){
-    card.classList.add("event-card-empty");
     card.innerHTML = `
-      <span class="event-card-icon">${calendarSvg}</span>
-      <div class="event-card-info">
-        <span class="event-card-title">Upcoming Event</span>
-        <p class="event-card-empty-main">No upcoming events</p>
-        <p class="event-card-empty-sub">Tap the + to add your first family event.</p>
+      ${headerHtml}
+      <div class="event-card-body event-card-body-empty">
+        <div class="event-card-empty-copy">
+          <p class="event-card-empty-main">No upcoming event</p>
+          <p class="event-card-empty-sub">Tap + to add your first family event.</p>
+        </div>
       </div>
-      <span class="event-card-add">+</span>
     `;
-    card.onclick = ()=>openEventDialog();
+
+    const btn = card.querySelector(".event-add-btn");
+    if(btn){
+      btn.onclick = openAdd;
+      btn.onkeydown = (e) => {
+        if(e.key === "Enter" || e.key === " ") openAdd(e);
+      };
+    }
+
+    card.onclick = openList;
+    card.onkeydown = (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        openList();
+      }
+    };
     return;
   }
-  card.classList.remove("event-card-empty");
+
   const ev = upcomingEventsCache[0];
   const cd = countdownLabel(ev._next);
-  const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"🎉";
+  const emoji = EVENT_TYPE_EMOJI[ev.event_type] || "🎉";
+
   card.innerHTML = `
-    <span class="event-card-icon">${calendarSvg}</span>
-    <div class="event-card-info">
-      <span class="event-card-title">Upcoming Event</span>
-      <h3>${emoji} ${escapeHtml(ev.title)}</h3>
-      <p class="event-card-date">${formatEventDate(ev._next)}</p>
-      <p class="event-card-days">${cd.big}${cd.small?" "+cd.small:""}</p>
+    ${headerHtml}
+    <div class="event-card-body">
+      <div class="event-card-event-emoji" aria-hidden="true">${emoji}</div>
+      <div class="event-card-event-copy">
+        <h3>${escapeHtml(ev.title)}</h3>
+        <p class="event-card-date">
+          <span>${formatEventDate(ev._next)}</span>
+          <span class="event-card-date-dot">•</span>
+          <span class="event-card-today">${cd.big}</span>${cd.small ? `<span class="event-card-date-small">${cd.small}</span>` : ""}
+        </p>
+      </div>
     </div>
-    <span class="event-card-chevron">›</span>
   `;
-  card.onclick = ()=>openEventListDialog();
+
+  const btn = card.querySelector(".event-add-btn");
+  if(btn){
+    btn.onclick = openAdd;
+    btn.onkeydown = (e) => {
+      if(e.key === "Enter" || e.key === " ") openAdd(e);
+    };
+  }
+
+  card.onclick = openList;
+  card.onkeydown = (e) => {
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      openList();
+    }
+  };
 }
 
 function openEventListDialog(){
+
   const content = $("eventListContent");
   content.innerHTML = upcomingEventsCache.map(ev=>{
     const cd = countdownLabel(ev._next);
@@ -1133,47 +1187,6 @@ function openEventListDialog(){
   }).join("") || `<p class="muted">No upcoming events.</p>`;
   $("eventListDialog").showModal();
 }
-$("closeEventListDialog").onclick=()=>$("eventListDialog").close();
-$("addEventFromListBtn").onclick=()=>{ $("eventListDialog").close(); openEventDialog(); };
-
-function openEventDialog(){
-  $("eventForm").reset();
-  $("eventDialogTitle").textContent="Add Event";
-  $("eventFormError").classList.add("hidden");
-  $("eventDialog").showModal();
-}
-$("closeEventDialog").onclick=$("cancelEventDialog").onclick=()=>$("eventDialog").close();
-
-$("eventForm").onsubmit = async e=>{
-  e.preventDefault();
-  const errEl = $("eventFormError");
-  errEl.classList.add("hidden");
-  const title = $("eventTitle").value.trim();
-  const event_date = $("eventDate").value;
-  if(!title || !event_date){
-    errEl.textContent = "Please add a title and date.";
-    errEl.classList.remove("hidden");
-    return;
-  }
-  const payload = {
-    title,
-    event_date,
-    repeat_type: $("eventRepeat").value,
-    event_type: $("eventType").value || null,
-    notes: $("eventNotes").value.trim() || null,
-    reminder: $("eventReminder").value || null,
-    created_by: currentUser.id
-  };
-  const {error} = await client.from("events").insert(payload);
-  if(error){
-    errEl.textContent = error.message;
-    errEl.classList.remove("hidden");
-    return;
-  }
-  $("eventDialog").close();
-  toast("Event saved!");
-  loadUpcomingEvents();
-};
 
 async function loadFamilyCover(){
   const cover=$("coverImage");
