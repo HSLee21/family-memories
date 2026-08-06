@@ -364,12 +364,12 @@ html,body{overflow-x:hidden}
   .folder-card{ padding:10px!important; gap:8px!important; min-height:0!important; border-radius:14px!important; }
   .folder-icon{ font-size:22px!important; }
   .folder-info h3{ font-size:14px!important; margin:0 0 2px!important; }
-  .folder-info p{ font-size:15px!important; }
+  .folder-info p{ font-size:13px!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
   .folder-menu{ padding:4px!important; }
   .content-grid{ grid-template-columns:repeat(4,1fr)!important; gap:6px!important; }
   .content-card{ padding:5px!important; border-radius:12px!important; }
   .content-preview{ border-radius:9px!important; }
-  .content-card h3{ font-size:15px!important; margin:4px 0 0!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
+  .content-card h3{ font-size:12px!important; margin:4px 0 0!important; white-space:nowrap!important; overflow:hidden!important; text-overflow:ellipsis!important; }
   .content-card .meta{ font-size:9px!important; margin-top:4px!important; }
   .content-card p{ display:none!important; }
   .delete-item{ font-size:10px!important; padding:5px!important; margin-top:4px!important; border-radius:8px!important; }
