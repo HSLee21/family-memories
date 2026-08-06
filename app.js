@@ -988,13 +988,29 @@ async function loadProfilePhoto(){
   if(!currentUser) return;
   const img=$("profilePhotoImage"), fallback=$("profilePhotoFallback");
   const largeImg=$("profileLargePhoto"), largeFallback=$("profileLargeFallback");
+
+  const cacheKey="profile_signed_url_cache_"+currentUser.id;
+  let cached=null;
+  try{ cached=JSON.parse(localStorage.getItem(cacheKey)||"null"); }catch(e){ cached=null; }
+
+  // Show cached photo immediately (no flash of the blank placeholder while we wait)
+  if(cached && cached.url && cached.expires>Date.now()){
+    if(img){ img.src=cached.url; img.classList.remove("hidden"); }
+    if(fallback) fallback.classList.add("hidden");
+    if(largeImg){ largeImg.src=cached.url; largeImg.classList.remove("hidden"); }
+    if(largeFallback) largeFallback.classList.add("hidden");
+  }
+
   const {data}=await b2Storage.createSignedUrl(profileStoragePath(),3600);
   if(data?.signedUrl){
     if(img){ img.src=data.signedUrl; img.classList.remove("hidden"); }
     if(fallback) fallback.classList.add("hidden");
     if(largeImg){ largeImg.src=data.signedUrl; largeImg.classList.remove("hidden"); }
     if(largeFallback) largeFallback.classList.add("hidden");
-  }else{
+    try{
+      localStorage.setItem(cacheKey, JSON.stringify({url:data.signedUrl, expires: Date.now()+3600*1000}));
+    }catch(e){ /* localStorage full or unavailable - ignore, just skip caching */ }
+  }else if(!cached){
     if(img) img.classList.add("hidden");
     if(fallback) fallback.classList.remove("hidden");
     if(largeImg) largeImg.classList.add("hidden");
@@ -1064,15 +1080,29 @@ function countdownLabel(d){
 async function loadUpcomingEvents(){
   const card = $("upcomingEventCard");
   if(!card) return;
+
+  const cacheKey="events_cache_"+(currentUser?.id||"");
+  let cachedRows=null;
+  try{ cachedRows=JSON.parse(localStorage.getItem(cacheKey)||"null"); }catch(e){ cachedRows=null; }
+
+  // Show the last-known events immediately (no blank flash while we fetch fresh data)
+  if(cachedRows){
+    const withNext = cachedRows.map(ev=>({...ev,_next:nextOccurrence(ev)})).filter(ev=>ev._next);
+    withNext.sort((a,b)=>a._next-b._next);
+    upcomingEventsCache = withNext;
+    renderEventCard();
+  }
+
   try{
     const {data,error} = await client.from("events").select("*");
     if(error) throw error;
     const withNext = (data||[]).map(ev=>({...ev,_next:nextOccurrence(ev)})).filter(ev=>ev._next);
     withNext.sort((a,b)=>a._next-b._next);
     upcomingEventsCache = withNext;
+    try{ localStorage.setItem(cacheKey, JSON.stringify(data||[])); }catch(e){ /* ignore */ }
   }catch(err){
     console.error(err);
-    upcomingEventsCache = [];
+    if(!cachedRows) upcomingEventsCache = [];
   }
   renderEventCard();
 }
