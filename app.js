@@ -1023,9 +1023,125 @@ async function loadHomeExperience(){
   await loadFamilyCover();
   await loadProfilePhoto();
   await loadCardImages();
+  loadUpcomingEvents();
   setTimeout(()=>warmSlideshowCache(),1000);
 }
 
+
+/* ---------- Upcoming Events ---------- */
+const EVENT_TYPE_EMOJI = {Birthday:"🎂",Anniversary:"💍","Family Trip":"✈️",Holiday:"🎉",Other:"📌"};
+let upcomingEventsCache = [];
+
+function nextOccurrence(ev){
+  const base = new Date(ev.event_date+"T00:00:00");
+  const today = new Date(); today.setHours(0,0,0,0);
+  if(ev.repeat_type==="none"){
+    return base>=today ? base : null;
+  }
+  let next = new Date(base);
+  if(ev.repeat_type==="yearly"){
+    next.setFullYear(today.getFullYear());
+    if(next<today) next.setFullYear(today.getFullYear()+1);
+  } else if(ev.repeat_type==="monthly"){
+    next.setFullYear(today.getFullYear(),today.getMonth(),base.getDate());
+    if(next<today) next.setMonth(next.getMonth()+1);
+  }
+  return next;
+}
+
+function formatEventDate(d){
+  return d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"});
+}
+
+function countdownLabel(d){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const diffDays = Math.round((d-today)/86400000);
+  if(diffDays===0) return {big:"Today",small:""};
+  if(diffDays===1) return {big:"Tomorrow",small:""};
+  return {big:String(diffDays),small:"Days Left"};
+}
+
+async function loadUpcomingEvents(){
+  const card = $("upcomingEventCard");
+  if(!card) return;
+  const {data,error} = await client.from("events").select("*");
+  if(error){ console.error(error); return; }
+  const withNext = (data||[]).map(ev=>({...ev,_next:nextOccurrence(ev)})).filter(ev=>ev._next);
+  withNext.sort((a,b)=>a._next-b._next);
+  upcomingEventsCache = withNext;
+  renderEventCard();
+}
+
+function renderEventCard(){
+  const card = $("upcomingEventCard");
+  if(!card) return;
+  if(!upcomingEventsCache.length){
+    card.classList.add("event-card-empty");
+    card.innerHTML = `<span class="event-card-icon">🎉</span><span>No upcoming events</span><span class="event-card-chevron">›</span>`;
+    card.onclick = ()=>openEventDialog();
+    return;
+  }
+  card.classList.remove("event-card-empty");
+  const ev = upcomingEventsCache[0];
+  const cd = countdownLabel(ev._next);
+  card.innerHTML = `
+    <span class="event-card-icon">📅</span>
+    <div class="event-card-info">
+      <span class="event-card-label">Upcoming Event</span>
+      <h3>${escapeHtml(ev.title)}</h3>
+      <p>${formatEventDate(ev._next)}</p>
+    </div>
+    <div class="event-card-countdown"><strong>${cd.big}</strong>${cd.small?`<span>${cd.small}</span>`:""}</div>
+    <span class="event-card-chevron">›</span>
+  `;
+  card.onclick = ()=>openEventListDialog();
+}
+
+function openEventListDialog(){
+  const content = $("eventListContent");
+  content.innerHTML = upcomingEventsCache.map(ev=>{
+    const cd = countdownLabel(ev._next);
+    const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"📅";
+    return `<div class="folder-option-btn" style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+      <span style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span>${emoji}</span>
+        <span style="min-width:0"><strong style="display:block">${escapeHtml(ev.title)}</strong><span class="muted small">${formatEventDate(ev._next)}</span></span>
+      </span>
+      <span class="muted small" style="white-space:nowrap">${cd.big}${cd.small?" "+cd.small:""}</span>
+    </div>`;
+  }).join("") || `<p class="muted">No upcoming events.</p>`;
+  $("eventListDialog").showModal();
+}
+$("closeEventListDialog").onclick=()=>$("eventListDialog").close();
+$("addEventFromListBtn").onclick=()=>{ $("eventListDialog").close(); openEventDialog(); };
+
+function openEventDialog(){
+  $("eventForm").reset();
+  $("eventDialogTitle").textContent="Add Event";
+  $("eventDialog").showModal();
+}
+$("closeEventDialog").onclick=$("cancelEventDialog").onclick=()=>$("eventDialog").close();
+
+$("eventForm").onsubmit = async e=>{
+  e.preventDefault();
+  const title = $("eventTitle").value.trim();
+  const event_date = $("eventDate").value;
+  if(!title || !event_date) return toast("Please add a title and date.");
+  const payload = {
+    title,
+    event_date,
+    repeat_type: $("eventRepeat").value,
+    event_type: $("eventType").value || null,
+    notes: $("eventNotes").value.trim() || null,
+    reminder: $("eventReminder").value || null,
+    created_by: currentUser.id
+  };
+  const {error} = await client.from("events").insert(payload);
+  if(error) return toast(error.message);
+  $("eventDialog").close();
+  toast("Event saved!");
+  loadUpcomingEvents();
+};
 
 async function loadFamilyCover(){
   const cover=$("coverImage");
