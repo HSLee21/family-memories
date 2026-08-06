@@ -335,8 +335,10 @@ html,body{overflow-x:hidden}
   }
   #mediaHubPage .media-hub-grid-top{ grid-template-columns:1fr 1fr!important; margin-bottom:10px!important; }
   #mediaHubPage .media-hub-grid-bottom{ grid-template-columns:1fr 1fr 1fr!important; }
-  #mediaHubPage .media-hub-card{ padding:14px 8px!important; border-radius:18px!important; gap:8px!important; font-size:13.5px!important; min-height:0!important; justify-content:center!important; }
-  #mediaHubPage .media-hub-ico{ width:34px!important; height:34px!important; }
+  #mediaHubPage .media-hub-grid-top .media-hub-card{ padding:38px 8px!important; border-radius:18px!important; gap:12px!important; font-size:15px!important; min-height:0!important; justify-content:center!important; }
+  #mediaHubPage .media-hub-grid-bottom .media-hub-card{ padding:28px 6px!important; border-radius:18px!important; gap:10px!important; font-size:13.5px!important; min-height:0!important; justify-content:center!important; }
+  #mediaHubPage .media-hub-grid-top .media-hub-ico{ width:46px!important; height:46px!important; }
+  #mediaHubPage .media-hub-grid-bottom .media-hub-ico{ width:36px!important; height:36px!important; }
   .video-fs-btn{ top:6px!important; right:6px!important; bottom:auto!important; }
   .video-play-btn{ width:30px!important; height:30px!important; }
   .video-play-btn svg{ width:14px!important; height:14px!important; }
