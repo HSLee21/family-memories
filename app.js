@@ -1,4 +1,4 @@
-console.log("APP.JS v13-compact loaded");
+console.log("APP.JS v12-1784358136 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1087,40 +1087,73 @@ function renderEventCard(){
   const card = $("upcomingEventCard");
   if(!card) return;
 
-  const headerIcon = `
-    <img src="assets/images/upcoming event.jpg" class="event-card-header-icon" alt="Upcoming Event">
-  `;
-  const plusBtn = `<button class="event-card-add" type="button" aria-label="Add event">+</button>`;
+  const calendarSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect height="17" rx="3" width="18" x="3" y="4"></rect><path d="M3 9h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path></svg>`;
+  const headerIcon = `<span class="event-card-header-icon">${calendarSvg}</span>`;
+  const plusButton = `<button class="event-card-add" type="button" aria-label="Add event">+</button>`;
+
+  const bindActions = (mode) => {
+    card.onclick = () => {
+      if (mode === "empty") {
+        openEventDialog();
+      } else {
+        openEventListDialog();
+      }
+    };
+
+    card.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (mode === "empty") openEventDialog();
+        else openEventListDialog();
+      }
+    };
+
+    const addBtn = card.querySelector(".event-card-add");
+    if (addBtn) {
+      addBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openEventDialog();
+      };
+    }
+  };
 
   if(!upcomingEventsCache.length){
-    card.classList.add("event-card-empty");
+    card.className = "event-card event-card-empty";
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.setAttribute("aria-label","Upcoming Event");
     card.innerHTML = `
       <div class="event-card-header">
         <div class="event-card-header-left">
           ${headerIcon}
           <span class="event-card-title">Upcoming Event</span>
         </div>
-        ${plusBtn}
+        ${plusButton}
       </div>
       <div class="event-card-body event-card-body-empty">
-        <span class="event-card-event-emoji" aria-hidden="true">📅</span>
-        <div class="event-card-empty-copy">
-          <p class="event-card-empty-main">No upcoming event</p>
-          <p class="event-card-empty-sub">Tap + to add your first event.</p>
+        <div class="event-card-event-copy">
+          <p class="event-card-empty-main">No upcoming events</p>
+          <p class="event-card-empty-sub">Tap + to add your first family event.</p>
         </div>
       </div>
     `;
-
-    card.onclick = ()=>openEventListDialog();
-    const addBtn = card.querySelector(".event-card-add");
-    if(addBtn) addBtn.onclick = (e)=>{ e.stopPropagation(); openEventDialog(); };
+    bindActions("empty");
     return;
   }
 
-  card.classList.remove("event-card-empty");
+  card.className = "event-card";
+  card.setAttribute("role","button");
+  card.setAttribute("tabindex","0");
+  card.setAttribute("aria-label","Upcoming Events");
   const ev = upcomingEventsCache[0];
   const cd = countdownLabel(ev._next);
-  const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"🎂";
+  const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"🎉";
+  const dateStatus = cd.big === "Today"
+    ? `<span class="event-card-date-dot">•</span> <span class="event-card-date-today">Today</span>`
+    : cd.small
+      ? `<span class="event-card-date-dot">•</span> ${escapeHtml(cd.big)} ${escapeHtml(cd.small)}`
+      : ``;
 
   card.innerHTML = `
     <div class="event-card-header">
@@ -1128,44 +1161,54 @@ function renderEventCard(){
         ${headerIcon}
         <span class="event-card-title">Upcoming Event</span>
       </div>
-      ${plusBtn}
+      ${plusButton}
     </div>
+
     <div class="event-card-body">
-      <span class="event-card-event-emoji" aria-hidden="true">${emoji}</span>
-      <div class="event-card-copy">
+      <div class="event-card-event-icon">${emoji}</div>
+      <div class="event-card-event-copy">
         <h3>${escapeHtml(ev.title)}</h3>
-        <p class="event-card-date">
-          ${formatEventDate(ev._next)}
-          <span class="event-card-date-dot">•</span>
-          <span class="event-card-date-small">${cd.big}${cd.small ? ` ${cd.small}` : ""}</span>
-        </p>
+        <p class="event-card-date">${formatEventDate(ev._next)}${dateStatus}</p>
       </div>
     </div>
   `;
-
-  card.onclick = ()=>openEventListDialog();
-  const addBtn = card.querySelector(".event-card-add");
-  if(addBtn) addBtn.onclick = (e)=>{ e.stopPropagation(); openEventDialog(); };
+  bindActions("list");
 }
 
 function openEventListDialog(){
-
   const content = $("eventListContent");
   content.innerHTML = upcomingEventsCache.map(ev=>{
     const cd = countdownLabel(ev._next);
     const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"📅";
-    return `<div class="folder-option-btn" style="display:flex;align-items:center;gap:12px;justify-content:space-between">
-      <span style="display:flex;align-items:center;gap:10px;min-width:0">
-        <span>${emoji}</span>
-        <span style="min-width:0"><strong style="display:block">${escapeHtml(ev.title)}</strong><span class="muted small">${formatEventDate(ev._next)}</span></span>
+    const status = cd.big === "Today"
+      ? `<span class="event-list-status-today">Today</span>`
+      : cd.small
+        ? `${escapeHtml(cd.big)} ${escapeHtml(cd.small)}`
+        : escapeHtml(cd.big);
+    return `<button type="button" class="event-list-row">
+      <span class="event-list-left">
+        <span class="event-list-emoji">${emoji}</span>
+        <span class="event-list-copy">
+          <strong>${escapeHtml(ev.title)}</strong>
+          <span class="muted small">${formatEventDate(ev._next)}</span>
+        </span>
       </span>
-      <span class="muted small" style="white-space:nowrap">${cd.big}${cd.small?" "+cd.small:""}</span>
-    </div>`;
+      <span class="event-list-status">${status}</span>
+    </button>`;
   }).join("") || `<p class="muted">No upcoming events.</p>`;
+
   $("eventListDialog").showModal();
 }
-$("closeEventListDialog").onclick=()=>$("eventListDialog").close();
-$("addEventFromListBtn").onclick=()=>{ $("eventListDialog").close(); openEventDialog(); };
+
+$("closeEventListDialog").addEventListener("click", (e) => {
+  e.preventDefault();
+  $("eventListDialog").close();
+});
+$("addEventFromListBtn").addEventListener("click", (e) => {
+  e.preventDefault();
+  $("eventListDialog").close();
+  openEventDialog();
+});
 
 function openEventDialog(){
   $("eventForm").reset();
@@ -1173,7 +1216,8 @@ function openEventDialog(){
   $("eventFormError").classList.add("hidden");
   $("eventDialog").showModal();
 }
-$("closeEventDialog").onclick=$("cancelEventDialog").onclick=()=>$("eventDialog").close();
+$("closeEventDialog").addEventListener("click", (e) => { e.preventDefault(); $("eventDialog").close(); });
+$("cancelEventDialog").addEventListener("click", (e) => { e.preventDefault(); $("eventDialog").close(); });
 
 $("eventForm").onsubmit = async e=>{
   e.preventDefault();
