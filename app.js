@@ -2016,15 +2016,15 @@ $("videoPlayerBack").onclick=()=>{
 
 /* ---- Navigation wiring for the hub ---- */
 const SECTION_META = {
-  memory:{title:"Our Memories",art:"🖼️💗",cls:"hub-blue"},
-  trip:{title:"Family Trips",art:"🧳📷",cls:"hub-pink"},
-  celebration:{title:"Celebrations",art:"🎈🎉",cls:"hub-purple"}
+  memory:{title:"Our Memories",art:"🖼️💗",cls:"hub-blue",photo:"assets/images/mediasection-memory.jpg"},
+  trip:{title:"Family Trips",art:"🧳📷",cls:"hub-pink",photo:"assets/images/mediasection-trip.jpg"},
+  celebration:{title:"Celebrations",art:"🎈🎉",cls:"hub-purple",photo:"assets/images/mediasection-celebration.jpg"}
 };
 document.querySelectorAll("[data-hub-section]").forEach(btn=>btn.onclick=()=>{
   currentMediaSection = btn.dataset.hubSection;
   const meta = SECTION_META[currentMediaSection];
-  $("mediaSectionTitle").textContent = meta.title;
-  $("mediaSectionArt").textContent = meta.art;
+  $("mediaSectionHeroImg").src = meta.photo;
+  $("mediaSectionHeroImg").alt = meta.title;
   ["hub-blue","hub-pink","hub-purple"].forEach(c=>{
     $("mediaSectionPhotosBtn").classList.remove(c);
     $("mediaSectionVideosBtn").classList.remove(c);
