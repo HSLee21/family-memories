@@ -1,4 +1,4 @@
-console.log("APP.JS v13-compact loaded");
+console.log("APP.JS v12-1784358136 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1082,74 +1082,43 @@ async function loadUpcomingEvents(){
   renderEventCard();
 }
 
-
 function renderEventCard(){
   const card = $("upcomingEventCard");
   if(!card) return;
-
-  const headerIcon = `
-    <img src="assets/images/upcoming event.jpg" class="event-card-header-icon" alt="Upcoming Event">
-  `;
-  const plusBtn = `<button class="event-card-add" type="button" aria-label="Add event">+</button>`;
+  const calendarSvg = `<svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect height="17" rx="3" width="18" x="3" y="4"></rect><path d="M3 9h18"></path><path d="M8 2v4"></path><path d="M16 2v4"></path><circle cx="8" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="12" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="16" cy="13" fill="currentColor" r="1" stroke="none"></circle><circle cx="8" cy="17" fill="currentColor" r="1" stroke="none"></circle><circle cx="12" cy="17" fill="currentColor" r="1" stroke="none"></circle></svg>`;
 
   if(!upcomingEventsCache.length){
     card.classList.add("event-card-empty");
     card.innerHTML = `
-      <div class="event-card-header">
-        <div class="event-card-header-left">
-          ${headerIcon}
-          <span class="event-card-title">Upcoming Event</span>
-        </div>
-        ${plusBtn}
+      <span class="event-card-icon">${calendarSvg}</span>
+      <div class="event-card-info">
+        <span class="event-card-title">Upcoming Event</span>
+        <p class="event-card-empty-main">No upcoming events</p>
+        <p class="event-card-empty-sub">Tap the + to add your first family event.</p>
       </div>
-      <div class="event-card-body event-card-body-empty">
-        <span class="event-card-event-emoji" aria-hidden="true">📅</span>
-        <div class="event-card-empty-copy">
-          <p class="event-card-empty-main">No upcoming event</p>
-          <p class="event-card-empty-sub">Tap + to add your first event.</p>
-        </div>
-      </div>
+      <span class="event-card-add">+</span>
     `;
-
-    card.onclick = ()=>openEventListDialog();
-    const addBtn = card.querySelector(".event-card-add");
-    if(addBtn) addBtn.onclick = (e)=>{ e.stopPropagation(); openEventDialog(); };
+    card.onclick = ()=>openEventDialog();
     return;
   }
-
   card.classList.remove("event-card-empty");
   const ev = upcomingEventsCache[0];
   const cd = countdownLabel(ev._next);
-  const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"🎂";
-
+  const emoji = EVENT_TYPE_EMOJI[ev.event_type]||"🎉";
   card.innerHTML = `
-    <div class="event-card-header">
-      <div class="event-card-header-left">
-        ${headerIcon}
-        <span class="event-card-title">Upcoming Event</span>
-      </div>
-      ${plusBtn}
+    <span class="event-card-icon">${calendarSvg}</span>
+    <div class="event-card-info">
+      <span class="event-card-title">Upcoming Event</span>
+      <h3>${emoji} ${escapeHtml(ev.title)}</h3>
+      <p class="event-card-date">${formatEventDate(ev._next)}</p>
+      <p class="event-card-days">${cd.big}${cd.small?" "+cd.small:""}</p>
     </div>
-    <div class="event-card-body">
-      <span class="event-card-event-emoji" aria-hidden="true">${emoji}</span>
-      <div class="event-card-copy">
-        <h3>${escapeHtml(ev.title)}</h3>
-        <p class="event-card-date">
-          ${formatEventDate(ev._next)}
-          <span class="event-card-date-dot">•</span>
-          <span class="event-card-date-small">${cd.big}${cd.small ? ` ${cd.small}` : ""}</span>
-        </p>
-      </div>
-    </div>
+    <span class="event-card-chevron">›</span>
   `;
-
   card.onclick = ()=>openEventListDialog();
-  const addBtn = card.querySelector(".event-card-add");
-  if(addBtn) addBtn.onclick = (e)=>{ e.stopPropagation(); openEventDialog(); };
 }
 
 function openEventListDialog(){
-
   const content = $("eventListContent");
   content.innerHTML = upcomingEventsCache.map(ev=>{
     const cd = countdownLabel(ev._next);
