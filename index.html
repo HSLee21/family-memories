@@ -97,7 +97,7 @@
 </div>
 </div>
 </div>
-<div class="event-card" id="upcomingEventCard" role="button" tabindex="0" aria-label="Upcoming Event"></div>
+<button class="event-card" id="upcomingEventCard" type="button"></button>
 <input accept="image/*" hidden="" id="cardFile-memories" type="file"/>
 <input accept="image/*" hidden="" id="cardFile-trips" type="file"/>
 <input accept="image/*" hidden="" id="cardFile-celebrations" type="file"/>
@@ -264,7 +264,7 @@
 <dialog id="folderOptionsDialog"><div class="dialog-card"><div class="dialog-head"><h2 id="folderOptionsTitle">Folder</h2><button class="icon-btn" id="closeFolderOptions" type="button">×</button></div><div class="folder-options-list"><button class="secondary folder-option-btn" id="folderOptionsRename" type="button">✏️ Rename folder</button><button class="secondary folder-option-btn danger" id="folderOptionsDelete" type="button">🗑️ Delete folder</button></div></div></dialog>
 <dialog id="settingsDialog"><form class="dialog-card" id="settingsForm" novalidate=""><div class="dialog-head"><h2>Settings</h2><button class="icon-btn" id="closeSettingsDialog" type="button">×</button></div><label class="small muted" for="settingsDisplayName">Display name</label><input id="settingsDisplayName" maxlength="80" placeholder="Your name" required=""/><div class="dialog-actions"><button class="secondary" id="cancelSettingsDialog" type="button">Cancel</button><button class="primary" id="settingsSaveBtn">Save</button></div></form></dialog>
 <dialog id="addDialog"><form class="dialog-card" id="addForm" novalidate=""><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button class="icon-btn" id="closeDialog" type="button">×</button></div><input id="itemTitle" placeholder="Title (optional)"/><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"/><label class="file-picker">📎 <span id="itemFileLabel">Choose photo or file</span><input hidden="" id="itemFile" type="file" multiple=""/></label><div class="dialog-actions"><button class="secondary" id="cancelDialog" type="button">Cancel</button><button class="primary">Save</button></div></form></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v18-20260806"></script><script src="app.js?v=v18-20260806"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=v17-1784511659?v=v17-1784511659"></script><script src="app.js?v=v18-compact"></script>
 <script>
 (function(){
   function resetScroll(){ window.scrollTo(0,window.scrollY); document.documentElement.scrollLeft=0; document.body.scrollLeft=0; }
