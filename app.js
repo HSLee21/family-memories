@@ -1064,11 +1064,16 @@ function countdownLabel(d){
 async function loadUpcomingEvents(){
   const card = $("upcomingEventCard");
   if(!card) return;
-  const {data,error} = await client.from("events").select("*");
-  if(error){ console.error(error); return; }
-  const withNext = (data||[]).map(ev=>({...ev,_next:nextOccurrence(ev)})).filter(ev=>ev._next);
-  withNext.sort((a,b)=>a._next-b._next);
-  upcomingEventsCache = withNext;
+  try{
+    const {data,error} = await client.from("events").select("*");
+    if(error) throw error;
+    const withNext = (data||[]).map(ev=>({...ev,_next:nextOccurrence(ev)})).filter(ev=>ev._next);
+    withNext.sort((a,b)=>a._next-b._next);
+    upcomingEventsCache = withNext;
+  }catch(err){
+    console.error(err);
+    upcomingEventsCache = [];
+  }
   renderEventCard();
 }
 
