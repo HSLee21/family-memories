@@ -291,7 +291,7 @@ html,body{overflow-x:hidden}
     min-height:0!important; gap:8px!important;
     padding-bottom:0!important; margin-bottom:0!important;
   }
-  #homePage .event-card{ flex:0 0 auto!important; margin:0!important; padding:12px 12px!important; min-height:86px!important; box-sizing:border-box!important; }
+  #homePage .event-card{ flex:0 0 auto!important; margin:0!important; padding:12px 12px!important; min-height:104px!important; box-sizing:border-box!important; }
   #homePage .event-card-icon{ width:44px!important; height:44px!important; flex-shrink:0!important; border-radius:50%!important; }
   #homePage .event-card-icon svg{ width:24px!important; height:24px!important; }
   #homePage .event-card-info{ flex:1 1 0%!important; min-width:0!important; width:0!important; overflow:hidden!important; }
@@ -334,10 +334,11 @@ html,body{overflow-x:hidden}
   .camera-fab{ width:26px!important; height:26px!important; left:10px!important; right:auto!important; bottom:8px!important; background:rgba(255,255,255,.9)!important; backdrop-filter:blur(8px)!important; border-radius:50%!important; font-size:10px!important; box-shadow:0 2px 8px rgba(0,0,0,.15)!important; display:grid!important; place-items:center!important; z-index:3!important; }
 
   .family-space-grid{
-    /* Flexible: grows/shrinks to exactly fill whatever space is left
-       after the fixed-height cover above, instead of a guessed fixed
-       size that either clips (too tall) or leaves a gap (too short). */
-    flex:1 1 0!important; min-height:0!important; overflow:hidden!important;
+    /* Fixed minimum so the cards can never be squeezed shorter than
+       readable (title + 2-line description). If total page content
+       is taller than the screen, the page scrolls instead of clipping -
+       far more robust than shrinking cards to fit no matter what. */
+    flex:1 1 0!important; min-height:300px!important;
     display:grid!important; grid-template-columns:1fr 1fr!important; grid-template-rows:1fr 1fr!important;
     gap:12px!important; margin:0 4px!important;
   }
