@@ -1139,15 +1139,22 @@ $("addEventFromListBtn").onclick=()=>{ $("eventListDialog").close(); openEventDi
 function openEventDialog(){
   $("eventForm").reset();
   $("eventDialogTitle").textContent="Add Event";
+  $("eventFormError").classList.add("hidden");
   $("eventDialog").showModal();
 }
 $("closeEventDialog").onclick=$("cancelEventDialog").onclick=()=>$("eventDialog").close();
 
 $("eventForm").onsubmit = async e=>{
   e.preventDefault();
+  const errEl = $("eventFormError");
+  errEl.classList.add("hidden");
   const title = $("eventTitle").value.trim();
   const event_date = $("eventDate").value;
-  if(!title || !event_date) return toast("Please add a title and date.");
+  if(!title || !event_date){
+    errEl.textContent = "Please add a title and date.";
+    errEl.classList.remove("hidden");
+    return;
+  }
   const payload = {
     title,
     event_date,
@@ -1158,7 +1165,11 @@ $("eventForm").onsubmit = async e=>{
     created_by: currentUser.id
   };
   const {error} = await client.from("events").insert(payload);
-  if(error) return toast(error.message);
+  if(error){
+    errEl.textContent = error.message;
+    errEl.classList.remove("hidden");
+    return;
+  }
   $("eventDialog").close();
   toast("Event saved!");
   loadUpcomingEvents();
