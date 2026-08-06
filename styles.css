@@ -8,6 +8,7 @@
 .section-theme{background:#fff;border-radius:30px;overflow:hidden;box-shadow:var(--shadow)}.section-hero{min-height:170px;padding:28px 36px;display:flex;align-items:center;gap:28px;position:relative}.section-hero .hero-art{font-size:72px}.section-hero h1{font-size:34px;margin:0 0 10px}.section-hero p{margin:0;color:#475467}.hero-add{margin-left:auto;border:0;border-radius:16px;padding:13px 18px;color:#fff;font-weight:700}.memories-theme .section-hero{background:#e8f4ff}.trips-theme .section-hero{background:#fff0f4}.celebrations-theme .section-hero{background:#f3edff}.study-theme .section-hero{background:#fff5e7}.memories-theme .section-hero h1,.memories-theme .link-button{color:var(--blue)}.trips-theme .section-hero h1,.trips-theme .link-button{color:var(--pink)}.celebrations-theme .section-hero h1,.celebrations-theme .link-button{color:var(--purple)}.study-theme .section-hero h1,.study-theme .link-button{color:var(--orange)}.memories-theme .hero-add{background:var(--blue)}.trips-theme .hero-add{background:var(--pink)}.celebrations-theme .hero-add{background:var(--purple)}.study-theme .hero-add{background:var(--orange)}.filter-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:20px 28px;border-bottom:1px solid var(--line)}.filter{border:0;background:#f8fafc;border-radius:18px;padding:16px 8px;display:grid;gap:6px;font-size:23px}.filter span{font-size:13px}.filter.active{box-shadow:inset 0 0 0 2px #d8e7ff}.content-heading{display:flex;align-items:center;justify-content:space-between;padding:24px 28px 12px}.content-heading h2{margin:0}.link-button{border:0;background:none;font-weight:700}.folder-grid{padding:12px 28px 32px}.visual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.folder-card{border:1px solid var(--line);border-radius:20px;background:#fff;padding:18px;display:flex;align-items:center;gap:14px;min-height:110px;position:relative;box-shadow:0 6px 20px #1822300a}.folder-icon{font-size:38px}.folder-info{min-width:0}.folder-info h3{margin:0 0 6px}.folder-info p{margin:0;color:var(--muted);font-size:13px}.folder-menu{margin-left:auto;padding:8px;background:transparent}
 .field-label{display:grid;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
 .event-card{width:100%;border:1px solid var(--line);border-radius:20px;background:#fff;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 6px 20px #1822300a;text-align:left}
+.event-card:empty{visibility:hidden;border-color:transparent;box-shadow:none}
 .event-card-icon{font-size:26px;flex-shrink:0}
 .event-card-info{flex:1;min-width:0}
 .event-card-label{display:block;font-size:12px;font-weight:700;color:#9333ea;margin-bottom:2px}
@@ -17,7 +18,7 @@
 .event-card-countdown strong{display:block;font-size:22px;color:#9333ea;line-height:1}
 .event-card-countdown span{display:block;font-size:11px;color:var(--muted)}
 .event-card-chevron{font-size:20px;color:var(--muted);flex-shrink:0}
-.event-card-empty{justify-content:flex-start;color:var(--muted);font-weight:700}
+.event-card-empty{justify-content:flex-start;color:var(--muted);font-weight:700;font-size:14px}
 .event-card-empty .event-card-icon{font-size:20px}
 .folder-icon img{width:34px;height:auto;display:block;flex-shrink:0}.list-grid{display:grid;gap:10px}.list-grid .folder-card{min-height:74px}.folder-browser{padding:24px}.folder-toolbar{display:flex;align-items:center;gap:20px;margin-bottom:20px}.folder-toolbar>div{flex:1}.content-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.content-card{border:1px solid var(--line);border-radius:20px;padding:14px;background:#fff;min-width:0;overflow:hidden}.content-card h3{overflow-wrap:anywhere;word-break:break-word}.content-preview{width:100%;max-width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;background:#eef2f7;display:block}
 .video-wrap{position:relative}
@@ -285,7 +286,7 @@ html,body{overflow-x:hidden}
     min-height:0!important; gap:8px!important;
     padding-bottom:0!important; margin-bottom:0!important;
   }
-  #homePage .event-card{ flex:0 0 auto!important; margin:0 4px!important; padding:12px 14px!important; }
+  #homePage .event-card{ flex:0 0 auto!important; margin:0 4px!important; padding:12px 14px!important; min-height:60px!important; box-sizing:border-box!important; }
   #homePage .event-card-icon{ font-size:22px!important; }
   #homePage .event-card-info h3{ font-size:14px!important; }
   #homePage .event-card-info p{ font-size:11px!important; }
