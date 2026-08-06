@@ -337,7 +337,7 @@ html,body{overflow-x:hidden}
   .trips-card{ background:#fcd0e0!important; }
   .celebrations-card{ background:#ccb4f0!important; }
   .study-card{ background:#f8d8b0!important; }
-  .card-default-content{ height:100%!important; min-height:0!important; padding:4px 6px 16px 6px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
+  .card-default-content{ height:100%!important; min-height:0!important; padding:4px 6px 8px 6px!important; display:flex!important; flex-direction:column!important; gap:2px!important; position:relative!important; z-index:2!important; }
   .card-local-image{ flex:1 1 0!important; min-height:0!important; width:100%!important; margin:0 0 4px!important; border-radius:12px!important; object-fit:cover!important; object-position:center!important; }
   .family-space-card h3{ font-size:12px!important; margin:1px 0!important; line-height:1.1!important; }
   .family-space-card p{ font-size:9px!important; line-height:1.25!important; margin:0!important; display:-webkit-box!important; -webkit-line-clamp:2!important; -webkit-box-orient:vertical!important; overflow:hidden!important; }
