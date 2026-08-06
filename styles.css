@@ -11,11 +11,11 @@
 .date-field{position:relative;width:100%;box-sizing:border-box}
 .date-field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:var(--muted);pointer-events:none}
 .date-field input{width:100%;box-sizing:border-box;border:1px solid #dfe5ec;border-radius:14px;padding:14px 14px 14px 42px;background:#fff;-webkit-appearance:none;appearance:none;font:inherit;color:var(--ink)}
-.event-card{width:100%;border:1px solid var(--line);border-radius:20px;background:#fff;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 6px 20px #1822300a;text-align:left}
+.event-card{width:100%;border:1px solid var(--line);border-radius:20px;background:#fff;padding:16px 18px;display:flex;flex-wrap:nowrap;align-items:center;gap:14px;box-shadow:0 6px 20px #1822300a;text-align:left}
 .event-card:empty{visibility:hidden;border-color:transparent;box-shadow:none}
 .event-card-icon{flex-shrink:0;width:42px;height:42px;border-radius:14px;background:#eaf1ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
 .event-card-icon svg{width:24px;height:24px}
-.event-card-info{flex:1;min-width:0}
+.event-card-info{flex:1 1 0%;min-width:0;width:0;overflow:hidden}
 .event-card-title{display:block;font-size:15px;font-weight:800;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .event-card-info h3{margin:0 0 2px;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .event-card-date{margin:0;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -294,7 +294,8 @@ html,body{overflow-x:hidden}
   #homePage .event-card{ flex:0 0 auto!important; margin:0!important; padding:12px 12px!important; min-height:86px!important; box-sizing:border-box!important; }
   #homePage .event-card-icon{ width:44px!important; height:44px!important; flex-shrink:0!important; border-radius:50%!important; }
   #homePage .event-card-icon svg{ width:24px!important; height:24px!important; }
-  #homePage .event-card-info{ flex:1 1 auto!important; min-width:0!important; }
+  #homePage .event-card-info{ flex:1 1 0%!important; min-width:0!important; width:0!important; overflow:hidden!important; }
+  #homePage .event-card{ flex-wrap:nowrap!important; }
   #homePage .event-card-title{ font-size:12.5px!important; }
   #homePage .event-card-info h3{ font-size:13.5px!important; }
   #homePage .event-card-date{ font-size:11.5px!important; }
