@@ -1134,9 +1134,28 @@ function openEventListDialog(){
         <span>${emoji}</span>
         <span style="min-width:0"><strong style="display:block">${escapeHtml(ev.title)}</strong><span class="muted small">${formatEventDate(ev._next)}</span></span>
       </span>
-      <span class="muted small" style="white-space:nowrap">${cd.big}${cd.small?" "+cd.small:""}</span>
+      <span style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <span class="muted small" style="white-space:nowrap">${cd.big}${cd.small?" "+cd.small:""}</span>
+        <button class="event-delete-btn" type="button" data-id="${ev.id}" title="Delete event" aria-label="Delete event">🗑️</button>
+      </span>
     </div>`;
   }).join("") || `<p class="muted">No upcoming events.</p>`;
+  content.querySelectorAll(".event-delete-btn").forEach(btn=>{
+    btn.onclick = async e=>{
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const ev = upcomingEventsCache.find(x=>String(x.id)===String(id));
+      if(!ev) return;
+      if(!confirm(`Delete "${ev.title}"? This cannot be undone.`)) return;
+      const {error} = await client.from("events").delete().eq("id", id);
+      if(error){ toast(error.message); return; }
+      upcomingEventsCache = upcomingEventsCache.filter(x=>String(x.id)!==String(id));
+      renderEventCard();
+      toast("Event deleted.");
+      if(upcomingEventsCache.length===0){ $("eventListDialog").close(); }
+      else openEventListDialog();
+    };
+  });
   $("eventListDialog").showModal();
 }
 $("closeEventListDialog").onclick=()=>$("eventListDialog").close();
