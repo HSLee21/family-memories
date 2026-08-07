@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Pacifico&amp;display=optional" rel="stylesheet"/>
-<link href="styles.css?v=family-memories-v121" rel="stylesheet"/>
+<link href="styles.css?v=family-memories-v122" rel="stylesheet"/>
 <!-- PWA -->
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1670f8" name="theme-color"/>
@@ -62,13 +62,13 @@
 <header class="legacy-header hidden"><h2 id="pageTitle">Home</h2><p id="welcomeText"></p><div id="userBadge"></div></header>
 <section class="page" id="homePage">
 <div class="family-cover" id="familyCover"><div class="cover-image" id="coverImage">
-<img alt="Family Cover" class="cover-local-image" decoding="async" fetchpriority="high" height="686" id="localHeroImage" src="assets/images/hero.jpg" width="1200"/>
+<img alt="Family Cover" class="cover-local-image" decoding="sync" fetchpriority="high" height="686" id="localHeroImage" src="assets/images/hero.jpg" width="1200"/>
 </div><div class="cover-content"><span class="cover-script">Our Family</span><h1>Memories</h1><p>One place for our moments,<br/>journeys and milestones.</p></div><button class="camera-fab hidden" id="changeCoverBtn" title="Change cover photo" type="button">📷</button><input accept="image/*" hidden="" id="coverFileInput" type="file"/></div>
 <div class="family-space-grid">
 <div class="family-space-card memories-card" data-go="memories">
 <button class="card-camera-btn" data-card="memories" type="button">📷</button>
 <div class="card-default-content">
-<img alt="Our Memories" class="card-local-image" decoding="async" height="333" src="assets/images/memories.jpg" width="500"/>
+<img alt="Our Memories" class="card-local-image" decoding="sync" height="333" src="assets/images/memories.jpg" width="500"/>
 <div class="card-body"><h3>Our Memories</h3><p>Photos, videos and little moments worth keeping.</p></div>
 <span class="round-arrow">→</span>
 </div>
@@ -76,7 +76,7 @@
 <div class="family-space-card trips-card" data-go="trips">
 <button class="card-camera-btn" data-card="trips" type="button">📷</button>
 <div class="card-default-content">
-<img alt="Family Trips" class="card-local-image" decoding="async" height="333" src="assets/images/trips.jpg" width="500"/>
+<img alt="Family Trips" class="card-local-image" decoding="sync" height="333" src="assets/images/trips.jpg" width="500"/>
 <div class="card-body"><h3>Family Trips</h3><p>Adventures, holidays and places we explored together.</p></div>
 <span class="round-arrow">→</span>
 </div>
@@ -84,7 +84,7 @@
 <div class="family-space-card celebrations-card" data-go="celebrations">
 <button class="card-camera-btn" data-card="celebrations" type="button">📷</button>
 <div class="card-default-content">
-<img alt="Celebrations" class="card-local-image" decoding="async" height="333" src="assets/images/celebrations.jpg" width="500"/>
+<img alt="Celebrations" class="card-local-image" decoding="sync" height="333" src="assets/images/celebrations.jpg" width="500"/>
 <div class="card-body"><h3>Celebrations</h3><p>Birthdays, anniversaries and meaningful milestones.</p></div>
 <span class="round-arrow">→</span>
 </div>
@@ -92,7 +92,7 @@
 <div class="family-space-card study-card" data-go="study">
 <button class="card-camera-btn" data-card="study" type="button">📷</button>
 <div class="card-default-content">
-<img alt="Study Hub" class="card-local-image" decoding="async" height="333" src="assets/images/study.jpg" width="500"/>
+<img alt="Study Hub" class="card-local-image" decoding="sync" height="333" src="assets/images/study.jpg" width="500"/>
 <div class="card-body"><h3>Study Hub</h3><p>Learning materials and useful family study tools.</p></div>
 <span class="round-arrow">→</span>
 </div>
@@ -265,7 +265,7 @@
 <dialog id="folderOptionsDialog"><div class="dialog-card"><div class="dialog-head"><h2 id="folderOptionsTitle">Folder</h2><button class="icon-btn" id="closeFolderOptions" type="button">×</button></div><div class="folder-options-list"><button class="secondary folder-option-btn" id="folderOptionsRename" type="button">✏️ Rename folder</button><button class="secondary folder-option-btn danger" id="folderOptionsDelete" type="button">🗑️ Delete folder</button></div></div></dialog>
 <dialog id="settingsDialog"><form class="dialog-card" id="settingsForm" novalidate=""><div class="dialog-head"><h2>Settings</h2><button class="icon-btn" id="closeSettingsDialog" type="button">×</button></div><label class="small muted" for="settingsDisplayName">Display name</label><input id="settingsDisplayName" maxlength="80" placeholder="Your name" required=""/><div class="dialog-actions"><button class="secondary" id="cancelSettingsDialog" type="button">Cancel</button><button class="primary" id="settingsSaveBtn">Save</button></div></form></dialog>
 <dialog id="addDialog"><form class="dialog-card" id="addForm" novalidate=""><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button class="icon-btn" id="closeDialog" type="button">×</button></div><input id="itemTitle" placeholder="Title (optional)"/><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"/><label class="file-picker">📎 <span id="itemFileLabel">Choose photo or file</span><input hidden="" id="itemFile" type="file" multiple=""/></label><div class="dialog-actions"><button class="secondary" id="cancelDialog" type="button">Cancel</button><button class="primary">Save</button></div></form></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=family-memories-v121"></script><script src="app.js?v=family-memories-v121"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=family-memories-v122"></script><script src="app.js?v=family-memories-v122"></script>
 <script>
 (function(){
   function resetScroll(){ window.scrollTo(0,window.scrollY); document.documentElement.scrollLeft=0; document.body.scrollLeft=0; }
@@ -288,7 +288,7 @@ if ('serviceWorker' in navigator) {
 // server "what version are you actually running?" and compare it to the
 // version this page was loaded with. Simple, deterministic, no guessing.
 (function(){
-  var CURRENT_APP_VERSION = 'family-memories-v121';
+  var CURRENT_APP_VERSION = 'family-memories-v122';
   var reloadingForUpdate = false;
   var shown = false;
   function checkForUpdate(){

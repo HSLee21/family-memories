@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v121 loaded");
+console.log("APP.JS family-memories-v122 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1118,7 +1118,7 @@ async function loadUpcomingEvents(){
 function renderEventCard(){
   const card = $("upcomingEventCard");
   if(!card) return;
-  const iconImg = `<img alt="" class="event-card-icon-img" src="assets/images/upcoming-event.jpg"/>`;
+  const iconImg = `<img alt="" class="event-card-icon-img" decoding="sync" src="assets/images/upcoming-event.jpg"/>`;
 
   let rowHtml;
   if(!upcomingEventsCache.length){
