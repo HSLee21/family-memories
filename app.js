@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v157 loaded");
+console.log("APP.JS family-memories-v158 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -897,12 +897,33 @@ async function loadFamilyTree(){
   const bySlot=Object.fromEntries(data.map(d=>[d.slot_key,d]));
   const CAMERA_BADGE = '<span class="admin-tree-edit-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 4.5a1.5 1.5 0 0 0-1.27.7L6.8 6.9H4.5A2.5 2.5 0 0 0 2 9.4v8.1A2.5 2.5 0 0 0 4.5 20h15a2.5 2.5 0 0 0 2.5-2.5V9.4a2.5 2.5 0 0 0-2.5-2.5H17.2l-.93-1.7A1.5 1.5 0 0 0 15 4.5H9zm3 12.2A4.2 4.2 0 1 1 12 8.3a4.2 4.2 0 0 1 0 8.4zm0-1.9a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6z"/></svg></span>';
 
+  // Same idea as the family cover photo cache: signed URLs are valid for a
+  // full hour, but this page used to generate a brand-new one for EVERY
+  // member's photo on EVERY visit - with several members, that's several
+  // uncached network round-trips each time, which is exactly what was slow.
+  // Now cached signed URLs are reused until they're close to expiring.
+  const cacheKey="family_tree_avatar_cache";
+  let avatarCache={};
+  try{ avatarCache=JSON.parse(localStorage.getItem(cacheKey)||"{}")||{}; }catch(e){ avatarCache={}; }
+  let cacheDirty=false;
+
   const cells=await Promise.all(FAMILY_TREE_ORDER.map(async key=>{
     const slot=bySlot[key]||{label:key,photo_path:null};
     let avatarHtml=`<span class="admin-tree-avatar admin-tree-avatar-empty">👤</span>`;
     if(slot.photo_path){
-      const {data:signed}=await b2Storage.createSignedUrl(slot.photo_path,3600);
-      if(signed?.signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signed.signedUrl}" loading="lazy" decoding="async"/>`;
+      const cached=avatarCache[key];
+      let signedUrl=null;
+      if(cached && cached.path===slot.photo_path && cached.expires>Date.now()+300000){
+        signedUrl=cached.url;
+      } else {
+        const {data:signed}=await b2Storage.createSignedUrl(slot.photo_path,3600);
+        signedUrl=signed?.signedUrl||null;
+        if(signedUrl){
+          avatarCache[key]={path:slot.photo_path,url:signedUrl,expires:Date.now()+3600*1000};
+          cacheDirty=true;
+        }
+      }
+      if(signedUrl) avatarHtml=`<img alt="${escapeHtml(slot.label)}" class="admin-tree-avatar admin-tree-avatar-photo" src="${signedUrl}" loading="lazy" decoding="async"/>`;
     }
     return `<div class="admin-tree-member${isAdmin?" admin-tree-editable":""}" data-slot="${key}">
       <div class="admin-tree-avatar-wrap">${avatarHtml}${isAdmin?CAMERA_BADGE:""}</div>
@@ -910,6 +931,9 @@ async function loadFamilyTree(){
     </div>`;
   }));
   $("adminTreeAvatars").innerHTML=cells.join("");
+  if(cacheDirty){
+    try{ localStorage.setItem(cacheKey, JSON.stringify(avatarCache)); }catch(e){ /* localStorage full/unavailable - skip caching */ }
+  }
 
   if(isAdmin){
     document.querySelectorAll(".admin-tree-editable").forEach(el=>{
@@ -932,6 +956,13 @@ if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
   if(upErr) return toast(upErr.message);
   const {error:dbErr}=await client.from("family_tree_slots").update({photo_path:path,updated_at:new Date().toISOString()}).eq("slot_key",slotKey);
   if(dbErr) return toast(dbErr.message);
+  // Clear this slot's cached signed URL so the freshly-uploaded photo shows
+  // right away instead of the old one sticking around until it expires.
+  try{
+    const cache=JSON.parse(localStorage.getItem("family_tree_avatar_cache")||"{}")||{};
+    delete cache[slotKey];
+    localStorage.setItem("family_tree_avatar_cache", JSON.stringify(cache));
+  }catch(e){}
   toast("Photo updated.");
   loadFamilyTree();
 };
