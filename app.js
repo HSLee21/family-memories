@@ -1829,6 +1829,9 @@ async function loadSlideshowMusic(key){
       return false;
     }
     audio.src = data.signedUrl;
+    audio.preload = "auto";
+    audio.load(); // kick off buffering immediately, in parallel with photo loading,
+                   // instead of only starting the network fetch once play() is called later
     return true;
   }catch(e){
     audio.pause();
