@@ -77,7 +77,7 @@
 .periodic-rotate-hint strong{display:block;font-size:17px;margin-bottom:4px}
 .periodic-image-scroll.landscape-view.orient-portrait .periodic-rotate-hint{display:flex}
 .periodic-image-scroll.landscape-view.orient-portrait img{display:none}
-.periodic-exit-btn{position:absolute;top:10px;right:10px;z-index:901;border:0;background:rgba(0,0,0,.6);color:#fff;border-radius:12px;padding:8px 14px;font-weight:700;font-size:13px}
+.periodic-exit-btn{position:absolute;top:10px;right:calc(10px + env(safe-area-inset-right) + 26px);z-index:901;border:0;background:rgba(0,0,0,.6);color:#fff;border-radius:12px;padding:8px 14px;font-weight:700;font-size:13px}
 .calc-actions,.converter-row{display:flex;gap:10px;margin-top:10px}.result-box{margin-top:12px;padding:14px;background:#fff;border-radius:12px}
 .timer-preset-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
 .timer-preset-row button{padding:12px 2px;font-size:14px;font-weight:700}
