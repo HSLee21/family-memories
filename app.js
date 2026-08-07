@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v128 loaded");
+console.log("APP.JS family-memories-v129 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1559,8 +1559,11 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
   $("grammarClear").onclick = () => { $("grammarInput").value = ""; $("grammarResult").textContent = "Suggestions will appear here"; };
 })();
 
-// Periodic table - "landscape view" toggle (rotates via CSS transform,
-// since real orientation-lock APIs aren't supported on iOS Safari)
+// Periodic table - full-size zoomed view toggle. Used to fake a landscape
+// orientation via a CSS rotate() transform, but that's confusing when the
+// device itself stays in portrait. Now it's just a normal full-screen
+// overlay in the device's actual current orientation, scaled to fill the
+// screen height with horizontal scroll for the rest - no rotation trick.
 (function(){
   const wrap = $("periodicImageWrap");
   function exitLandscape(){
