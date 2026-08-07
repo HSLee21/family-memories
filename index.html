@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Pacifico&amp;display=optional" rel="stylesheet"/>
-<link href="styles.css?v=family-memories-v114" rel="stylesheet"/>
+<link href="styles.css?v=family-memories-v115" rel="stylesheet"/>
 <!-- PWA -->
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1670f8" name="theme-color"/>
@@ -265,7 +265,7 @@
 <dialog id="folderOptionsDialog"><div class="dialog-card"><div class="dialog-head"><h2 id="folderOptionsTitle">Folder</h2><button class="icon-btn" id="closeFolderOptions" type="button">×</button></div><div class="folder-options-list"><button class="secondary folder-option-btn" id="folderOptionsRename" type="button">✏️ Rename folder</button><button class="secondary folder-option-btn danger" id="folderOptionsDelete" type="button">🗑️ Delete folder</button></div></div></dialog>
 <dialog id="settingsDialog"><form class="dialog-card" id="settingsForm" novalidate=""><div class="dialog-head"><h2>Settings</h2><button class="icon-btn" id="closeSettingsDialog" type="button">×</button></div><label class="small muted" for="settingsDisplayName">Display name</label><input id="settingsDisplayName" maxlength="80" placeholder="Your name" required=""/><div class="dialog-actions"><button class="secondary" id="cancelSettingsDialog" type="button">Cancel</button><button class="primary" id="settingsSaveBtn">Save</button></div></form></dialog>
 <dialog id="addDialog"><form class="dialog-card" id="addForm" novalidate=""><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button class="icon-btn" id="closeDialog" type="button">×</button></div><input id="itemTitle" placeholder="Title (optional)"/><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"/><label class="file-picker">📎 <span id="itemFileLabel">Choose photo or file</span><input hidden="" id="itemFile" type="file" multiple=""/></label><div class="dialog-actions"><button class="secondary" id="cancelDialog" type="button">Cancel</button><button class="primary">Save</button></div></form></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=family-memories-v114"></script><script src="app.js?v=family-memories-v114"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=family-memories-v115"></script><script src="app.js?v=family-memories-v115"></script>
 <script>
 (function(){
   function resetScroll(){ window.scrollTo(0,window.scrollY); document.documentElement.scrollLeft=0; document.body.scrollLeft=0; }
@@ -288,14 +288,28 @@ if ('serviceWorker' in navigator) {
 // server "what version are you actually running?" and compare it to the
 // version this page was loaded with. Simple, deterministic, no guessing.
 (function(){
-  var CURRENT_APP_VERSION = 'family-memories-v114';
+  var CURRENT_APP_VERSION = 'family-memories-v115';
   var reloadingForUpdate = false;
   var shown = false;
+  // TEMPORARY on-screen debug badge, purely to see on a phone (no DevTools
+  // access) whether checkForUpdate is actually running and what it finds.
+  // Safe to remove once iPhone behavior is understood.
+  var debugBadge = document.createElement('div');
+  debugBadge.style.cssText = 'position:fixed;left:6px;bottom:6px;z-index:99999;background:#000c;color:#0f0;font:10px monospace;padding:4px 7px;border-radius:6px;max-width:92vw;pointer-events:none;white-space:pre-wrap';
+  debugBadge.textContent = 'update-check: waiting for first check…';
+  document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(debugBadge); });
+  function debugLog(msg){
+    var t = new Date().toLocaleTimeString();
+    debugBadge.textContent = '[' + t + '] ' + msg;
+  }
   function checkForUpdate(){
-    if (shown || reloadingForUpdate) return;
+    debugLog('checking… (page=' + CURRENT_APP_VERSION + ')');
+    if (shown || reloadingForUpdate) { debugLog('skipped (already shown/reloading)'); return; }
     fetch('sw.js?_=' + Date.now(), {cache:'no-store'}).then(function(res){ return res.text(); }).then(function(txt){
       var m = txt.match(/CACHE_NAME\s*=\s*"([^"]+)"/);
-      console.log('[update-check] page version:', CURRENT_APP_VERSION, '| live sw.js version:', m ? m[1] : '(no match found in fetched text)');
+      var liveVer = m ? m[1] : '(no match)';
+      console.log('[update-check] page version:', CURRENT_APP_VERSION, '| live sw.js version:', liveVer);
+      debugLog('page=' + CURRENT_APP_VERSION + ' live=' + liveVer + (m && m[1] !== CURRENT_APP_VERSION ? ' -> SHOWING BANNER' : ' -> match, no banner'));
       if (!m || m[1] === CURRENT_APP_VERSION) return;
       shown = true;
       var banner = document.getElementById('updateBanner');
@@ -313,7 +327,7 @@ if ('serviceWorker' in navigator) {
         // did nothing, since the destination page can look identical.
         setTimeout(function(){ location.reload(); }, 350);
       };
-    }).catch(function(err){ console.log('[update-check] fetch failed:', err); });
+    }).catch(function(err){ console.log('[update-check] fetch failed:', err); debugLog('FETCH FAILED: ' + err); });
   }
   // Check shortly after load (catches "you opened this a while after a
   // deploy went out"), then keep checking periodically in case a new
