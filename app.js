@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v134 loaded");
+console.log("APP.JS family-memories-v135 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1488,12 +1488,14 @@ function showToolIconGrid(){
   if (periodicWrap) periodicWrap.classList.remove("landscape-view", "orient-portrait");
   if ($("periodicExitBtn")) $("periodicExitBtn").classList.add("hidden");
   document.body.style.overflow = "";
+  document.body.classList.remove("periodic-active");
 }
 document.querySelectorAll("#toolIconGrid [data-tool]").forEach(btn=>btn.onclick=()=>{
   $("toolIconGrid").classList.add("hidden");
   $("toolPanelsWrap").classList.remove("hidden");
   document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.toggle("hidden", p.id !== `toolPanel-${btn.dataset.tool}`));
   studyChromeEls().forEach(el=>el.classList.add("hidden"));
+  document.body.classList.toggle("periodic-active", btn.dataset.tool === "periodic");
   window.scrollTo({top:0,behavior:"smooth"});
 });
 if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
