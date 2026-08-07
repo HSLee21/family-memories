@@ -288,8 +288,15 @@ if ('serviceWorker' in navigator) {
     if (!banner || !btn) return;
     if (!banner.open) { try { banner.show(); } catch(e){} }
     btn.onclick = function(){
+      if (reloadingForUpdate) return;
       reloadingForUpdate = true;
-      location.reload();
+      btn.disabled = true;
+      btn.textContent = 'Updating…';
+      try { sessionStorage.setItem('fm_justUpdated', '1'); } catch(e){}
+      // Brief delay purely so the button's own state change is visible before
+      // the page reloads out from under it - otherwise the tap looks like it
+      // did nothing, since the destination page can look identical.
+      setTimeout(function(){ location.reload(); }, 350);
     };
   });
   window.addEventListener('load', function(){
@@ -298,6 +305,24 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+// After an update-triggered reload, confirm it actually worked instead of
+// leaving the person to guess. Doesn't depend on app.js's toast() since this
+// needs to run before Supabase/app.js state is necessarily ready.
+document.addEventListener('DOMContentLoaded', function(){
+  var justUpdated = false;
+  try { justUpdated = sessionStorage.getItem('fm_justUpdated') === '1'; sessionStorage.removeItem('fm_justUpdated'); } catch(e){}
+  if (!justUpdated) return;
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = 'Updated to the latest version.';
+  if (!t.open) { try { t.show(); } catch(e){} }
+  requestAnimationFrame(function(){ t.classList.add('show'); });
+  setTimeout(function(){
+    t.classList.remove('show');
+    setTimeout(function(){ try { t.close(); } catch(e){} }, 250);
+  }, 2600);
+});
+
 </script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){if(/Android/i.test(navigator.userAgent)){document.body.classList.add('android');}});
