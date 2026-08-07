@@ -407,6 +407,10 @@ html,body{overflow-x:hidden}
      .main using the default flex:0 0 auto + the reserved bottom
      clearance set on .main above ---------- */
   .section-theme{ background:transparent!important; border-radius:0!important; box-shadow:none!important; }
+  .memories-theme .section-theme{ background:#eaf4ff!important; }
+  .trips-theme .section-theme{ background:#fff0f4!important; }
+  .celebrations-theme .section-theme{ background:#f3edff!important; }
+  .study-theme .section-theme{ background:#fff5e7!important; }
   .folder-grid{ padding:8px 20px 16px!important; }
   .visual-grid{ grid-template-columns:1fr 1fr!important; gap:18px!important; }
   .folder-card{ padding:8px!important; gap:6px!important; min-height:0!important; border-radius:14px!important; }
@@ -433,7 +437,7 @@ html,body{overflow-x:hidden}
   .folder-toolbar p{ font-size:12.5px!important; }
   .folder-toolbar .upload-folder{ font-size:13px!important; padding:9px 14px!important; border-radius:11px!important; }
   .empty{ padding:18px!important; font-size:13px!important; border-radius:14px!important; line-height:1.5!important; }
-  .empty-state{ padding:32px 18px!important; border-radius:18px!important; }
+  .empty-state{ padding:32px 18px!important; border-radius:18px!important; background:#fff!important; }
   .empty-state-icon{ width:60px!important; height:60px!important; font-size:28px!important; margin-bottom:12px!important; }
   .empty-state h3{ font-size:16px!important; }
   .empty-state p{ font-size:12.5px!important; margin-bottom:16px!important; }
