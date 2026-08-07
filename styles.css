@@ -31,7 +31,24 @@
 .video-wrap{position:relative}
 .video-play-btn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;padding:0}
 .video-play-btn svg{width:20px;height:20px;margin-left:2px}
-.video-fs-btn{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:8px;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1}.delete-item{margin-top:10px;width:100%;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:12px;padding:9px;font-weight:600;font-size:13px}.meta{font-size:12px;color:var(--muted);margin-top:10px}.empty{padding:28px;text-align:center;color:var(--muted);background:#f8fafc;border-radius:18px}.study-tools{margin:0 28px 30px;border:1px solid var(--line);border-radius:18px;padding:16px}.study-tools summary{font-weight:700;cursor:pointer}.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:2px}.tool-card{padding:16px;background:#f8fafc;border-radius:18px}.periodic-image-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;background:#fff;position:relative}
+.video-fs-btn{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:8px;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1}.delete-item{margin-top:10px;width:100%;border:1px solid #fecaca;background:#fef2f2;color:#dc2626;border-radius:12px;padding:9px;font-weight:600;font-size:13px}.meta{font-size:12px;color:var(--muted);margin-top:10px}.empty{padding:28px;text-align:center;color:var(--muted);background:#f8fafc;border-radius:18px}
+.empty-state{padding:44px 24px;text-align:center;border:2px dashed var(--line);border-radius:22px;display:flex;flex-direction:column;align-items:center}
+.empty-state-icon{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:16px}
+.empty-state h3{margin:0 0 6px;font-size:19px;color:var(--ink)}
+.empty-state p{margin:0 0 20px;color:var(--muted);font-size:14px}
+.empty-state-cta{border:0;border-radius:14px;padding:13px 22px;color:#fff;font-weight:700;font-size:14px}
+.empty-state.type-memory{background:linear-gradient(180deg,#f3f8ff,#fff)}
+.empty-state.type-memory .empty-state-icon{background:#e3efff}
+.empty-state.type-memory .empty-state-cta{background:var(--blue)}
+.empty-state.type-trip{background:linear-gradient(180deg,#fff3f7,#fff)}
+.empty-state.type-trip .empty-state-icon{background:#ffe1ea}
+.empty-state.type-trip .empty-state-cta{background:var(--pink)}
+.empty-state.type-celebration{background:linear-gradient(180deg,#f7f2ff,#fff)}
+.empty-state.type-celebration .empty-state-icon{background:#eadfff}
+.empty-state.type-celebration .empty-state-cta{background:var(--purple)}
+.empty-state.type-study{background:linear-gradient(180deg,#fff8ee,#fff)}
+.empty-state.type-study .empty-state-icon{background:#ffe9c7}
+.empty-state.type-study .empty-state-cta{background:var(--orange)}.study-tools{margin:0 28px 30px;border:1px solid var(--line);border-radius:18px;padding:16px}.study-tools summary{font-weight:700;cursor:pointer}.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:2px}.tool-card{padding:16px;background:#f8fafc;border-radius:18px}.periodic-image-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;background:#fff;position:relative}
 .periodic-image-scroll img{display:block;height:340px;width:auto;max-width:none;border-radius:14px}
 @media (max-width:480px){.periodic-image-scroll img{height:260px}}
 .periodic-image-scroll.landscape-view{position:fixed;top:0;left:0;width:100vh;height:100vw;transform:rotate(90deg) translateY(-100vw);transform-origin:top left;z-index:900;border-radius:0;display:flex;align-items:center}
@@ -416,6 +433,11 @@ html,body{overflow-x:hidden}
   .folder-toolbar p{ font-size:12.5px!important; }
   .folder-toolbar .upload-folder{ font-size:13px!important; padding:9px 14px!important; border-radius:11px!important; }
   .empty{ padding:18px!important; font-size:13px!important; border-radius:14px!important; line-height:1.5!important; }
+  .empty-state{ padding:32px 18px!important; border-radius:18px!important; }
+  .empty-state-icon{ width:60px!important; height:60px!important; font-size:28px!important; margin-bottom:12px!important; }
+  .empty-state h3{ font-size:16px!important; }
+  .empty-state p{ font-size:12.5px!important; margin-bottom:16px!important; }
+  .empty-state-cta{ font-size:13px!important; padding:11px 18px!important; }
 
   /* ---------- Bottom nav ---------- */
   /* Sizing/shape comes entirely from the base .mobile-bottom-nav rule

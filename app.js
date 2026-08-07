@@ -216,6 +216,23 @@ client.auth.onAuthStateChange((event,session)=>{
 const sectionType = {memories:"memory",trips:"trip",celebrations:"celebration",study:"study"};
 const folderTarget = {memories:"memoriesFolders",trips:"tripsFolders",celebrations:"celebrationsFolders",study:"studyFolders"};
 const browserTarget = {memories:"memoriesBrowser",trips:"tripsBrowser",celebrations:"celebrationsBrowser",study:"studyBrowser"};
+
+const EMPTY_FOLDER_CONFIG = {
+  memory:{cls:"type-memory",icon:"📷",title:"No photos yet",subtitle:"Start adding your family memories.",cta:"+ Add Your First Photo"},
+  trip:{cls:"type-trip",icon:"🧳",title:"No trips yet",subtitle:"Start adding your travel adventures.",cta:"+ Add Your First Trip Photo"},
+  celebration:{cls:"type-celebration",icon:"🎈",title:"No celebrations yet",subtitle:"Start adding your special moments.",cta:"+ Add Your First Celebration"},
+  study:{cls:"type-study",icon:"📚",title:"No study materials yet",subtitle:"Start adding learning materials.",cta:"+ Add Your First File"},
+};
+function renderEmptyFolderState(type,target){
+  const cfg = EMPTY_FOLDER_CONFIG[type] || EMPTY_FOLDER_CONFIG.memory;
+  $(target).innerHTML = `<div class="empty-state ${cfg.cls}">
+    <div class="empty-state-icon">${cfg.icon}</div>
+    <h3>${cfg.title}</h3>
+    <p>${cfg.subtitle}</p>
+    <button type="button" class="empty-state-cta">${cfg.cta}</button>
+  </div>`;
+  $(target).querySelector(".empty-state-cta").onclick = ()=>openAddForFolder(type);
+}
 let currentFolderSection = null;
 let currentFolder = null;
 let editingFolderId = null;
@@ -558,7 +575,7 @@ async function loadFolderItems(type,folderIdOrIds,target){
   }
   const {data,error} = await query.order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
-  if(!data?.length){$(target).innerHTML='<div class="empty">Nothing here yet — add the first photo or file to get started.</div>';return}
+  if(!data?.length){ renderEmptyFolderState(type,target); return }
 
   const items=await Promise.all(data.map(async item=>{
     let signedUrl=null;
