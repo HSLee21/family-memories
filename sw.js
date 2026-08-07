@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v122";
+const CACHE_NAME = "family-memories-v124";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -25,7 +25,8 @@ const PRECACHE_IMAGES = [
   "./assets/images/trips-hero.jpg",
   "./assets/images/celebrations-hero.jpg",
   "./assets/images/study-hero.jpg",
-  "./assets/images/gallery-hero.jpg"
+  "./assets/images/gallery-hero.jpg",
+  "./assets/images/upcoming-event.jpg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -99,25 +100,35 @@ self.addEventListener("fetch", (event) => {
     );
   } else if (isLocalImage) {
     event.respondWith(
-      // {cache:"reload"} here too: without it, a plain fetch() honors GitHub
-      // Pages' Cache-Control:max-age=300 like any normal request, so a
-      // one-off bad/incomplete browser HTTP-cache entry for an image (e.g.
-      // from a page navigating away mid-download during heavy reload
-      // testing) could keep being served as broken for up to 5 minutes with
-      // no way to self-recover - exactly the "still broken after reopening"
-      // symptom this caused. Cache Storage (below) still provides the
-      // opportunistic offline/last-known-good fallback, so this doesn't
-      // meaningfully increase bandwidth use in normal cases - a fresh
-      // request just gets a fast 304 Not Modified if the file is unchanged.
-      fetch(req, { cache: "reload" })
-        .then((res) => {
-          if (res.ok) {
-            const resClone = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
-          }
-          return res;
-        })
-        .catch(() => caches.match(req))
+      // Cache-first, with a background refresh: these icons rarely change,
+      // so once cached they should load instantly with zero network
+      // round-trip - forcing a network fetch every single time (the
+      // previous approach) caused a visible one-by-one pop-in on every page
+      // that uses them, since several images now had to be re-fetched in
+      // sequence instead of just being read from disk.
+      //
+      // Still avoids the earlier "stuck broken image" problem: a cache miss
+      // (first load, or nothing cached yet) uses {cache:"reload"} to bypass
+      // any bad HTTP-cache entry, and every cache hit also kicks off a
+      // silent background refetch to keep the cached copy from going stale
+      // forever - neither of these delay what's actually shown on screen.
+      caches.match(req).then((cached) => {
+        if (cached) {
+          fetch(req, { cache: "reload" })
+            .then((res) => { if (res.ok) caches.open(CACHE_NAME).then((cache) => cache.put(req, res)); })
+            .catch(() => {});
+          return cached;
+        }
+        return fetch(req, { cache: "reload" })
+          .then((res) => {
+            if (res.ok) {
+              const resClone = res.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+            }
+            return res;
+          })
+          .catch(() => caches.match(req));
+      })
     );
   } else {
     event.respondWith(
