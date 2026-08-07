@@ -1,4 +1,4 @@
-console.log("APP.JS v12-1784358136 loaded");
+console.log("APP.JS family-memories-v106 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
