@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v146";
+const CACHE_NAME = "family-memories-v147";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -15,20 +15,13 @@ const APP_SHELL = [
 // (populate cache on success, fall back to cache on failure) rather than the
 // app-shell's force-bypass-HTTP-cache strategy, which would be wasteful
 // bandwidth-wise for large images that don't need to be re-fetched every load.
-const PRECACHE_IMAGES = [
-  "./assets/images/hero.jpg",
-  "./assets/images/memories.jpg",
-  "./assets/images/trips.jpg",
-  "./assets/images/celebrations.jpg",
-  "./assets/images/study.jpg",
-  "./assets/images/memories-hero.jpg",
-  "./assets/images/trips-hero.jpg",
-  "./assets/images/celebrations-hero.jpg",
-  "./assets/images/study-hero.jpg",
-  "./assets/images/gallery-hero.jpg",
-  "./assets/images/upcoming-event.jpg",
-  "./assets/images/periodic-table.jpg"
-];
+// These images are NOT precached at install time anymore (see below for
+// why) - listed here only for reference/documentation of what's covered by
+// the runtime cache-first strategy further down.
+// - hero.jpg, memories.jpg, trips.jpg, celebrations.jpg, study.jpg,
+//   memories-hero.jpg, trips-hero.jpg, celebrations-hero.jpg,
+//   study-hero.jpg, gallery-hero.jpg, upcoming-event.jpg,
+//   periodic-table.jpg
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -38,8 +31,20 @@ self.addEventListener("install", (event) => {
       // A single missing/renamed asset must never again be able to block
       // every future update from activating - that's what caused the
       // old service worker to keep serving stale styles.css indefinitely.
+      //
+      // IMPORTANT: only APP_SHELL (a handful of small text files) is
+      // precached here - NOT the decorative photos. Those used to be
+      // precached too, which meant every single update had to re-download
+      // several MB of images (and that total kept growing release over
+      // release as more images were added) before the new version could
+      // finish installing - directly competing for bandwidth with
+      // whatever the person was actually trying to do right after
+      // updating (like logging back in). The runtime fetch handler below
+      // already populates the cache for these images the first time each
+      // one is actually used, which is functionally just as good without
+      // that recurring install-time cost.
       Promise.all(
-        APP_SHELL.concat(PRECACHE_IMAGES).map((url) =>
+        APP_SHELL.map((url) =>
           cache.add(url).catch((err) =>
             console.warn("SW: failed to precache", url, err)
           )
