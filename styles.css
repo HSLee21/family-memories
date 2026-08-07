@@ -276,7 +276,7 @@ html,body{overflow-x:hidden}
      so extra room becomes a slightly bigger photo/cards instead of a dead
      blank gap above the nav.
    ========================================================================= */
-@media (max-width:900px){
+@media (max-width:1024px){
 
   html,body{ height:100%; }
 
@@ -585,7 +585,7 @@ body.android .family-space-card{
 }
 
 /* ===== Admin page balance + avatar polish ===== */
-@media (max-width: 900px){
+@media (max-width: 1024px){
   #adminPage.utility-page{
     padding: 12px 12px calc(100px + env(safe-area-inset-bottom)) !important;
     margin: 0 !important;
