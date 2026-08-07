@@ -83,7 +83,7 @@
 .timer-preset-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
 .timer-preset-row button{padding:12px 2px;font-size:16px;font-weight:700}
 #toolPanel-timer .calc-actions{justify-content:center}
-#toolPanel-timer .calc-actions button{font-size:13px;padding:10px 20px}
+#toolPanel-timer .calc-actions button{font-size:16px;padding:12px 22px}
 .calendar-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
 .calendar-header button{border:0;background:#eef2f7;border-radius:10px;width:30px;height:30px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:12px}
