@@ -69,7 +69,7 @@
 .empty-state.type-study .empty-state-cta{background:var(--blue)}.study-tools{margin:0 28px 30px;border:1px solid var(--line);border-radius:18px;padding:16px}.study-tools summary{font-weight:700;cursor:pointer}.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:2px}.tool-card{padding:16px;background:#f8fafc;border-radius:18px}.periodic-image-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;background:#fff;position:relative}
 .periodic-image-scroll img{display:block;height:340px;width:auto;max-width:none;border-radius:14px}
 @media (max-width:480px){.periodic-image-scroll:not(.landscape-view){overflow-x:hidden!important}.periodic-image-scroll:not(.landscape-view) img{display:block!important;height:auto!important;width:100%!important;max-width:100%!important}}
-.periodic-image-scroll.landscape-view{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;z-index:900;border-radius:0;display:flex;align-items:center;background:#fff;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.periodic-image-scroll.landscape-view{position:fixed;top:0;left:0;width:100vh;height:100vw;transform:rotate(90deg) translateY(-100vw);transform-origin:top left;z-index:900;border-radius:0;display:flex;align-items:center}
 .periodic-image-scroll.landscape-view img{height:100%;width:auto;max-width:none;border-radius:0;margin:0 auto}
 .periodic-exit-btn{position:absolute;top:10px;right:10px;z-index:901;border:0;background:rgba(0,0,0,.6);color:#fff;border-radius:12px;padding:8px 14px;font-weight:700;font-size:13px}
 .calc-actions,.converter-row{display:flex;gap:10px;margin-top:10px}.result-box{margin-top:12px;padding:14px;background:#fff;border-radius:12px}
