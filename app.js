@@ -308,6 +308,8 @@ async function loadFolders(section){
   $(browser).classList.add("hidden");
   $(browser).innerHTML="";
   $(target).classList.remove("hidden");
+  const heading = $(target).previousElementSibling;
+  if(heading && heading.classList.contains("content-heading")) heading.classList.remove("hidden");
   $(target).innerHTML='<div class="empty">Loading folders…</div>';
   const {data,error}=await client.from("folders").select("*").eq("section",section).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
@@ -367,11 +369,13 @@ async function openFolder(section,folder){
   currentFolderSection=section; currentFolder=folder;
   const target=folderTarget[section], browser=browserTarget[section], type=sectionType[section];
   $(target).classList.add("hidden");
+  const heading = $(target).previousElementSibling;
+  if(heading && heading.classList.contains("content-heading")) heading.classList.add("hidden");
   $(browser).classList.remove("hidden");
   const isUncategorized = !folder.id;
   $(browser).innerHTML=`<div class="folder-toolbar">
     <button class="secondary back-folders">← All folders</button>
-    <div><h2>${escapeHtml(folder.name)}</h2><p class="muted">${escapeHtml(folder.description||"")}</p></div>
+    ${isUncategorized ? '<p class="muted folder-toolbar-desc">'+escapeHtml(folder.description||"")+'</p>' : ""}
     ${isUncategorized ? "" : '<button class="primary upload-folder">+ Add / Upload</button>'}
   </div><div id="${browser}Items" class="content-grid"></div>`;
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
