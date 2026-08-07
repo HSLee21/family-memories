@@ -277,12 +277,24 @@
 })();
 if ('serviceWorker' in navigator) {
   // Only true "you already had an older version running, now a newer one has
-  // taken over" transitions should prompt the person - the very first activation
-  // on a brand new visit also fires controllerchange, but that's not an update.
+  // taken over" transitions should prompt the person. Two things can make a
+  // controllerchange fire that AREN'T that:
+  //  1. The very first-ever activation on a brand new visit.
+  //  2. On practically every returning visit, a SW from the last session
+  //     already controls the page (navigator.serviceWorker.controller is
+  //     truthy immediately), so if sw.js happened to change since then, the
+  //     browser's routine "check for a newer SW" install+activate cascade
+  //     runs automatically as part of THIS load and fires controllerchange
+  //     within the first moment or two - even though the page on screen was
+  //     already served fresh content (network-first). That's not a stale
+  //     page needing a manual refresh, so it shouldn't prompt anyone.
+  // Only something that fires well after the page has settled counts as a
+  // genuine "you're mid-session and now behind" update.
   var hadControllerAtLoad = !!navigator.serviceWorker.controller;
+  var pageSettledAt = Date.now() + 6000;
   var reloadingForUpdate = false;
   navigator.serviceWorker.addEventListener('controllerchange', function(){
-    if (!hadControllerAtLoad || reloadingForUpdate) return;
+    if (!hadControllerAtLoad || reloadingForUpdate || Date.now() < pageSettledAt) return;
     var banner = document.getElementById('updateBanner');
     var btn = document.getElementById('updateBannerBtn');
     if (!banner || !btn) return;
