@@ -358,7 +358,7 @@ html,body{overflow-x:hidden}
        readable (title + 2-line description). If total page content
        is taller than the screen, the page scrolls instead of clipping -
        far more robust than shrinking cards to fit no matter what. */
-    flex:1 1 0!important; min-height:300px!important;
+    flex:1 1 0!important; min-height:290px!important;
     display:grid!important; grid-template-columns:1fr 1fr!important; grid-template-rows:1fr 1fr!important;
     gap:16px!important; margin:0 14px!important;
   }
