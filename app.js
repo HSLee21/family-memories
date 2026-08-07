@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v133 loaded");
+console.log("APP.JS family-memories-v134 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1485,7 +1485,7 @@ function showToolIconGrid(){
   document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.add("hidden"));
   studyChromeEls().forEach(el=>el.classList.remove("hidden"));
   const periodicWrap = $("periodicImageWrap");
-  if (periodicWrap) periodicWrap.classList.remove("landscape-view");
+  if (periodicWrap) periodicWrap.classList.remove("landscape-view", "orient-portrait");
   if ($("periodicExitBtn")) $("periodicExitBtn").classList.add("hidden");
   document.body.style.overflow = "";
 }
@@ -1559,10 +1559,21 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
   $("grammarClear").onclick = () => { $("grammarInput").value = ""; $("grammarResult").textContent = "Suggestions will appear here"; };
 })();
 
-// Periodic table - "landscape view" toggle (rotates via CSS transform,
-// since real orientation-lock APIs aren't supported on iOS Safari)
+// Periodic table - full-table view. Used to fake landscape via a CSS
+// rotate() transform while the phone stayed in portrait, but tapping the
+// button then instantly made the content huge/sideways with zero
+// explanation - confusing, since nothing about the phone itself had
+// changed. Real physical rotation actually renders correctly on its own
+// (the browser's own viewport dimensions update), so now this just opens
+// a full-screen view that shows a clear "rotate your phone" prompt while
+// still in portrait, and automatically swaps to the full image the moment
+// real landscape orientation is detected - no CSS trickery, no confusion.
 (function(){
   const wrap = $("periodicImageWrap");
+  const orientationQuery = window.matchMedia("(orientation: landscape)");
+  function updateOrientationState(){
+    wrap.classList.toggle("orient-portrait", !orientationQuery.matches);
+  }
   function exitLandscape(){
     wrap.classList.remove("landscape-view");
     $("periodicExitBtn").classList.add("hidden");
@@ -1572,8 +1583,11 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
     wrap.classList.add("landscape-view");
     $("periodicExitBtn").classList.remove("hidden");
     document.body.style.overflow = "hidden";
+    updateOrientationState();
   };
   $("periodicExitBtn").onclick = exitLandscape;
+  if (orientationQuery.addEventListener) orientationQuery.addEventListener("change", updateOrientationState);
+  else orientationQuery.addListener(updateOrientationState); // older Safari fallback
 })();
 
 // OCR - Photo to text (Tesseract.js, loaded lazily on first use, runs fully in-browser)
