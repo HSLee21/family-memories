@@ -558,7 +558,7 @@ async function loadFolderItems(type,folderIdOrIds,target){
   }
   const {data,error} = await query.order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
-  if(!data?.length){$(target).innerHTML='<div class="empty">This folder is empty. Add the first item or file.</div>';return}
+  if(!data?.length){$(target).innerHTML='<div class="empty">Nothing here yet — add the first photo or file to get started.</div>';return}
 
   const items=await Promise.all(data.map(async item=>{
     let signedUrl=null;
