@@ -290,7 +290,7 @@ html,body{overflow-x:hidden}
   #homePage.page:not(.hidden){
     flex:1 1 auto!important;
     display:flex!important; flex-direction:column!important;
-    min-height:0!important; gap:12px!important;
+    min-height:0!important; gap:16px!important;
     padding-bottom:0!important; margin-bottom:0!important;
   }
   #homePage .event-card{ flex:0 0 auto!important; width:auto!important; margin:0 6px!important; padding:9px 12px!important; min-height:0!important; box-sizing:border-box!important; background:linear-gradient(145deg,#eaf5ff,#dcedff)!important; border-color:#cfe4ff!important; }
@@ -339,7 +339,7 @@ html,body{overflow-x:hidden}
        far more robust than shrinking cards to fit no matter what. */
     flex:1 1 0!important; min-height:300px!important;
     display:grid!important; grid-template-columns:1fr 1fr!important; grid-template-rows:1fr 1fr!important;
-    gap:12px!important; margin:0 6px!important;
+    gap:16px!important; margin:0 6px!important;
   }
   .family-space-card{ height:100%!important; min-height:0!important; border-radius:14px!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:0 1px 6px rgba(0,0,0,.06)!important; border:0!important; }
   /* Flat pastel card colours, resampled directly from each icon image's
