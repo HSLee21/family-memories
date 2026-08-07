@@ -15,11 +15,11 @@
 .event-card{width:100%;border:1px solid var(--line);border-radius:20px;background:#fff;padding:10px 14px;box-shadow:0 6px 20px #1822300a;text-align:left}
 .event-card:empty{visibility:hidden;border-color:transparent;box-shadow:none}
 .event-card-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.event-card-icon-img{flex-shrink:0;width:26px;height:26px;border-radius:50%;object-fit:cover}
+.event-card-icon-img{flex-shrink:0;width:29px;height:29px;border-radius:50%;object-fit:cover}
 .event-card-title{flex:1;min-width:0;font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .event-card-add{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;border:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
-.event-card-row{display:flex;align-items:center;gap:10px}
-.event-card-emoji{flex-shrink:0;font-size:20px}
+.event-card-row{display:flex;align-items:center;gap:8px}
+.event-card-emoji{flex-shrink:0;width:29px;font-size:23px;text-align:center;line-height:1}
 .event-card-info{flex:1 1 0%;min-width:0;width:0;overflow:hidden}
 .event-card-info h3{margin:0 0 1px;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .event-card-info p{margin:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -312,7 +312,7 @@ html,body{overflow-x:hidden}
     padding-bottom:0!important; margin-bottom:0!important;
   }
   #homePage .event-card{ flex:0 0 auto!important; width:auto!important; margin:0 14px!important; padding:9px 12px!important; min-height:0!important; box-sizing:border-box!important; background:linear-gradient(145deg,#eaf5ff,#dcedff)!important; border-color:#cfe4ff!important; box-shadow:none!important; }
-  #homePage .event-card-icon-img{ width:22px!important; height:22px!important; }
+  #homePage .event-card-icon-img{ width:25px!important; height:25px!important; }
   #homePage .event-card-info{ flex:1 1 0%!important; min-width:0!important; width:0!important; overflow:hidden!important; }
   #homePage .event-card-title{ font-size:12.5px!important; }
   #homePage .event-card-info h3{ font-size:12.5px!important; }
@@ -320,6 +320,9 @@ html,body{overflow-x:hidden}
   #homePage .event-card-empty-main{ font-size:11.5px!important; }
   #homePage .event-card-empty-sub{ font-size:9.5px!important; }
   #homePage .event-card-add{ width:24px!important; height:24px!important; font-size:15px!important; flex-shrink:0!important; }
+  #homePage .event-card-top{ gap:8px!important; }
+  #homePage .event-card-row{ gap:8px!important; }
+  #homePage .event-card-emoji{ width:25px!important; font-size:20px!important; }
   #mediaHubPage.page:not(.hidden){
     flex:1 1 auto!important;
     display:flex!important; flex-direction:column!important;
