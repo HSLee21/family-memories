@@ -288,12 +288,12 @@ if ('serviceWorker' in navigator) {
 // server "what version are you actually running?" and compare it to the
 // version this page was loaded with. Simple, deterministic, no guessing.
 (function(){
-  var CURRENT_APP_VERSION = 'family-memories-v104';
+  var CURRENT_APP_VERSION = 'family-memories-v105';
   var reloadingForUpdate = false;
   var shown = false;
   function checkForUpdate(){
     if (shown || reloadingForUpdate) return;
-    fetch('sw.js', {cache:'no-store'}).then(function(res){ return res.text(); }).then(function(txt){
+    fetch('sw.js?_=' + Date.now(), {cache:'no-store'}).then(function(res){ return res.text(); }).then(function(txt){
       var m = txt.match(/CACHE_NAME\s*=\s*"([^"]+)"/);
       if (!m || m[1] === CURRENT_APP_VERSION) return;
       shown = true;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v104";
+const CACHE_NAME = "family-memories-v105";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -44,6 +44,15 @@ self.addEventListener("activate", (event) => {
 // updates never show up because the service worker itself only re-installs
 // when sw.js's own bytes change, which doesn't happen just from editing
 // index.html/styles.css. Cache is now only an offline fallback.
+//
+// {cache:"reload"} is essential here, not optional: GitHub Pages sends
+// Cache-Control: max-age=300 on these files, and a plain fetch() honors that
+// freshness window like any normal request - meaning within 5 minutes of a
+// previous load, even a genuine force-quit + relaunch could silently get a
+// browser-HTTP-cached response with no network round-trip at all, so a fix
+// that was just pushed wouldn't show up until that 5-minute window happened
+// to expire. {cache:"reload"} forces the browser to bypass that freshness
+// check and always revalidate with the network.
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
@@ -53,7 +62,7 @@ self.addEventListener("fetch", (event) => {
 
   if (isAppShellFile) {
     event.respondWith(
-      fetch(req)
+      fetch(req, { cache: "reload" })
         .then((res) => {
           const resClone = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
