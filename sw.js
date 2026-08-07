@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v135";
+const CACHE_NAME = "family-memories-v136";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -26,7 +26,8 @@ const PRECACHE_IMAGES = [
   "./assets/images/celebrations-hero.jpg",
   "./assets/images/study-hero.jpg",
   "./assets/images/gallery-hero.jpg",
-  "./assets/images/upcoming-event.jpg"
+  "./assets/images/upcoming-event.jpg",
+  "./assets/images/periodic-table.jpg"
 ];
 
 self.addEventListener("install", (event) => {
