@@ -111,7 +111,18 @@ const views = ["authView","pendingView","appView"];
 const pages = ["home","memories","trips","celebrations","study","mediaHub","mediaSection","search","profile","admin"];
 const tableMap = {memory:"memories",trip:"trips",celebration:"celebrations",study:"study_materials"};
 
-function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
+let _toastHideTimer=null;
+function toast(msg){
+  const t=$("toast");
+  t.textContent=msg;
+  if(!t.open){ try{t.show()}catch(e){} }
+  t.classList.add("show");
+  clearTimeout(_toastHideTimer);
+  _toastHideTimer=setTimeout(()=>{
+    t.classList.remove("show");
+    setTimeout(()=>{ try{t.close()}catch(e){} },250);
+  },2600);
+}
 function showView(id){views.forEach(v=>$(v).classList.toggle("hidden",v!==id))}
 function initials(name){return (name||"?").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()}
 
@@ -376,12 +387,12 @@ async function openFolder(section,folder){
   $(browser).innerHTML=`<div class="folder-toolbar">
     <button class="secondary back-folders">← All folders</button>
     ${isUncategorized ? '<p class="muted folder-toolbar-desc">'+escapeHtml(folder.description||"")+'</p>' : ""}
-    ${isUncategorized ? "" : '<button class="primary upload-folder">+ Add / Upload</button>'}
+    ${isUncategorized ? "" : '<button class="primary upload-folder hidden">+ Add / Upload</button>'}
   </div><div id="${browser}Items" class="content-grid"></div>`;
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
   const uploadBtn=$(browser).querySelector(".upload-folder");
   if(uploadBtn) uploadBtn.onclick=()=>openAddForFolder(type);
-  loadFolderItems(type, isUncategorized ? {ids:folder._orphanIds||[]} : folder.id, browser+"Items");
+  loadFolderItems(type, isUncategorized ? {ids:folder._orphanIds||[]} : folder.id, browser+"Items", uploadBtn);
 }
 
 function openAddForFolder(type){
@@ -562,7 +573,7 @@ function renderItemsIncrementally(items,target){
   renderBatch();
 }
 
-async function loadFolderItems(type,folderIdOrIds,target){
+async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn){
   $(target).innerHTML='<div class="empty">Loading…</div>';
   const table=tableMap[type];
   let query = client.from(table).select("*");
@@ -579,7 +590,8 @@ async function loadFolderItems(type,folderIdOrIds,target){
   }
   const {data,error} = await query.order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
-  if(!data?.length){ renderEmptyFolderState(type,target); return }
+  if(!data?.length){ renderEmptyFolderState(type,target); toolbarUploadBtn?.classList.add("hidden"); return }
+  toolbarUploadBtn?.classList.remove("hidden");
 
   const items=await Promise.all(data.map(async item=>{
     let signedUrl=null;
