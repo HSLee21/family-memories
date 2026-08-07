@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v139 loaded");
+console.log("APP.JS family-memories-v140 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1485,7 +1485,12 @@ function showToolIconGrid(){
   document.querySelectorAll("#toolPanelsWrap .tool-card").forEach(p=>p.classList.add("hidden"));
   studyChromeEls().forEach(el=>el.classList.remove("hidden"));
   const periodicWrap = $("periodicImageWrap");
-  if (periodicWrap) periodicWrap.classList.remove("landscape-view", "orient-portrait");
+  if (periodicWrap) {
+    periodicWrap.classList.remove("landscape-view", "orient-portrait");
+    if (periodicWrap.parentNode === document.body && periodicWrap._originalParent) {
+      periodicWrap._originalParent.insertBefore(periodicWrap, periodicWrap._originalNextSibling);
+    }
+  }
   if ($("periodicExitBtn")) $("periodicExitBtn").classList.add("hidden");
   document.body.style.overflow = "";
   document.body.classList.remove("periodic-active");
@@ -1572,6 +1577,11 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
 // real landscape orientation is detected - no CSS trickery, no confusion.
 (function(){
   const wrap = $("periodicImageWrap");
+  // Where this element normally lives, so we can put it back on exit.
+  // Stored on the element itself so showToolIconGrid() (a separate function,
+  // used for the "‹ Back to tools" link) can also restore it correctly.
+  wrap._originalParent = wrap.parentNode;
+  wrap._originalNextSibling = wrap.nextSibling;
   const orientationQuery = window.matchMedia("(orientation: landscape)");
   function updateOrientationState(){
     wrap.classList.toggle("orient-portrait", !orientationQuery.matches);
@@ -1580,8 +1590,20 @@ if ($("toolPanelBackBtn")) $("toolPanelBackBtn").onclick = showToolIconGrid;
     wrap.classList.remove("landscape-view");
     $("periodicExitBtn").classList.add("hidden");
     document.body.style.overflow = "";
+    if (wrap.parentNode === document.body) {
+      wrap._originalParent.insertBefore(wrap, wrap._originalNextSibling);
+    }
   }
   $("periodicRotateBtn").onclick = () => {
+    // position:fixed only positions relative to the true viewport if none of
+    // its ancestors have a transform/filter/etc set - if any do (even
+    // transiently, e.g. from a page-transition animation), position:fixed
+    // gets trapped inside that ancestor's box instead of covering the real
+    // screen, which is exactly what caused the header/nav to stay visible
+    // above and below this "full screen" view after rotating. Moving this
+    // element to be a direct child of <body> sidesteps that entirely -
+    // there's no ancestor left that could trap it.
+    document.body.appendChild(wrap);
     wrap.classList.add("landscape-view");
     $("periodicExitBtn").classList.remove("hidden");
     document.body.style.overflow = "hidden";
