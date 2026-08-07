@@ -70,8 +70,8 @@
 #toolPanel-periodic{background:#fff}
 .periodic-image-scroll img{display:block;height:340px;width:auto;max-width:none;border-radius:14px}
 @media (max-width:480px){.periodic-image-scroll:not(.landscape-view){overflow-x:hidden!important}.periodic-image-scroll:not(.landscape-view) img{display:block!important;height:auto!important;width:100%!important;max-width:100%!important}}
-.periodic-image-scroll.landscape-view{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;z-index:900;border-radius:0;background:#fff;display:flex;align-items:flex-start;justify-content:center;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:calc(52px + env(safe-area-inset-top)) 0 0;box-sizing:border-box}
-.periodic-image-scroll.landscape-view img{height:calc(100vh - 52px - env(safe-area-inset-top));width:auto;max-width:none;border-radius:0;margin:0 auto;display:block}
+.periodic-image-scroll.landscape-view{position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;z-index:900;border-radius:0;background:#fff;display:flex;align-items:center;justify-content:center;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:calc(50px + env(safe-area-inset-top)) 0 calc(50px + env(safe-area-inset-bottom));box-sizing:border-box}
+.periodic-image-scroll.landscape-view img{height:calc(100vh - 100px - env(safe-area-inset-top) - env(safe-area-inset-bottom));width:auto;max-width:none;border-radius:0;margin:0 auto;display:block}
 .periodic-rotate-hint{display:none;flex-direction:column;align-items:center;gap:14px;padding:32px;text-align:center;color:var(--ink);max-width:320px}
 .periodic-rotate-hint .rotate-icon{font-size:56px;display:inline-block;animation:periodicRotateHint 1.6s ease-in-out infinite}
 @keyframes periodicRotateHint{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
