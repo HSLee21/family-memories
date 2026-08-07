@@ -14,7 +14,7 @@
 .event-card{width:100%;border:1px solid var(--line);border-radius:20px;background:#fff;padding:10px 14px;box-shadow:0 6px 20px #1822300a;text-align:left}
 .event-card:empty{visibility:hidden;border-color:transparent;box-shadow:none}
 .event-card-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.event-card-icon-img{flex-shrink:0;width:26px;height:26px;border-radius:7px;object-fit:cover}
+.event-card-icon-img{flex-shrink:0;width:26px;height:26px;border-radius:50%;object-fit:cover}
 .event-card-title{flex:1;min-width:0;font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .event-card-add{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;border:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
 .event-card-row{display:flex;align-items:center;gap:10px}
