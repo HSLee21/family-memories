@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v153 loaded");
+console.log("APP.JS family-memories-v154 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -926,8 +926,9 @@ if($("familyTreePhotoInput")) $("familyTreePhotoInput").onchange=async e=>{
   const slotKey=e.target.dataset.slot;
   e.target.value="";
   if(!file||!slotKey) return;
+  const uploadFile=await compressImageIfNeeded(file);
   const path=familyTreeStoragePath(slotKey);
-  const {error:upErr}=await b2Storage.upload(path,file,{upsert:true,contentType:file.type});
+  const {error:upErr}=await b2Storage.upload(path,uploadFile,{upsert:true,contentType:uploadFile.type});
   if(upErr) return toast(upErr.message);
   const {error:dbErr}=await client.from("family_tree_slots").update({photo_path:path,updated_at:new Date().toISOString()}).eq("slot_key",slotKey);
   if(dbErr) return toast(dbErr.message);
@@ -1039,8 +1040,9 @@ if($("profilePhotoBtn")) $("profilePhotoBtn").onclick=()=>$("profilePhotoInput")
 if($("profilePhotoInput")) $("profilePhotoInput").onchange=async e=>{
   const file=e.target.files?.[0];
   if(!file || !currentUser) return;
+  const uploadFile=await compressImageIfNeeded(file);
   const {error}=await b2Storage.upload(
-    profileStoragePath(), file, {upsert:true,contentType:file.type}
+    profileStoragePath(), uploadFile, {upsert:true,contentType:uploadFile.type}
   );
   if(error) return toast(error.message);
   await loadProfilePhoto();
@@ -1272,7 +1274,8 @@ if($("coverFileInput")) $("coverFileInput").onchange=async e=>{
   const file=e.target.files?.[0];
   if(!file) return;
   if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
-  const {error}=await b2Storage.upload(coverStoragePath(),file,{upsert:true,contentType:file.type});
+  const uploadFile=await compressImageIfNeeded(file);
+  const {error}=await b2Storage.upload(coverStoragePath(),uploadFile,{upsert:true,contentType:uploadFile.type});
   if(error) return toast(error.message);
   try{ localStorage.removeItem("cover_signed_url_cache"); }catch(e){}
   toast("Family cover updated.");
@@ -1319,16 +1322,17 @@ function initCardCameraButtons(){
       const file = e.target.files?.[0];
       if(!file) return;
       if(!file.type.startsWith("image/")) return toast("Please choose an image file.");
+      const uploadFile = await compressImageIfNeeded(file);
       const reader = new FileReader();
       reader.onload = () => {
         const dataUrl = reader.result;
         setCardImageDOM(card, dataUrl);
         try{ localStorage.setItem(cardLocalKey(card), dataUrl); }catch{}
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(uploadFile);
       if(currentUser){
         try{
-          const {error} = await b2Storage.upload(cardStoragePath(card), file, {upsert:true, contentType:file.type});
+          const {error} = await b2Storage.upload(cardStoragePath(card), uploadFile, {upsert:true, contentType:uploadFile.type});
           if(error) toast("Saved locally. Cloud error: "+error.message);
           else {
             toast("Card image updated.");
