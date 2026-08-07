@@ -1,8 +1,45 @@
-console.log("APP.JS family-memories-v160 loaded");
+console.log("APP.JS family-memories-v161 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
 // explicitly signs out (or clears the app's storage / reinstalls).
+//
+// Usage tracker: Supabase doesn't expose a public API for the exact
+// dashboard egress numbers, so this is a self-measured proxy instead -
+// every request the Supabase client makes passes through here, and we add
+// up each response's Content-Length. Not identical to Supabase's own
+// billing figure (their egress also includes Storage/Realtime/Auth
+// overhead beyond database respones, and compression can affect header
+// accuracy), but it's a real, live signal fully under our own control that
+// can warn ahead of time, which a manually-checked dashboard can't do.
+const supabaseUsageTracker = {
+  totalBytes: 0, requestCount: 0, since: Date.now(),
+  load(){
+    try{
+      const saved = JSON.parse(localStorage.getItem("supabase_usage_tracker")||"{}");
+      this.totalBytes = saved.totalBytes || 0;
+      this.requestCount = saved.requestCount || 0;
+      this.since = saved.since || Date.now();
+    }catch(e){ this.since = Date.now(); }
+  },
+  save(){
+    try{ localStorage.setItem("supabase_usage_tracker", JSON.stringify({totalBytes:this.totalBytes, requestCount:this.requestCount, since:this.since})); }catch(e){}
+  },
+  reset(){ this.totalBytes=0; this.requestCount=0; this.since=Date.now(); this.save(); }
+};
+supabaseUsageTracker.load();
+
+async function trackedSupabaseFetch(input, init){
+  const res = await fetch(input, init);
+  try{
+    const len = res.headers.get("content-length");
+    if(len) supabaseUsageTracker.totalBytes += parseInt(len,10);
+    supabaseUsageTracker.requestCount += 1;
+    supabaseUsageTracker.save();
+  }catch(e){}
+  return res;
+}
+
 const client = window.supabase.createClient(
   cfg.SUPABASE_URL,
   cfg.SUPABASE_PUBLISHABLE_KEY,
@@ -12,7 +49,8 @@ const client = window.supabase.createClient(
       storage: window.localStorage,
       autoRefreshToken: true,
       detectSessionInUrl: true
-    }
+    },
+    global: { fetch: trackedSupabaseFetch }
   }
 );
 
@@ -1771,6 +1809,9 @@ if($("familyAdminShortcut")) $("familyAdminShortcut").onclick=()=>navigate("admi
 if($("changePasswordShortcut")) $("changePasswordShortcut").onclick=()=>{showView("authView");showAuthForm("forgot");};
 if($("settingsShortcut")) $("settingsShortcut").onclick=()=>{
   $("settingsDisplayName").value = currentProfile?.name || "";
+  const isAdmin = currentProfile?.role === "admin";
+  $("storageUsageSection").classList.toggle("hidden", !isAdmin);
+  if(isAdmin) initStorageUsagePanel();
   $("settingsDialog").showModal();
 };
 if($("closeSettingsDialog")) $("closeSettingsDialog").onclick=()=>$("settingsDialog").close();
@@ -1789,6 +1830,80 @@ if($("settingsForm")) $("settingsForm").onsubmit=async e=>{
   $("settingsDialog").close();
 };
 if($("notificationBtn")) $("notificationBtn").onclick=()=>toast("Activity notifications will appear here.");
+
+/* ---------- Storage Usage panel (Settings dialog, admin only) ---------- */
+const B2_TOTAL_GB = 10;
+function loadUsageThresholds(){
+  let t = {b2Pct:80, supabaseGB:3};
+  try{ t = {...t, ...JSON.parse(localStorage.getItem("usage_alert_thresholds")||"{}")}; }catch(e){}
+  return t;
+}
+function saveUsageThresholds(t){
+  try{ localStorage.setItem("usage_alert_thresholds", JSON.stringify(t)); }catch(e){}
+}
+function setUsageBar(fillEl, pct){
+  fillEl.style.width = Math.min(100,pct) + "%";
+  fillEl.classList.toggle("usage-warn", pct>=70 && pct<90);
+  fillEl.classList.toggle("usage-danger", pct>=90);
+}
+function renderSupabaseUsageText(){
+  const gb = (supabaseUsageTracker.totalBytes / (1024*1024*1024));
+  const since = new Date(supabaseUsageTracker.since).toLocaleDateString();
+  $("supabaseUsageText").textContent = `~${gb.toFixed(3)} GB transferred (${supabaseUsageTracker.requestCount} requests) since ${since}`;
+}
+async function refreshB2Usage(){
+  $("b2UsageText").textContent = "Checking...";
+  try{
+    const {usedBytes} = await b2Fetch("/usage", {});
+    const usedGB = usedBytes / (1024*1024*1024);
+    const pct = (usedGB / B2_TOTAL_GB) * 100;
+    setUsageBar($("b2UsageBarFill"), pct);
+    $("b2UsageText").textContent = `${usedGB.toFixed(2)} GB / ${B2_TOTAL_GB} GB used (${pct.toFixed(0)}%)`;
+  }catch(e){
+    $("b2UsageText").textContent = "Couldn't check usage: " + e.message;
+  }
+}
+function initStorageUsagePanel(){
+  const t = loadUsageThresholds();
+  $("b2AlertThreshold").value = t.b2Pct;
+  $("supabaseAlertThreshold").value = t.supabaseGB;
+  renderSupabaseUsageText();
+  $("b2UsageText").textContent = "Tap Refresh to check current usage.";
+  setUsageBar($("b2UsageBarFill"), 0);
+}
+if($("refreshB2UsageBtn")) $("refreshB2UsageBtn").onclick = refreshB2Usage;
+if($("resetSupabaseUsageBtn")) $("resetSupabaseUsageBtn").onclick = ()=>{
+  if(!confirm("Reset the database activity counter back to zero?")) return;
+  supabaseUsageTracker.reset();
+  renderSupabaseUsageText();
+};
+if($("b2AlertThreshold")) $("b2AlertThreshold").onchange = ()=>{
+  const t = loadUsageThresholds();
+  t.b2Pct = Math.max(1, Math.min(99, parseInt($("b2AlertThreshold").value,10) || 80));
+  saveUsageThresholds(t);
+};
+if($("supabaseAlertThreshold")) $("supabaseAlertThreshold").onchange = ()=>{
+  const t = loadUsageThresholds();
+  t.supabaseGB = Math.max(0.1, parseFloat($("supabaseAlertThreshold").value) || 3);
+  saveUsageThresholds(t);
+};
+// Passive check (no network call) each time the app comes back to the
+// foreground - warns using the already-tracked Supabase number without
+// needing the Settings dialog to be open. B2 isn't checked here since that
+// needs a live network call; the admin checks that from Settings directly.
+function checkSupabaseUsageAlert(){
+  if(currentProfile?.role!=="admin") return;
+  const t = loadUsageThresholds();
+  const gb = supabaseUsageTracker.totalBytes / (1024*1024*1024);
+  if(gb >= t.supabaseGB){
+    const key = "usage_alert_shown_"+Math.floor(gb/t.supabaseGB);
+    if(sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key,"1");
+    toast(`Database activity has passed ${t.supabaseGB} GB since your last reset - worth checking Settings.`);
+  }
+}
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible") checkSupabaseUsageAlert(); });
+
 
 if($("globalSearch")) $("globalSearch").addEventListener("input",async e=>{
   const q=e.target.value.trim();
