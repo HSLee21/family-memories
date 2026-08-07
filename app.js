@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v147 loaded");
+console.log("APP.JS family-memories-v148 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -187,9 +187,10 @@ $("signOutBtn").onclick=signOut; $("pendingSignOut").onclick=signOut;
 
 async function loadProfile(){
   const {data,error}=await client.from("profiles").select("*").eq("id",currentUser.id).single();
-  if(error){console.error(error);toast("Could not load your profile.");return}
+  if(error){console.error(error);toast("Could not load your profile.");hideLoader();return}
   currentProfile=data;
-  if(data.status!=="approved"){showView("pendingView");return}
+  if(data.status!=="approved"){hideLoader();showView("pendingView");return}
+  hideLoader();
   showView("appView");
   $("welcomeText").textContent=`Welcome, ${data.name||currentUser.email}`;
   $("userBadge").textContent=`${initials(data.name)}  ${data.name||currentUser.email}`;
