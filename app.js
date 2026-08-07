@@ -1117,7 +1117,6 @@ function renderEventCard(){
       <span class="event-card-title">Upcoming Event</span>
       <button class="event-card-add" id="eventCardAddBtn" type="button">+</button>
     </div>
-    <div class="event-card-divider"></div>
     ${rowHtml}
   `;
 
