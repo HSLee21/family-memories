@@ -1,13 +1,4 @@
-const CACHE_NAME = "family-memories-v150";
-// Images live in their own cache that is NOT tied to the app version and is
-// deliberately never deleted on activate. Using the versioned CACHE_NAME for
-// images meant every single update wiped out everything previously cached,
-// including all the hero/icon images - so right after every update, Home
-// had to fetch every image over the network from scratch before it could
-// display properly (showing broken-image placeholders in the meantime).
-// Images almost never change, so there's no good reason their cache should
-// ever be tied to how often the app code itself changes.
-const IMAGE_CACHE_NAME = "family-memories-images-v1";
+const CACHE_NAME = "family-memories-v151";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -67,9 +58,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      // Only delete OLD versioned app-shell caches - never touch
-      // IMAGE_CACHE_NAME, which is meant to persist across every update.
-      Promise.all(keys.filter((k) => k !== CACHE_NAME && k !== IMAGE_CACHE_NAME).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
     )
   );
   self.clients.claim();
@@ -132,7 +121,7 @@ self.addEventListener("fetch", (event) => {
       caches.match(req).then((cached) => {
         if (cached) {
           fetch(req, { cache: "reload" })
-            .then((res) => { if (res.ok) caches.open(IMAGE_CACHE_NAME).then((cache) => cache.put(req, res)); })
+            .then((res) => { if (res.ok) caches.open(CACHE_NAME).then((cache) => cache.put(req, res)); })
             .catch(() => {});
           return cached;
         }
@@ -140,7 +129,7 @@ self.addEventListener("fetch", (event) => {
           .then((res) => {
             if (res.ok) {
               const resClone = res.clone();
-              caches.open(IMAGE_CACHE_NAME).then((cache) => cache.put(req, resClone));
+              caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
             }
             return res;
           })
