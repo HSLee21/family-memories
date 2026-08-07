@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v154 loaded");
+console.log("APP.JS family-memories-v155 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1064,7 +1064,7 @@ async function loadHomeExperience(){
     loadCardImages(),
     loadUpcomingEvents()
   ]);
-  setTimeout(()=>warmSlideshowCache(),1000);
+  setTimeout(()=>warmSlideshowCache(),6000);
 }
 
 
@@ -1831,13 +1831,19 @@ async function signMediaItems(items){
 
 
 async function preloadSlideshowImages(items){
-  const queue = items.slice(0,30);
-  queue.forEach(item=>{
+  // Only a handful, staggered rather than all firing at once - this is a
+  // "nice to have if you happen to open the slideshow soon" background
+  // task, not something that should compete hard for bandwidth against
+  // whatever the person is actually trying to look at right now.
+  const queue = items.slice(0,8);
+  queue.forEach((item,i)=>{
     if(!item.signedUrl) return;
-    const img=new Image();
-    img.decoding="async";
-    img.loading="eager";
-    img.src=item.signedUrl;
+    setTimeout(()=>{
+      const img=new Image();
+      img.decoding="async";
+      img.loading="eager";
+      img.src=item.signedUrl;
+    }, i*400);
   });
 }
 
@@ -1850,7 +1856,7 @@ async function warmSlideshowCache(){
   slideshowPrefetchStarted=true;
   try{
     const items=await fetchMediaItems(MEDIA_TYPES_ALL);
-    const photos=items.filter(i=>!isVideoPath(i.file_path)).slice(0,60);
+    const photos=items.filter(i=>!isVideoPath(i.file_path)).slice(0,20);
     const signed=await signMediaItems(photos);
     preloadSlideshowImages(signed.filter(i=>i.signedUrl));
   }catch(e){}
