@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v126 loaded");
+console.log("APP.JS family-memories-v127 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1118,7 +1118,6 @@ async function loadUpcomingEvents(){
 function renderEventCard(){
   const card = $("upcomingEventCard");
   if(!card) return;
-  const iconImg = `<img alt="" class="event-card-icon-img" decoding="sync" src="assets/images/upcoming-event.jpg"/>`;
 
   let rowHtml;
   if(!upcomingEventsCache.length){
@@ -1144,16 +1143,24 @@ function renderEventCard(){
       </div>`;
   }
 
-  card.innerHTML = `
-    <div class="event-card-top">
-      ${iconImg}
-      <span class="event-card-title">Upcoming Event</span>
-      <button class="event-card-add" id="eventCardAddBtn" type="button">+</button>
-    </div>
-    ${rowHtml}
-  `;
-
-  $("eventCardAddBtn").onclick = e=>{ e.stopPropagation(); openEventDialog(); };
+  // Build the static top row (icon/title/add button) only once - rebuilding
+  // it every visit to Home (even with byte-identical markup) creates a
+  // brand-new <img> element each time, forcing a fresh decode every time
+  // regardless of how well the underlying bytes are cached. The icon never
+  // changes, so keep that same DOM node across re-renders and only ever
+  // replace the dynamic bottom row (title/date/countdown).
+  if(!card.querySelector(".event-card-top")){
+    card.innerHTML = `
+      <div class="event-card-top">
+        <img alt="" class="event-card-icon-img" decoding="sync" src="assets/images/upcoming-event.jpg"/>
+        <span class="event-card-title">Upcoming Event</span>
+        <button class="event-card-add" id="eventCardAddBtn" type="button">+</button>
+      </div>
+      <div class="event-card-row" id="eventCardRow"></div>
+    `;
+    $("eventCardAddBtn").onclick = e=>{ e.stopPropagation(); openEventDialog(); };
+  }
+  $("eventCardRow").outerHTML = rowHtml;
   $("eventCardRow").onclick = upcomingEventsCache.length ? ()=>openEventListDialog() : ()=>openEventDialog();
 }
 
