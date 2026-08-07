@@ -1817,26 +1817,36 @@ let lastSlideUrl = "";
 const musicStoragePath = (key) => `${currentUser.id}/app-settings/slideshow-music-${key||"all"}`;
 let slideshowMusicKey = "all";
 let slideshowHasMusic = false;
+let loadedMusicKey = null; // which key's audio is currently loaded into the <audio> element,
+                            // so reopening the same slideshow doesn't re-fetch+re-buffer from scratch
 
 async function loadSlideshowMusic(key){
   const audio = $("slideshowMusic");
+  // Already loaded (or confirmed absent) for this exact key - reuse it instead of
+  // re-fetching a fresh signed URL and re-buffering the whole track from zero.
+  if(loadedMusicKey === key){
+    return !!audio.src;
+  }
   try{
     const {data,error} = await b2Storage.createSignedUrl(musicStoragePath(key),3600);
     if(error || !data?.signedUrl){
       audio.pause();
       audio.removeAttribute("src");
       audio.load();
+      loadedMusicKey = key;
       return false;
     }
     audio.src = data.signedUrl;
     audio.preload = "auto";
     audio.load(); // kick off buffering immediately, in parallel with photo loading,
                    // instead of only starting the network fetch once play() is called later
+    loadedMusicKey = key;
     return true;
   }catch(e){
     audio.pause();
     audio.removeAttribute("src");
     audio.load();
+    loadedMusicKey = key;
     return false;
   }
 }
@@ -1890,6 +1900,7 @@ if($("slideshowMusicInput")) $("slideshowMusicInput").onchange=async(e)=>{
   const {error} = await b2Storage.upload(musicStoragePath(slideshowMusicKey),file,{upsert:true,contentType:file.type});
   if(error){ toast(error.message); return; }
   toast("Music added — it'll play for this collection's slideshows.");
+  loadedMusicKey = null; // force a fresh fetch - the file at this key just changed
   slideshowHasMusic = await loadSlideshowMusic(slideshowMusicKey);
   if(slideshowHasMusic && !$("slideshowOverlay").classList.contains("hidden")){
     $("slideshowMusic").currentTime=0;
