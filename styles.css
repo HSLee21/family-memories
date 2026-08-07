@@ -288,17 +288,6 @@ html,body{overflow-x:hidden}
     background:#fff!important;
   }
 
-  /* When the periodic table tool is open and the phone is actually rotated
-     to landscape, hide the header and bottom nav so the table gets the
-     full screen instead of being squeezed into the strip between them. */
-  @media (orientation:landscape){
-    body.periodic-active .topbar,
-    body.periodic-active .mobile-bottom-nav{ display:none!important; }
-    body.periodic-active .periodic-image-scroll:not(.landscape-view) img{
-      height:calc(100vh - 24px)!important;
-    }
-  }
-
   /* ---------- Topbar ---------- */
   .topbar{
     flex:0 0 auto!important;
