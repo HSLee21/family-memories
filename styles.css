@@ -82,12 +82,14 @@
 .calc-actions,.converter-row{display:flex;gap:10px;margin-top:10px}.result-box{margin-top:12px;padding:14px;background:#fff;border-radius:12px}
 .timer-preset-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
 .timer-preset-row button{padding:12px 2px;font-size:14px;font-weight:700}
-.calendar-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.calendar-header button{border:0;background:#eef2f7;border-radius:10px;width:34px;height:34px;font-size:16px;font-weight:700;cursor:pointer}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:13px}
-.calendar-grid .cal-day{padding:9px 0;border-radius:10px;background:#f8fafc;cursor:pointer}
+.calendar-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.calendar-header button{border:0;background:#eef2f7;border-radius:10px;width:30px;height:30px;font-size:15px;font-weight:700;cursor:pointer}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:12px}
+.calendar-grid .cal-day{padding:6px 0;border-radius:8px;background:#f8fafc;cursor:pointer}
 .calendar-grid .cal-day.empty-cell{background:none;cursor:default}
 .calendar-grid .cal-day.has-event{background:#fde68a;font-weight:700}
+#toolPanel-calendar .converter-row{margin-top:8px}
+#toolPanel-calendar .result-box{margin-top:8px;padding:10px}
 .section-hero.hero-compact{padding:12px 20px;gap:10px}
 .section-hero.hero-compact .hero-art{font-size:26px}
 .section-hero.hero-compact h1{font-size:20px;margin:0}
