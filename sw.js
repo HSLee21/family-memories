@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v119";
+const CACHE_NAME = "family-memories-v120";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -99,7 +99,17 @@ self.addEventListener("fetch", (event) => {
     );
   } else if (isLocalImage) {
     event.respondWith(
-      fetch(req)
+      // {cache:"reload"} here too: without it, a plain fetch() honors GitHub
+      // Pages' Cache-Control:max-age=300 like any normal request, so a
+      // one-off bad/incomplete browser HTTP-cache entry for an image (e.g.
+      // from a page navigating away mid-download during heavy reload
+      // testing) could keep being served as broken for up to 5 minutes with
+      // no way to self-recover - exactly the "still broken after reopening"
+      // symptom this caused. Cache Storage (below) still provides the
+      // opportunistic offline/last-known-good fallback, so this doesn't
+      // meaningfully increase bandwidth use in normal cases - a fresh
+      // request just gets a fast 304 Not Modified if the file is unchanged.
+      fetch(req, { cache: "reload" })
         .then((res) => {
           if (res.ok) {
             const resClone = res.clone();
