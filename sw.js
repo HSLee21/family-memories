@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v100";
+const CACHE_NAME = "family-memories-v101";
 const APP_SHELL = [
   "./",
   "./index.html",

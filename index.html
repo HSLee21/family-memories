@@ -25,6 +25,7 @@
 </head>
 <body>
 <dialog id="toast"></dialog>
+<dialog id="updateBanner"><span>A new version is ready.</span><button id="updateBannerBtn" type="button">Update</button></dialog>
 <div id="appLoader" style="position:fixed;inset:0;z-index:9999;background:#f7f9fc;display:grid;place-items:center;font-family:Inter,sans-serif">
 <div style="text-align:center"><div style="font-family:Pacifico,cursive;font-size:28px">Family <span style="color:#ef4444">♥</span></div><div style="font-weight:800;color:#1670f8;margin-top:4px">Memories</div><div style="margin-top:16px;width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#1670f8;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block"></div></div>
 </div>
@@ -275,6 +276,22 @@
   [0,50,150,300,600,1200].forEach(function(t){ setTimeout(resetScroll, t); });
 })();
 if ('serviceWorker' in navigator) {
+  // Only true "you already had an older version running, now a newer one has
+  // taken over" transitions should prompt the person - the very first activation
+  // on a brand new visit also fires controllerchange, but that's not an update.
+  var hadControllerAtLoad = !!navigator.serviceWorker.controller;
+  var reloadingForUpdate = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if (!hadControllerAtLoad || reloadingForUpdate) return;
+    var banner = document.getElementById('updateBanner');
+    var btn = document.getElementById('updateBannerBtn');
+    if (!banner || !btn) return;
+    if (!banner.open) { try { banner.show(); } catch(e){} }
+    btn.onclick = function(){
+      reloadingForUpdate = true;
+      location.reload();
+    };
+  });
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('sw.js').catch(function(err){
       console.warn('Service worker registration failed:', err);
