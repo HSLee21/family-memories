@@ -611,7 +611,7 @@ body.android .family-space-card{
    sitting flush against content on every non-Home page. */
 body.android .mobile-bottom-nav{
     height:54px !important;
-    bottom:calc(14px + env(safe-area-inset-bottom)) !important;
+    bottom:env(safe-area-inset-bottom) !important;
 }
 body.android .mobile-nav-item{
     padding:6px 0 4px !important;
@@ -630,7 +630,7 @@ body.android .mobile-nav-item.add-main .add-plus{
     margin-bottom:3px !important;
 }
 body.android .main{
-    padding-bottom:calc(76px + env(safe-area-inset-bottom)) !important;
+    padding-bottom:calc(64px + env(safe-area-inset-bottom)) !important;
 }
 
 /* ===== Admin page balance + avatar polish ===== */
