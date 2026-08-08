@@ -1995,6 +1995,7 @@ function loadProfilePage(){
   $("profileDisplayEmail").textContent=currentProfile.email||currentUser.email||"";
   $("profileLargeFallback").textContent=initials(currentProfile.name||currentUser.email);
   $("familyAdminShortcut").classList.toggle("hidden",currentProfile.role!=="admin");
+  if($("appVersionLabel")) $("appVersionLabel").textContent = window.APP_RUNNING_VERSION ? `Version: ${window.APP_RUNNING_VERSION}` : "";
   loadProfilePhoto();
 }
 
