@@ -719,12 +719,15 @@ async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,select
   const {data,error} = await query.order("sort_order",{ascending:true, nullsFirst:false}).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
   if(!data?.length){ renderEmptyFolderState(type,target); toolbarUploadBtn?.classList.add("hidden"); selectBtn?.classList.add("hidden"); return }
+  toolbarUploadBtn?.classList.remove("hidden");
   // Respect the currently-active mode instead of unconditionally revealing
   // Upload - otherwise every reload (e.g. after moving or deleting an item
   // while in Select mode) briefly flashes it visible again before
-  // setFolderMode re-hides it moments later.
-  if(browser && folderModeState[browser]==="select") toolbarUploadBtn?.classList.add("hidden");
-  else toolbarUploadBtn?.classList.remove("hidden");
+  // setFolderMode re-hides it moments later. reserved-hidden (not hidden)
+  // keeps its layout space intact, so Select's centered position between
+  // Back and Upload never shifts even while Upload is invisible.
+  if(browser && folderModeState[browser]==="select") toolbarUploadBtn?.classList.add("reserved-hidden");
+  else toolbarUploadBtn?.classList.remove("reserved-hidden");
   selectBtn?.classList.remove("hidden");
 
   const items=await Promise.all(data.map(async item=>{
@@ -827,7 +830,7 @@ function setFolderMode(browser,type,folderIdOrIds,mode){
   const selectBtn=root.querySelector(".select-toggle");
   const uploadBtn=root.querySelector(".upload-folder");
   if(selectBtn) selectBtn.classList.toggle("active",mode==="select");
-  if(uploadBtn) uploadBtn.classList.toggle("hidden",mode==="select");
+  if(uploadBtn) uploadBtn.classList.toggle("reserved-hidden",mode==="select");
   updateBulkBarCount(browser);
 }
 function updateBulkBarCount(browser){
