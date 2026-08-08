@@ -1,4 +1,5 @@
 // Family Memories - B2 Signing Worker
+// (Deployed automatically via GitHub Actions - see .github/workflows/deploy-worker.yml)
 //
 // This Worker is the ONLY thing that ever holds Backblaze B2 credentials.
 // The browser app never talks to B2 directly except to PUT/GET the
