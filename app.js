@@ -1082,11 +1082,11 @@ if($("addMemberForm")) $("addMemberForm").onsubmit=async e=>{
     const data=await edgeFetch("invite",{email,role});
     toast(data.emailSent
       ? `Invitation emailed to ${email}.`
-      : `Invite added for ${email}, but the email couldn't be sent — share the app link with them yourself.`);
+      : `${email} added — share the app link with them so they can sign up.`);
     $("addMemberForm").reset();
     loadInvites();
   }catch(err){
-    toast(err.message||"Could not send invitation.");
+    toast(err.message||"Could not add family member.");
   }finally{
     if(btn) btn.disabled=false;
   }
