@@ -490,19 +490,18 @@ async function openFolder(section,folder){
   $(browser).innerHTML=`<div class="folder-toolbar">
     <button class="secondary back-folders">← All folders</button>
     ${isUncategorized ? '<p class="muted folder-toolbar-desc">'+escapeHtml(folder.description||"")+'</p>' : ""}
-    ${isUncategorized ? "" : '<button class="secondary reorder-toggle hidden">↕ Reorder</button><button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden">+ Add / Upload</button>'}
-  </div><div class="bulk-bar hidden"><span class="bulk-bar-count">0 selected</span><button type="button" class="secondary bulk-cancel">Cancel</button><button type="button" class="bulk-delete">🗑 Delete Selected</button></div><div id="${browser}Items" class="content-grid"></div>`;
+    ${isUncategorized ? "" : '<button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden">+ Add / Upload</button>'}
+  </div><div class="bulk-bar hidden"><span class="bulk-bar-count">0 selected</span><button type="button" class="secondary bulk-cancel">Cancel</button><button type="button" class="bulk-delete">🗑 Delete Selected</button></div><p class="wiggle-hint hidden">Drag to reorder · tap ✕ to delete · tap Done when finished</p><button type="button" class="secondary wiggle-done hidden">Done</button><div id="${browser}Items" class="content-grid"></div>`;
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
   const uploadBtn=$(browser).querySelector(".upload-folder");
   if(uploadBtn) uploadBtn.onclick=()=>openAddForFolder(type);
-  const reorderBtn=$(browser).querySelector(".reorder-toggle");
   const selectBtn=$(browser).querySelector(".select-toggle");
   const folderRef = isUncategorized ? {ids:folder._orphanIds||[]} : folder.id;
-  if(reorderBtn) reorderBtn.onclick=()=>setFolderMode(browser,type,folderRef,reorderBtn.classList.contains("active")?null:"reorder");
+  $(browser).querySelector(".wiggle-done").onclick=()=>setFolderMode(browser,type,folderRef,null);
   if(selectBtn) selectBtn.onclick=()=>setFolderMode(browser,type,folderRef,selectBtn.classList.contains("active")?null:"select");
   $(browser).querySelector(".bulk-cancel").onclick=()=>setFolderMode(browser,type,folderRef,null);
   $(browser).querySelector(".bulk-delete").onclick=()=>bulkDeleteSelected(browser,type,folderRef);
-  loadFolderItems(type, folderRef, browser+"Items", uploadBtn, reorderBtn, selectBtn, browser);
+  loadFolderItems(type, folderRef, browser+"Items", uploadBtn, selectBtn, browser);
 }
 
 function openAddForFolder(type){
@@ -692,7 +691,7 @@ function renderItemsIncrementally(items,target){
   renderBatch();
 }
 
-async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser){
+async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,selectBtn,browser){
   $(target).innerHTML='<div class="empty">Loading…</div>';
   const table=tableMap[type];
   let query = client.from(table).select("*");
@@ -709,10 +708,8 @@ async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorde
   }
   const {data,error} = await query.order("sort_order",{ascending:true, nullsFirst:false}).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
-  if(!data?.length){ renderEmptyFolderState(type,target); toolbarUploadBtn?.classList.add("hidden"); reorderBtn?.classList.add("hidden"); selectBtn?.classList.add("hidden"); return }
+  if(!data?.length){ renderEmptyFolderState(type,target); toolbarUploadBtn?.classList.add("hidden"); selectBtn?.classList.add("hidden"); return }
   toolbarUploadBtn?.classList.remove("hidden");
-  // Reordering needs at least 2 items to mean anything.
-  reorderBtn?.classList.toggle("hidden", data.length < 2);
   selectBtn?.classList.remove("hidden");
 
   const items=await Promise.all(data.map(async item=>{
@@ -737,17 +734,12 @@ const cards=items.map(item=>{
       : "";
     return `<article class="content-card" data-id="${item.id}" data-sort="${item.sort_order ?? ""}">
       <label class="content-select hidden"><input type="checkbox" class="item-checkbox" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}"></label>
+      <button type="button" class="wiggle-delete-badge hidden" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}" aria-label="Delete">✕</button>
       ${media}
       <div class="meta">${item.event_date||new Date(item.created_at).toLocaleDateString()}</div>
       <h3>${escapeHtml(item.title||"Untitled")}</h3>
       ${item.description?`<p>${escapeHtml(item.description)}</p>`:""}
-      <div class="content-card-actions">
-        <div class="reorder-controls hidden">
-          <button type="button" class="move-up" data-id="${item.id}" aria-label="Move up">↑</button>
-          <button type="button" class="move-down" data-id="${item.id}" aria-label="Move down">↓</button>
-        </div>
-        <button class="secondary delete-item" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}">Delete</button>
-      </div>
+      <button class="secondary delete-item" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}">Delete</button>
     </article>`;
   });
   renderItemsIncrementally(cards,target);
@@ -795,60 +787,66 @@ const cards=items.map(item=>{
     }
     mediaIndexCache.items=null;
     toast("Deleted.");
-    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
+    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,selectBtn,browser);
   });
 
-  document.querySelectorAll(`#${target} .move-up`).forEach(btn=>btn.onclick=async()=>{
-    const idx=items.findIndex(x=>x.id===btn.dataset.id);
-    if(idx<=0) return;
-    btn.disabled=true;
-    await swapSortOrder(table,items[idx],items[idx-1]);
-    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
-  });
-  document.querySelectorAll(`#${target} .move-down`).forEach(btn=>btn.onclick=async()=>{
-    const idx=items.findIndex(x=>x.id===btn.dataset.id);
-    if(idx<0||idx>=items.length-1) return;
-    btn.disabled=true;
-    await swapSortOrder(table,items[idx],items[idx+1]);
-    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
+  document.querySelectorAll(`#${target} .wiggle-delete-badge`).forEach(btn=>btn.onclick=async(e)=>{
+    e.stopPropagation();
+    if(!confirm("Delete this item? This cannot be undone.")) return;
+    const id=btn.dataset.id;
+    const filePath=btn.dataset.filePath?decodeURIComponent(btn.dataset.filePath):null;
+    const {error}=await client.from(table).delete().eq("id",id);
+    if(error){ toast(error.message); return; }
+    if(filePath){
+      await b2Storage.remove([filePath]);
+      videoPosterCache.delete(filePath);
+      persistVideoPosterCache();
+    }
+    mediaIndexCache.items=null;
+    toast("Deleted.");
+    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,selectBtn,browser);
   });
   document.querySelectorAll(`#${target} .item-checkbox`).forEach(cb=>cb.onchange=()=>updateBulkBarCount(browser));
+  if(browser) enableCardDragReorder(browser,target,type,folderIdOrIds,table);
 
-  // Re-apply whichever mode (reorder/select) was already active before this
-  // re-render, so toggling a checkbox or arrow doesn't silently reset back
-  // to the plain view every time.
-  if(browser) setFolderMode(browser,type,folderIdOrIds,folderModeState[browser]||null,{skipReload:true});
+  // Re-apply whichever mode (select/wiggle) was already active before this
+  // re-render, so toggling a checkbox doesn't silently reset back to the
+  // plain view every time.
+  if(browser) setFolderMode(browser,type,folderIdOrIds,folderModeState[browser]||null);
   },0);
 }
 
-async function swapSortOrder(table,itemA,itemB){
-  const a = typeof itemA.sort_order === "number" ? itemA.sort_order : 0;
-  const b = typeof itemB.sort_order === "number" ? itemB.sort_order : 0;
-  await Promise.all([
-    client.from(table).update({sort_order:b}).eq("id",itemA.id),
-    client.from(table).update({sort_order:a}).eq("id",itemB.id)
-  ]);
+// Persists the current on-screen order after a drag finishes - writes fresh
+// sequential sort_order values (0,1,2...) for every item in the folder,
+// rather than just the two that got swapped, since a single drag can move
+// an item past many others at once.
+async function persistFolderOrder(table,orderedIds){
+  await Promise.all(orderedIds.map((id,i)=>client.from(table).update({sort_order:i}).eq("id",id)));
 }
 
 // Tracks which mode (if any) is active per folder-browser element, so it
-// can be restored across re-renders (e.g. after deleting or reordering an
-// item) instead of silently dropping back to the plain view each time.
+// can be restored across re-renders (e.g. after deleting an item)
+// instead of silently dropping back to the plain view each time.
 const folderModeState = {};
-function setFolderMode(browser,type,folderIdOrIds,mode,opts){
+function setFolderMode(browser,type,folderIdOrIds,mode){
   folderModeState[browser]=mode;
   const root=$(browser);
   if(!root) return;
   root.querySelectorAll(".content-select").forEach(el=>el.classList.toggle("hidden",mode!=="select"));
-  root.querySelectorAll(".reorder-controls").forEach(el=>el.classList.toggle("hidden",mode!=="reorder"));
-  root.querySelectorAll(".delete-item").forEach(el=>el.classList.toggle("hidden",mode==="select"||mode==="reorder"));
+  root.querySelectorAll(".wiggle-delete-badge").forEach(el=>el.classList.toggle("hidden",mode!=="wiggle"));
+  root.querySelectorAll(".delete-item").forEach(el=>el.classList.toggle("hidden",mode==="select"||mode==="wiggle"));
+  root.querySelector(".content-grid")?.classList.toggle("wiggle-mode",mode==="wiggle");
   const bulkBar=root.querySelector(".bulk-bar");
   if(bulkBar) bulkBar.classList.toggle("hidden",mode!=="select");
-  const reorderBtn=root.querySelector(".reorder-toggle");
+  const wiggleHint=root.querySelector(".wiggle-hint");
+  const wiggleDone=root.querySelector(".wiggle-done");
+  if(wiggleHint) wiggleHint.classList.toggle("hidden",mode!=="wiggle");
+  if(wiggleDone) wiggleDone.classList.toggle("hidden",mode!=="wiggle");
   const selectBtn=root.querySelector(".select-toggle");
   const uploadBtn=root.querySelector(".upload-folder");
-  if(reorderBtn) reorderBtn.classList.toggle("active",mode==="reorder");
   if(selectBtn) selectBtn.classList.toggle("active",mode==="select");
-  if(uploadBtn) uploadBtn.classList.toggle("hidden",mode==="select"||mode==="reorder");
+  if(selectBtn) selectBtn.classList.toggle("hidden",mode==="wiggle");
+  if(uploadBtn) uploadBtn.classList.toggle("hidden",mode==="select"||mode==="wiggle");
   updateBulkBarCount(browser);
 }
 function updateBulkBarCount(browser){
@@ -877,10 +875,109 @@ async function bulkDeleteSelected(browser,type,folderIdOrIds){
   toast(`Deleted ${ids.length} item${ids.length>1?"s":""}.`);
   const target=browser+"Items";
   const toolbarUploadBtn=root.querySelector(".upload-folder");
-  const reorderBtn=root.querySelector(".reorder-toggle");
   const selectBtn=root.querySelector(".select-toggle");
   folderModeState[browser]=null; // bulk delete implicitly exits select mode - nothing left selected
-  loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
+  loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,selectBtn,browser);
+}
+
+// Long-press-to-drag reordering, matching the iOS home-screen icon pattern:
+// hold a card briefly, everything starts wiggling with a small delete badge
+// on each one, and the held card can be dragged to a new position while
+// the rest reflow live around it. Tapping "Done" (or a badge, to delete)
+// exits. Deliberately not using any drag library - Pointer Events cover
+// this cleanly on their own.
+function enableCardDragReorder(browser,target,type,folderIdOrIds,table){
+  const grid = document.getElementById(target);
+  if(!grid) return;
+  const LONG_PRESS_MS = 450;
+  const MOVE_CANCEL_PX = 10;
+
+  grid.querySelectorAll(".content-card").forEach(card=>{
+    let pressTimer=null, startX=0, startY=0, dragging=false, pointerId=null;
+    let placeholder=null;
+
+    function cancelPress(){
+      clearTimeout(pressTimer);
+      pressTimer=null;
+    }
+
+    function startDrag(e){
+      dragging=true;
+      card.classList.add("dragging");
+      grid.classList.add("wiggle-mode"); // long-press always enters wiggle mode, even if not already in it
+      if(folderModeState[browser]!=="wiggle") setFolderMode(browser,type,folderIdOrIds,"wiggle");
+      const rect=card.getBoundingClientRect();
+      card.style.width=rect.width+"px";
+      card.style.position="fixed";
+      card.style.left=rect.left+"px";
+      card.style.top=rect.top+"px";
+      card.style.zIndex="1000";
+      card.style.pointerEvents="none";
+      placeholder=document.createElement("div");
+      placeholder.className="content-card drag-placeholder";
+      placeholder.style.visibility="hidden";
+      placeholder.style.height=rect.height+"px";
+      card.parentNode.insertBefore(placeholder,card.nextSibling);
+      try{ card.setPointerCapture(pointerId); }catch(err){}
+    }
+
+    function onMove(e){
+      if(!dragging){
+        if(pressTimer && (Math.abs(e.clientX-startX)>MOVE_CANCEL_PX || Math.abs(e.clientY-startY)>MOVE_CANCEL_PX)){
+          cancelPress(); // moved too much before the hold completed - treat as a scroll/tap, not a drag
+        }
+        return;
+      }
+      e.preventDefault();
+      const dx=e.clientX-startX, dy=e.clientY-startY;
+      card.style.transform=`translate(${dx}px, ${dy}px)`;
+      // Find which sibling the pointer is currently over, and move the
+      // placeholder there so everything else reflows live.
+      const under=document.elementFromPoint(e.clientX,e.clientY);
+      const overCard=under && under.closest(".content-card:not(.dragging):not(.drag-placeholder)");
+      if(overCard && overCard.parentNode===grid){
+        const overRect=overCard.getBoundingClientRect();
+        const before = e.clientY < overRect.top+overRect.height/2;
+        grid.insertBefore(placeholder, before?overCard:overCard.nextSibling);
+      }
+    }
+
+    async function onUp(e){
+      cancelPress();
+      if(!dragging){ return; }
+      dragging=false;
+      card.classList.remove("dragging");
+      card.style.position="";
+      card.style.left="";
+      card.style.top="";
+      card.style.width="";
+      card.style.zIndex="";
+      card.style.pointerEvents="";
+      card.style.transform="";
+      grid.insertBefore(card, placeholder);
+      placeholder.remove();
+      placeholder=null;
+      const orderedIds=[...grid.querySelectorAll(".content-card")].map(c=>c.dataset.id);
+      await persistFolderOrder(table,orderedIds);
+      mediaIndexCache.items=null;
+    }
+
+    card.addEventListener("pointerdown",e=>{
+      if(e.target.closest(".wiggle-delete-badge, .content-select, .delete-item, .video-play-btn, .video-fs-btn, .file-link")) return;
+      if(folderModeState[browser]==="select") return; // don't fight with checkbox tapping
+      pointerId=e.pointerId;
+      startX=e.clientX; startY=e.clientY;
+      pressTimer=setTimeout(()=>startDrag(e),LONG_PRESS_MS);
+    });
+    card.addEventListener("pointermove",onMove);
+    card.addEventListener("pointerup",onUp);
+    card.addEventListener("pointercancel",()=>{ cancelPress(); if(dragging) onUp(); });
+    // A long-press that turns into a drag shouldn't also fire the card's
+    // normal open/play click afterward.
+    card.addEventListener("click",e=>{
+      if(grid.classList.contains("wiggle-mode")){ e.preventDefault(); e.stopPropagation(); }
+    },true);
+  });
 }
 // Videos hosted in storage have no poster image, so mobile browsers show a
 // blank box until the user taps play. Grab the first frame ourselves on a
