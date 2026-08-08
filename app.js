@@ -490,7 +490,7 @@ async function openFolder(section,folder){
   $(browser).innerHTML=`<div class="folder-toolbar">
     <button class="secondary back-folders">← Back to folder</button>
     ${isUncategorized ? '<p class="muted folder-toolbar-desc">'+escapeHtml(folder.description||"")+'</p>' : ""}
-    ${isUncategorized ? "" : '<button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden">+ Add / Upload</button>'}
+    ${isUncategorized ? "" : '<button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-cloud-icon"><path d="M7 18a4.6 4.4 0 0 1-1.5-8.8 5.5 5.5 0 0 1 10.8-1.5 4.5 4.5 0 0 1 1.2 8.9"/><path d="M12 12v8"/><path d="m8.5 15.5 3.5-3.5 3.5 3.5"/></svg>+ Upload</button>'}
   </div><div class="bulk-bar hidden">
     <span class="bulk-bar-count">0 selected</span>
     <button type="button" class="move-btn move-left" aria-label="Move left">←</button>
