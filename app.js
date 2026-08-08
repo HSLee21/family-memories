@@ -2438,7 +2438,10 @@ async function openVideoGallery(types,label,opts){
     $("videoGalleryList").innerHTML='<div class="empty">No videos found in this collection yet.</div>';
     return;
   }
-  $("videoGalleryList").innerHTML = playable.map((v,i)=>`<div class="video-gallery-item"><button type="button" class="video-gallery-play" data-video-index="${i}"><span class="video-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="video-gallery-title">${escapeHtml(v.title||"Untitled video")}</span></button><button type="button" class="video-gallery-delete" data-video-index="${i}" aria-label="Delete video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 13H7L6 7zm3-3h6l1 2H8l1-2zm-4 3h14"/></svg></button></div>`).join("");
+  $("videoGalleryList").innerHTML = playable.map((v,i)=>{
+    const dateStr = v.event_date || (v.created_at ? new Date(v.created_at).toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}) : "");
+    return `<div class="video-gallery-item"><button type="button" class="video-gallery-play" data-video-index="${i}"><span class="video-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="video-gallery-info"><span class="video-gallery-title">${escapeHtml(v.title||"Untitled video")}</span>${dateStr?`<span class="video-gallery-date">${escapeHtml(dateStr)}</span>`:""}</span></button><button type="button" class="video-gallery-delete" data-video-index="${i}" aria-label="Delete video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 13H7L6 7zm3-3h6l1 2H8l1-2zm-4 3h14"/></svg></button></div>`;
+  }).join("");
 
   function playVideoAt(index){
     if (index < 0 || index >= playable.length) return;
