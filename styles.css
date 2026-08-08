@@ -403,7 +403,7 @@ html,body{overflow-x:hidden}
        far more robust than shrinking cards to fit no matter what. */
     flex:1 1 0!important; min-height:290px!important;
     display:grid!important; grid-template-columns:1fr 1fr!important; grid-template-rows:1fr 1fr!important;
-    gap:16px!important; margin:0 14px!important;
+    gap:14px!important; margin:0 14px!important;
   }
   .family-space-card{ height:100%!important; min-height:0!important; border-radius:14px!important; padding:0!important; position:relative!important; overflow:hidden!important; background:#fff!important; box-shadow:none!important; border:0!important; }
   /* Flat pastel card colours, resampled directly from each icon image's
