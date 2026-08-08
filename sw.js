@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v179";
+const CACHE_NAME = "family-memories-v180";
 // Images live in their own cache that is NOT tied to the app version and is
 // deliberately never deleted on activate. Using the versioned CACHE_NAME for
 // images meant every single update wiped out everything previously cached,
