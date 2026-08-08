@@ -488,19 +488,27 @@ async function openFolder(section,folder){
   $(browser).classList.remove("hidden");
   const isUncategorized = !folder.id;
   $(browser).innerHTML=`<div class="folder-toolbar">
-    <button class="secondary back-folders">← All folders</button>
+    <button class="secondary back-folders">← Back to folder</button>
     ${isUncategorized ? '<p class="muted folder-toolbar-desc">'+escapeHtml(folder.description||"")+'</p>' : ""}
     ${isUncategorized ? "" : '<button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden">+ Add / Upload</button>'}
-  </div><div class="bulk-bar hidden"><span class="bulk-bar-count">0 selected</span><button type="button" class="secondary bulk-cancel">Cancel</button><button type="button" class="bulk-delete">🗑 Delete Selected</button></div><p class="wiggle-hint hidden">Drag to reorder · tap Done when finished</p><button type="button" class="secondary wiggle-done hidden">Done</button><div id="${browser}Items" class="content-grid"></div>`;
+  </div><div class="bulk-bar hidden">
+    <span class="bulk-bar-count">0 selected</span>
+    <button type="button" class="move-btn move-left" aria-label="Move left">←</button>
+    <button type="button" class="move-btn move-up" aria-label="Move up">↑</button>
+    <button type="button" class="move-btn move-down" aria-label="Move down">↓</button>
+    <button type="button" class="move-btn move-right" aria-label="Move right">→</button>
+    <button type="button" class="bulk-delete">🗑 Delete</button>
+  </div><div id="${browser}Items" class="content-grid"></div>`;
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
   const uploadBtn=$(browser).querySelector(".upload-folder");
   if(uploadBtn) uploadBtn.onclick=()=>openAddForFolder(type);
   const selectBtn=$(browser).querySelector(".select-toggle");
   const folderRef = isUncategorized ? {ids:folder._orphanIds||[]} : folder.id;
-  $(browser).querySelector(".wiggle-done").onclick=()=>setFolderMode(browser,type,folderRef,null);
   if(selectBtn) selectBtn.onclick=()=>setFolderMode(browser,type,folderRef,selectBtn.classList.contains("active")?null:"select");
-  $(browser).querySelector(".bulk-cancel").onclick=()=>setFolderMode(browser,type,folderRef,null);
   $(browser).querySelector(".bulk-delete").onclick=()=>bulkDeleteSelected(browser,type,folderRef);
+  $(browser).querySelectorAll(".move-btn").forEach(btn=>{
+    btn.onclick=()=>moveSelectedItem(browser,type,folderRef,btn.className.match(/move-(left|up|down|right)/)[1]);
+  });
   loadFolderItems(type, folderRef, browser+"Items", uploadBtn, selectBtn, browser);
 }
 
@@ -790,21 +798,11 @@ const cards=items.map(item=>{
   });
 
   document.querySelectorAll(`#${target} .item-checkbox`).forEach(cb=>cb.onchange=()=>updateBulkBarCount(browser));
-  if(browser) enableCardDragReorder(browser,target,type,folderIdOrIds,table);
 
-  // Re-apply whichever mode (select/wiggle) was already active before this
-  // re-render, so toggling a checkbox doesn't silently reset back to the
-  // plain view every time.
+  // Re-apply select mode if it was already active before this re-render,
+  // so toggling a checkbox doesn't silently reset back to the plain view.
   if(browser) setFolderMode(browser,type,folderIdOrIds,folderModeState[browser]||null);
   },0);
-}
-
-// Persists the current on-screen order after a drag finishes - writes fresh
-// sequential sort_order values (0,1,2...) for every item in the folder,
-// rather than just the two that got swapped, since a single drag can move
-// an item past many others at once.
-async function persistFolderOrder(table,orderedIds){
-  await Promise.all(orderedIds.map((id,i)=>client.from(table).update({sort_order:i}).eq("id",id)));
 }
 
 // Tracks which mode (if any) is active per folder-browser element, so it
@@ -816,19 +814,13 @@ function setFolderMode(browser,type,folderIdOrIds,mode){
   const root=$(browser);
   if(!root) return;
   root.querySelectorAll(".content-select").forEach(el=>el.classList.toggle("hidden",mode!=="select"));
-  root.querySelectorAll(".delete-item").forEach(el=>el.classList.toggle("hidden",mode==="select"||mode==="wiggle"));
-  root.querySelector(".content-grid")?.classList.toggle("wiggle-mode",mode==="wiggle");
+  root.querySelectorAll(".delete-item").forEach(el=>el.classList.toggle("hidden",mode==="select"));
   const bulkBar=root.querySelector(".bulk-bar");
   if(bulkBar) bulkBar.classList.toggle("hidden",mode!=="select");
-  const wiggleHint=root.querySelector(".wiggle-hint");
-  const wiggleDone=root.querySelector(".wiggle-done");
-  if(wiggleHint) wiggleHint.classList.toggle("hidden",mode!=="wiggle");
-  if(wiggleDone) wiggleDone.classList.toggle("hidden",mode!=="wiggle");
   const selectBtn=root.querySelector(".select-toggle");
   const uploadBtn=root.querySelector(".upload-folder");
   if(selectBtn) selectBtn.classList.toggle("active",mode==="select");
-  if(selectBtn) selectBtn.classList.toggle("hidden",mode==="wiggle");
-  if(uploadBtn) uploadBtn.classList.toggle("hidden",mode==="select"||mode==="wiggle");
+  if(uploadBtn) uploadBtn.classList.toggle("hidden",mode==="select");
   updateBulkBarCount(browser);
 }
 function updateBulkBarCount(browser){
@@ -837,6 +829,13 @@ function updateBulkBarCount(browser){
   const count=root.querySelectorAll(".item-checkbox:checked").length;
   const countEl=root.querySelector(".bulk-bar-count");
   if(countEl) countEl.textContent=`${count} selected`;
+  // Moving only makes sense for exactly one selected item at a time - a
+  // grid has no single well-defined meaning for "move 3 different photos
+  // left simultaneously". Delete works fine for any number, so it's left
+  // enabled whenever at least one item is checked.
+  root.querySelectorAll(".move-btn").forEach(btn=>{ btn.disabled = count!==1; });
+  const deleteBtn=root.querySelector(".bulk-delete");
+  if(deleteBtn) deleteBtn.disabled = count===0;
 }
 async function bulkDeleteSelected(browser,type,folderIdOrIds){
   const root=$(browser);
@@ -862,113 +861,47 @@ async function bulkDeleteSelected(browser,type,folderIdOrIds){
   loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,selectBtn,browser);
 }
 
-// Long-press-to-drag reordering, matching the iOS home-screen icon pattern:
-// hold a card briefly, everything starts wiggling with a small delete badge
-// on each one, and the held card can be dragged to a new position while
-// the rest reflow live around it. Tapping "Done" (or a badge, to delete)
-// exits. Deliberately not using any drag library - Pointer Events cover
-// this cleanly on their own.
-function enableCardDragReorder(browser,target,type,folderIdOrIds,table){
-  const grid = document.getElementById(target);
+// Moves the single selected item one step in the given direction, using
+// button taps instead of freeform dragging - far more reliable on a phone
+// than trying to hit a precise drop target with a finger. Left/right swap
+// with the immediate neighbor; up/down swap with the item one full grid
+// row away, using the grid's actual current column count (read live from
+// its computed style, so this stays correct even if that ever changes).
+async function moveSelectedItem(browser,type,folderIdOrIds,direction){
+  const root=$(browser);
+  const grid=root.querySelector(".content-grid");
   if(!grid) return;
-  const LONG_PRESS_MS = 450;
-  const MOVE_CANCEL_PX = 10;
+  const cards=[...grid.querySelectorAll(".content-card")];
+  const checkedBox=grid.querySelector(".item-checkbox:checked");
+  if(!checkedBox) return;
+  const card=checkedBox.closest(".content-card");
+  const idx=cards.indexOf(card);
+  if(idx<0) return;
 
-  grid.querySelectorAll(".content-card").forEach(card=>{
-    let pressTimer=null, startX=0, startY=0, dragging=false, pointerId=null;
-    let placeholder=null;
+  const columns=getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length || 1;
+  let targetIdx;
+  if(direction==="left") targetIdx=idx-1;
+  else if(direction==="right") targetIdx=idx+1;
+  else if(direction==="up") targetIdx=idx-columns;
+  else if(direction==="down") targetIdx=idx+columns;
+  if(targetIdx<0 || targetIdx>=cards.length || targetIdx===idx) return; // already at that edge, nothing to do
 
-    function cancelPress(){
-      clearTimeout(pressTimer);
-      pressTimer=null;
-    }
-
-    function startDrag(e){
-      dragging=true;
-      card.classList.add("dragging");
-      grid.classList.add("wiggle-mode"); // long-press always enters wiggle mode, even if not already in it
-      if(folderModeState[browser]!=="wiggle") setFolderMode(browser,type,folderIdOrIds,"wiggle");
-      const rect=card.getBoundingClientRect();
-      card.style.width=rect.width+"px";
-      card.style.position="fixed";
-      card.style.left=rect.left+"px";
-      card.style.top=rect.top+"px";
-      card.style.zIndex="1000";
-      card.style.pointerEvents="none";
-      placeholder=document.createElement("div");
-      placeholder.className="content-card drag-placeholder";
-      placeholder.style.visibility="hidden";
-      placeholder.style.height=rect.height+"px";
-      card.parentNode.insertBefore(placeholder,card.nextSibling);
-      try{ card.setPointerCapture(pointerId); }catch(err){}
-    }
-
-    function onMove(e){
-      if(!dragging){
-        if(pressTimer && (Math.abs(e.clientX-startX)>MOVE_CANCEL_PX || Math.abs(e.clientY-startY)>MOVE_CANCEL_PX)){
-          cancelPress(); // moved too much before the hold completed - treat as a scroll/tap, not a drag
-        }
-        return;
-      }
-      e.preventDefault();
-      const dx=e.clientX-startX, dy=e.clientY-startY;
-      card.style.transform=`translate(${dx}px, ${dy}px)`;
-      // Find which sibling the pointer is currently over, and move the
-      // placeholder there so everything else reflows live. Uses direction
-      // of travel (is the placeholder currently before or after the card
-      // being hovered) rather than just comparing Y position - a pure
-      // Y-midpoint check breaks down in a multi-column grid (can't tell
-      // left/right within the same row) and specifically can never place
-      // the placeholder before the very first card.
-      const under=document.elementFromPoint(e.clientX,e.clientY);
-      const overCard=under && under.closest(".content-card:not(.dragging):not(.drag-placeholder)");
-      if(overCard && overCard.parentNode===grid){
-        const children=[...grid.children];
-        const placeholderIndex=children.indexOf(placeholder);
-        const overIndex=children.indexOf(overCard);
-        if(overIndex>-1 && overIndex!==placeholderIndex){
-          if(placeholderIndex<overIndex) grid.insertBefore(placeholder,overCard.nextSibling);
-          else grid.insertBefore(placeholder,overCard);
-        }
-      }
-    }
-
-    async function onUp(e){
-      cancelPress();
-      if(!dragging){ return; }
-      dragging=false;
-      card.classList.remove("dragging");
-      card.style.position="";
-      card.style.left="";
-      card.style.top="";
-      card.style.width="";
-      card.style.zIndex="";
-      card.style.pointerEvents="";
-      card.style.transform="";
-      grid.insertBefore(card, placeholder);
-      placeholder.remove();
-      placeholder=null;
-      const orderedIds=[...grid.querySelectorAll(".content-card")].map(c=>c.dataset.id);
-      await persistFolderOrder(table,orderedIds);
-      mediaIndexCache.items=null;
-    }
-
-    card.addEventListener("pointerdown",e=>{
-      if(e.target.closest(".content-select, .delete-item, .video-play-btn, .video-fs-btn, .file-link")) return;
-      if(folderModeState[browser]==="select") return; // don't fight with checkbox tapping
-      pointerId=e.pointerId;
-      startX=e.clientX; startY=e.clientY;
-      pressTimer=setTimeout(()=>startDrag(e),LONG_PRESS_MS);
-    });
-    card.addEventListener("pointermove",onMove);
-    card.addEventListener("pointerup",onUp);
-    card.addEventListener("pointercancel",()=>{ cancelPress(); if(dragging) onUp(); });
-    // A long-press that turns into a drag shouldn't also fire the card's
-    // normal open/play click afterward.
-    card.addEventListener("click",e=>{
-      if(grid.classList.contains("wiggle-mode")){ e.preventDefault(); e.stopPropagation(); }
-    },true);
-  });
+  const table=tableMap[type];
+  const idA=card.dataset.id, idB=cards[targetIdx].dataset.id;
+  const sortA=Number(card.dataset.sort)||0, sortB=Number(cards[targetIdx].dataset.sort)||0;
+  await Promise.all([
+    client.from(table).update({sort_order:sortB}).eq("id",idA),
+    client.from(table).update({sort_order:sortA}).eq("id",idB)
+  ]);
+  mediaIndexCache.items=null;
+  const target=browser+"Items";
+  const toolbarUploadBtn=root.querySelector(".upload-folder");
+  const selectBtn=root.querySelector(".select-toggle");
+  await loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,selectBtn,browser);
+  // Keep the same item checked after the re-render, so repeated taps keep
+  // moving it further instead of losing the selection every time.
+  const newBox=root.querySelector(`.item-checkbox[data-id="${idA}"]`);
+  if(newBox){ newBox.checked=true; updateBulkBarCount(browser); }
 }
 // Videos hosted in storage have no poster image, so mobile browsers show a
 // blank box until the user taps play. Grab the first frame ourselves on a
