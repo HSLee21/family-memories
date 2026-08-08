@@ -189,12 +189,32 @@ $("signInForm").onsubmit=async e=>{
 };
 $("signUpForm").onsubmit=async e=>{
   e.preventDefault();
-  const {error}=await client.auth.signUp({
-    email:$("signUpEmail").value,password:$("signUpPassword").value,
-    options:{data:{name:$("signUpName").value}}
-  });
-  if(error) return toast(error.message);
-  toast("Account created. Check your email to verify your address.");
+  const email=$("signUpEmail").value.trim();
+  const password=$("signUpPassword").value;
+  const name=$("signUpName").value.trim();
+  const btn=e.target.querySelector('button[type="submit"], .primary');
+  if(btn){btn.disabled=true;}
+  try{
+    // Account creation is invite-gated server-side (the Worker checks the
+    // `invites` table with a key that never reaches the browser), not via
+    // Supabase's own open signUp() - only pre-invited emails can succeed here.
+    const res=await fetch(`${cfg.WORKER_URL}/signup`,{
+      method:"POST",
+      headers:{"content-type":"application/json"},
+      body:JSON.stringify({email,password,name})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok){ toast(data.error||"Could not create account."); return; }
+    // The Worker already approved and role-assigned the profile, so just
+    // sign in immediately instead of asking them to verify an email.
+    const {error}=await client.auth.signInWithPassword({email,password});
+    if(error){ toast("Account created - please sign in."); showAuthForm("signin"); return; }
+    toast("Account created. Welcome!");
+  }catch(err){
+    toast("Could not reach the server. Check your connection and try again.");
+  }finally{
+    if(btn){btn.disabled=false;}
+  }
 };
 $("forgotPasswordForm").onsubmit=async e=>{
   e.preventDefault();
