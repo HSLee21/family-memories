@@ -154,11 +154,6 @@ function lockBodyScroll(){
   document.body.style.right = "0";
   document.body.style.width = "100%";
   document.body.style.overflow = "hidden";
-  // Safety net: while a full-screen dark overlay (photo slideshow or video
-  // player) is open, force the page background dark too - so even if some
-  // future edge case leaves a sliver of the overlay uncovered, what's
-  // revealed behind it is black, not the site's normal white background.
-  document.body.classList.add("overlay-open");
 }
 function unlockBodyScroll(){
   document.body.style.position = "";
@@ -167,8 +162,16 @@ function unlockBodyScroll(){
   document.body.style.right = "";
   document.body.style.width = "";
   document.body.style.overflow = "";
-  document.body.classList.remove("overlay-open");
   window.scrollTo(0, _scrollLockY);
+}
+// Safety net specifically for genuinely dark full-screen content (photo
+// slideshow, video player) - so even if some future edge case leaves a
+// sliver of the overlay uncovered, what's revealed behind it is black,
+// not the site's normal white background. Deliberately NOT tied to
+// lockBodyScroll/unlockBodyScroll, since those also run for the video
+// list, which is light-themed and must not get a forced black background.
+function setDarkOverlayOpen(isOpen){
+  document.body.classList.toggle("overlay-open", isOpen);
 }
 const views = ["authView","pendingView","appView"];
 const pages = ["home","memories","trips","celebrations","study","mediaHub","mediaSection","search","profile","admin"];
@@ -2200,6 +2203,7 @@ async function openSlideshow(types,label){
   // instead of waiting until after photos finish loading — that's what made music start late.
   const musicPromise = loadSlideshowMusic(slideshowMusicKey);
   lockBodyScroll();
+  setDarkOverlayOpen(true);
   $("slideshowOverlay").classList.remove("hidden");
   $("slideshowEmpty").classList.add("hidden");
   $("slideshowEmpty").textContent = "No photos found in this collection yet.";
@@ -2360,6 +2364,7 @@ function closeSlideshow(){
   lastSlideUrl="";
   const music=$("slideshowMusic");
   music.pause(); music.currentTime=0;
+  setDarkOverlayOpen(false);
   unlockBodyScroll();
 }
 $("slideshowClose").onclick=closeSlideshow;
@@ -2455,6 +2460,7 @@ async function openVideoGallery(types,label,opts){
     const v = playable[index];
     $("videoGalleryList").classList.add("hidden");
     $("videoPlayerWrap").classList.remove("hidden");
+    setDarkOverlayOpen(true);
     if($("videoPlayerTitle")) $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"} (${index+1}/${playable.length})`;
     const el=$("videoPlayerEl");
     el.setAttribute("muted","");
@@ -2570,6 +2576,7 @@ function closeVideoOverlay(){
   $("videoOverlay").classList.add("hidden");
   const el=$("videoPlayerEl");
   el.pause(); el.removeAttribute("src"); el.load();
+  setDarkOverlayOpen(false);
   unlockBodyScroll();
 }
 $("videoOverlayClose").onclick=closeVideoOverlay;
@@ -2578,6 +2585,7 @@ $("videoPlayerBack").onclick=()=>{
   el.pause();
   $("videoPlayerWrap").classList.add("hidden");
   $("videoGalleryList").classList.remove("hidden");
+  setDarkOverlayOpen(false);
 };
 
 /* ---- Navigation wiring for the hub ---- */
