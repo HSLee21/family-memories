@@ -2421,7 +2421,8 @@ $("slideshowPlayPause").onclick=()=>{
 })();
 
 /* ---- Video gallery + player ---- */
-async function openVideoGallery(types,label){
+async function openVideoGallery(types,label,opts){
+  const skipAutoplay = opts && opts.skipAutoplay;
   closeSlideshow();
   lockBodyScroll();
   $("videoOverlay").classList.remove("hidden");
@@ -2437,7 +2438,7 @@ async function openVideoGallery(types,label){
     $("videoGalleryList").innerHTML='<div class="empty">No videos found in this collection yet.</div>';
     return;
   }
-  $("videoGalleryList").innerHTML = playable.map((v,i)=>`<button class="video-gallery-item" data-video-index="${i}"><span class="video-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="video-gallery-title">${escapeHtml(v.title||"Untitled video")}</span></button>`).join("");
+  $("videoGalleryList").innerHTML = playable.map((v,i)=>`<div class="video-gallery-item"><button type="button" class="video-gallery-play" data-video-index="${i}"><span class="video-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="video-gallery-title">${escapeHtml(v.title||"Untitled video")}</span></button><button type="button" class="video-gallery-delete" data-video-index="${i}" aria-label="Delete video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 7h12l-1 13H7L6 7zm3-3h6l1 2H8l1-2zm-4 3h14"/></svg></button></div>`).join("");
 
   function playVideoAt(index){
     if (index < 0 || index >= playable.length) return;
@@ -2458,13 +2459,36 @@ async function openVideoGallery(types,label){
   }
   videoPlayNext = () => playVideoAt(videoPlayerIndex + 1);
 
-  $("videoGalleryList").querySelectorAll("[data-video-index]").forEach(btn=>{
+  $("videoGalleryList").querySelectorAll(".video-gallery-play").forEach(btn=>{
     btn.onclick = () => playVideoAt(Number(btn.dataset.videoIndex));
+  });
+  $("videoGalleryList").querySelectorAll(".video-gallery-delete").forEach(btn=>{
+    btn.onclick = async (e) => {
+      e.stopPropagation();
+      const idx = Number(btn.dataset.videoIndex);
+      const v = playable[idx];
+      if (!v) return;
+      if (!confirm(`Delete "${v.title||"this video"}"? This cannot be undone.`)) return;
+      btn.disabled = true;
+      const table = tableMap[v._type];
+      const { error } = await client.from(table).delete().eq("id", v.id);
+      if (error) { toast(error.message); btn.disabled = false; return; }
+      await b2Storage.remove([v.file_path]);
+      signedUrlCache.delete(v.file_path);
+      mediaIndexCache.items = null;
+      toast("Video deleted.");
+      // Re-render the whole list from scratch rather than just removing this
+      // row - simplest way to keep every remaining row's index (and the
+      // Play Next queue) correctly in sync with what's actually left.
+      openVideoGallery(types, label, {skipAutoplay:true});
+    };
   });
 
   // Jump straight into playback instead of requiring another tap into the list —
-  // "Watch All Videos" should mean exactly that.
-  playVideoAt(0);
+  // "Watch All Videos" should mean exactly that. Skipped when re-rendering
+  // after deleting a video from the list, so a delete doesn't unexpectedly
+  // yank the person into playback of whatever's left.
+  if (!skipAutoplay) playVideoAt(0);
 }
 let videoPlayerIndex = 0;
 let videoPlayNext = null;
