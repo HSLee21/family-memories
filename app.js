@@ -173,6 +173,13 @@ function unlockBodyScroll(){
 function setDarkOverlayOpen(isOpen){
   document.body.classList.toggle("overlay-open", isOpen);
 }
+// Same idea, but for the video list specifically: it's light-themed, not
+// black - if any sliver of it is ever uncovered, it should reveal the
+// list's own light grey (#f7f9fc), not the page's default pure white,
+// so there's no visible seam between the two shades.
+function setListOverlayOpen(isOpen){
+  document.body.classList.toggle("list-overlay-open", isOpen);
+}
 const views = ["authView","pendingView","appView"];
 const pages = ["home","memories","trips","celebrations","study","mediaHub","mediaSection","search","profile","admin"];
 const tableMap = {memory:"memories",trip:"trips",celebration:"celebrations",study:"study_materials"};
@@ -2439,6 +2446,7 @@ async function openVideoGallery(types,label,opts){
   $("videoOverlay").classList.remove("hidden");
   $("videoPlayerWrap").classList.add("hidden");
   $("videoGalleryList").classList.remove("hidden");
+  setListOverlayOpen(true);
   if($("videoGalleryTitle")) $("videoGalleryTitle").textContent = label || "Videos";
   $("videoGalleryList").innerHTML='<div class="empty">Loading…</div>';
   const items = await fetchMediaItems(types);
@@ -2460,6 +2468,7 @@ async function openVideoGallery(types,label,opts){
     const v = playable[index];
     $("videoGalleryList").classList.add("hidden");
     $("videoPlayerWrap").classList.remove("hidden");
+    setListOverlayOpen(false);
     setDarkOverlayOpen(true);
     if($("videoPlayerTitle")) $("videoPlayerTitle").textContent = `Playing: ${label ? label+" – " : ""}${v.title||"Untitled video"} (${index+1}/${playable.length})`;
     const el=$("videoPlayerEl");
@@ -2577,6 +2586,7 @@ function closeVideoOverlay(){
   const el=$("videoPlayerEl");
   el.pause(); el.removeAttribute("src"); el.load();
   setDarkOverlayOpen(false);
+  setListOverlayOpen(false);
   unlockBodyScroll();
 }
 $("videoOverlayClose").onclick=closeVideoOverlay;
@@ -2586,6 +2596,7 @@ $("videoPlayerBack").onclick=()=>{
   $("videoPlayerWrap").classList.add("hidden");
   $("videoGalleryList").classList.remove("hidden");
   setDarkOverlayOpen(false);
+  setListOverlayOpen(true);
 };
 
 /* ---- Navigation wiring for the hub ---- */
