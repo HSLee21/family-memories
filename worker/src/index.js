@@ -163,142 +163,6 @@ async function handleSignDownload(request, env, user) {
   return json({ url: signedRequest.url, expiresIn: ttl });
 }
 
-// Unauthenticated on purpose - the person calling this has no Supabase
-// session yet (that's the whole point of signing up). Safety instead comes
-// from checking the `invites` table with the service_role key before ever
-// creating an account, and from Postgres RLS on every other table once
-// they're signed in - this endpoint's only job is the invite gate.
-async function handleSignup(request, env) {
-  let body;
-  try { body = await request.json(); } catch (e) { return json({ error: "Invalid request body." }, 400); }
-
-  const email = (body.email || "").trim().toLowerCase();
-  const password = body.password || "";
-  const name = (body.name || "").trim();
-
-  if (!email || !password) return json({ error: "Email and password are required." }, 400);
-  if (password.length < 6) return json({ error: "Password must be at least 6 characters." }, 400);
-
-  // 1. Only allow signup if this email is on the invites list.
-  const inviteRes = await fetch(
-    `${env.SUPABASE_URL}/rest/v1/invites?email=eq.${encodeURIComponent(email)}&select=email,role`,
-    { headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` } }
-  );
-  if (!inviteRes.ok) {
-    const t = await inviteRes.text().catch(() => "");
-    return json({ error: `Could not check invitations (${inviteRes.status}): ${t.slice(0, 200)}` }, 502);
-  }
-  const invites = await inviteRes.json();
-  const invite = invites && invites[0];
-  if (!invite) {
-    return json({ error: "This email hasn't been invited yet. Ask a family admin to invite you first." }, 403);
-  }
-
-  // 2. Create the account via the Admin API. This bypasses the project-wide
-  // "allow signups" toggle entirely (so that toggle can stay OFF, closing
-  // off open self-signup) and skips email verification, since the invite
-  // itself is the vetting step.
-  const createRes = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/users`, {
-    method: "POST",
-    headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({ email, password, email_confirm: true, user_metadata: { name } })
-  });
-  const createData = await createRes.json().catch(() => ({}));
-  if (!createRes.ok) {
-    const msg = createData?.msg || createData?.message || createData?.error_description || `HTTP ${createRes.status}`;
-    return json({ error: `Could not create account: ${msg}` }, createRes.status || 400);
-  }
-  const userId = createData.id;
-  if (!userId) return json({ error: "Account creation returned no user id." }, 502);
-
-  // 3. Upsert the profile with the role from the invite, auto-approved -
-  // the invite itself was the admin's approval step, so there's no need
-  // for a second manual "Approve" click for people who were invited.
-  const profileRes = await fetch(`${env.SUPABASE_URL}/rest/v1/profiles`, {
-    method: "POST",
-    headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-      "content-type": "application/json",
-      prefer: "resolution=merge-duplicates,return=minimal"
-    },
-    body: JSON.stringify({ id: userId, email, name: name || email, role: invite.role || "family", status: "approved" })
-  });
-  if (!profileRes.ok) {
-    const t = await profileRes.text().catch(() => "");
-    return json({ error: `Account created, but the profile could not be finalized (${profileRes.status}): ${t.slice(0, 200)}. Ask an admin to approve you manually.` }, 502);
-  }
-
-  // 4. Consume the invite so it moves from "Pending Invitations" to
-  // "Family Members" in the admin page.
-  await fetch(`${env.SUPABASE_URL}/rest/v1/invites?email=eq.${encodeURIComponent(email)}`, {
-    method: "DELETE",
-    headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` }
-  }).catch(() => {});
-
-  return json({ ok: true });
-}
-
-async function handleInvite(request, env, user, profile) {
-  if (profile.role !== "admin") {
-    return json({ error: "Only admins can send invitations." }, 403);
-  }
-  let body;
-  try { body = await request.json(); } catch (e) { return json({ error: "Invalid request body." }, 400); }
-  const email = (body.email || "").trim().toLowerCase();
-  const role = body.role || "family";
-  if (!email) return json({ error: "Email is required." }, 400);
-
-  // 1. Record the invite. Upsert so re-inviting the same person just
-  // refreshes their row instead of erroring on a duplicate.
-  const insertRes = await fetch(`${env.SUPABASE_URL}/rest/v1/invites`, {
-    method: "POST",
-    headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-      "content-type": "application/json",
-      prefer: "resolution=merge-duplicates,return=minimal"
-    },
-    body: JSON.stringify({ email, role, invited_by: user.id })
-  });
-  if (!insertRes.ok) {
-    const t = await insertRes.text().catch(() => "");
-    return json({ error: `Could not save the invite (${insertRes.status}): ${t.slice(0, 200)}` }, 502);
-  }
-
-  // 2. Send the actual email via Resend, if configured. If RESEND_API_KEY
-  // isn't set, the invite is still saved - the admin just falls back to
-  // sharing the app link themselves, same as before this endpoint existed.
-  let emailSent = false;
-  let emailError = null;
-  if (env.RESEND_API_KEY) {
-    const appUrl = env.APP_URL || env.ALLOWED_ORIGIN || "";
-    const emailRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({
-        from: env.RESEND_FROM || "Family Memories <onboarding@resend.dev>",
-        to: [email],
-        subject: "You're invited to Family Memories",
-        html: `<p>You've been invited to join <strong>Family Memories</strong>, a private space for family photos, trips, and memories.</p>
-<p><a href="${appUrl}">Open Family Memories</a> and tap "Create account" using this email address (${email}) to get started.</p>
-<p>If you weren't expecting this, you can ignore this email.</p>`
-      })
-    });
-    if (emailRes.ok) {
-      emailSent = true;
-    } else {
-      const t = await emailRes.text().catch(() => "");
-      emailError = `HTTP ${emailRes.status}: ${t.slice(0, 200)}`;
-    }
-  }
-
-  return json({ ok: true, emailSent, emailError });
-}
 
 async function handleDelete(request, env, user, profile) {
   const { path } = await request.json();
@@ -331,19 +195,6 @@ export default {
 
     const { pathname } = new URL(request.url);
 
-    // /signup is the one endpoint that must work with no Supabase session
-    // yet - it's how a person gets one in the first place.
-    if (pathname === "/signup") {
-      try {
-        const resp = await handleSignup(request, env);
-        const headers = new Headers(resp.headers);
-        Object.entries(cors).forEach(([k, v]) => headers.set(k, v));
-        return new Response(resp.body, { status: resp.status, headers });
-      } catch (err) {
-        return new Response(JSON.stringify({ error: err.message || "Internal error" }), { status: 500, headers: { ...JSON_HEADERS, ...cors } });
-      }
-    }
-
     try {
       const user = await getSupabaseUser(request, env);
       if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...JSON_HEADERS, ...cors } });
@@ -364,7 +215,6 @@ export default {
       else if (pathname === "/sign-upload") resp = await handleSignUpload(request, env, user);
       else if (pathname === "/sign-download") resp = await handleSignDownload(request, env, user);
       else if (pathname === "/delete") resp = await handleDelete(request, env, user, profile);
-      else if (pathname === "/invite") resp = await handleInvite(request, env, user, profile);
       else resp = new Response("Not found", { status: 404 });
 
       const headers = new Headers(resp.headers);

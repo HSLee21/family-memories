@@ -58,6 +58,25 @@ const client = window.supabase.createClient(
 // Drop-in replacement for the `client.storage.from(bucket)` calls this app
 // used to make against Supabase Storage. Same method names/shapes
 // (upload/createSignedUrl/remove) so the rest of app.js barely changed.
+// --- Auth/invite operations, via the Supabase Edge Function (not the B2
+// Worker - these need the SUPABASE_SERVICE_ROLE_KEY, not B2 credentials). ---
+async function edgeFetch(action, body) {
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) throw new Error("Not signed in.");
+  const res = await fetch(`${cfg.SUPABASE_URL}/functions/v1/family-invites/${action}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      apikey: cfg.SUPABASE_PUBLISHABLE_KEY,
+      authorization: `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify(body)
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
+  return json;
+}
+
 async function b2Fetch(endpoint, body) {
   const { data: { session } } = await client.auth.getSession();
   if (!session) throw new Error("Not signed in.");
@@ -198,9 +217,9 @@ $("signUpForm").onsubmit=async e=>{
     // Account creation is invite-gated server-side (the Worker checks the
     // `invites` table with a key that never reaches the browser), not via
     // Supabase's own open signUp() - only pre-invited emails can succeed here.
-    const res=await fetch(`${cfg.WORKER_URL}/signup`,{
+    const res=await fetch(`${cfg.SUPABASE_URL}/functions/v1/family-invites/signup`,{
       method:"POST",
-      headers:{"content-type":"application/json"},
+      headers:{"content-type":"application/json","apikey":cfg.SUPABASE_PUBLISHABLE_KEY},
       body:JSON.stringify({email,password,name})
     });
     const data=await res.json().catch(()=>({}));
@@ -1060,7 +1079,7 @@ if($("addMemberForm")) $("addMemberForm").onsubmit=async e=>{
   const btn=e.target.querySelector('button[type="submit"], .primary');
   if(btn) btn.disabled=true;
   try{
-    const data=await b2Fetch("/invite",{email,role});
+    const data=await edgeFetch("invite",{email,role});
     toast(data.emailSent
       ? `Invitation emailed to ${email}.`
       : `Invite added for ${email}, but the email couldn't be sent — share the app link with them yourself.`);
