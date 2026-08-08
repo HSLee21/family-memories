@@ -243,6 +243,63 @@ async function handleSignup(request, env) {
   return json({ ok: true });
 }
 
+async function handleInvite(request, env, user, profile) {
+  if (profile.role !== "admin") {
+    return json({ error: "Only admins can send invitations." }, 403);
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ error: "Invalid request body." }, 400); }
+  const email = (body.email || "").trim().toLowerCase();
+  const role = body.role || "family";
+  if (!email) return json({ error: "Email is required." }, 400);
+
+  // 1. Record the invite. Upsert so re-inviting the same person just
+  // refreshes their row instead of erroring on a duplicate.
+  const insertRes = await fetch(`${env.SUPABASE_URL}/rest/v1/invites`, {
+    method: "POST",
+    headers: {
+      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+      authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+      "content-type": "application/json",
+      prefer: "resolution=merge-duplicates,return=minimal"
+    },
+    body: JSON.stringify({ email, role, invited_by: user.id })
+  });
+  if (!insertRes.ok) {
+    const t = await insertRes.text().catch(() => "");
+    return json({ error: `Could not save the invite (${insertRes.status}): ${t.slice(0, 200)}` }, 502);
+  }
+
+  // 2. Send the actual email via Resend, if configured. If RESEND_API_KEY
+  // isn't set, the invite is still saved - the admin just falls back to
+  // sharing the app link themselves, same as before this endpoint existed.
+  let emailSent = false;
+  let emailError = null;
+  if (env.RESEND_API_KEY) {
+    const appUrl = env.APP_URL || env.ALLOWED_ORIGIN || "";
+    const emailRes = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        from: env.RESEND_FROM || "Family Memories <onboarding@resend.dev>",
+        to: [email],
+        subject: "You're invited to Family Memories",
+        html: `<p>You've been invited to join <strong>Family Memories</strong>, a private space for family photos, trips, and memories.</p>
+<p><a href="${appUrl}">Open Family Memories</a> and tap "Create account" using this email address (${email}) to get started.</p>
+<p>If you weren't expecting this, you can ignore this email.</p>`
+      })
+    });
+    if (emailRes.ok) {
+      emailSent = true;
+    } else {
+      const t = await emailRes.text().catch(() => "");
+      emailError = `HTTP ${emailRes.status}: ${t.slice(0, 200)}`;
+    }
+  }
+
+  return json({ ok: true, emailSent, emailError });
+}
+
 async function handleDelete(request, env, user, profile) {
   const { path } = await request.json();
   if (!path) return json({ error: "path is required" }, 400);
@@ -307,6 +364,7 @@ export default {
       else if (pathname === "/sign-upload") resp = await handleSignUpload(request, env, user);
       else if (pathname === "/sign-download") resp = await handleSignDownload(request, env, user);
       else if (pathname === "/delete") resp = await handleDelete(request, env, user, profile);
+      else if (pathname === "/invite") resp = await handleInvite(request, env, user, profile);
       else resp = new Response("Not found", { status: 404 });
 
       const headers = new Headers(resp.headers);

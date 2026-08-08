@@ -1057,11 +1057,20 @@ if($("addMemberForm")) $("addMemberForm").onsubmit=async e=>{
   const email=$("newMemberEmail").value.trim().toLowerCase();
   const role=$("newMemberRole").value;
   if(!email) return;
-  const {error}=await client.from("invites").insert({email,role,invited_by:currentUser.id});
-  if(error) return toast(error.message);
-  toast(`Invite added for ${email}. Share the app link with them.`);
-  $("addMemberForm").reset();
-  loadInvites();
+  const btn=e.target.querySelector('button[type="submit"], .primary');
+  if(btn) btn.disabled=true;
+  try{
+    const data=await b2Fetch("/invite",{email,role});
+    toast(data.emailSent
+      ? `Invitation emailed to ${email}.`
+      : `Invite added for ${email}, but the email couldn't be sent — share the app link with them yourself.`);
+    $("addMemberForm").reset();
+    loadInvites();
+  }catch(err){
+    toast(err.message||"Could not send invitation.");
+  }finally{
+    if(btn) btn.disabled=false;
+  }
 };
 
 async function loadInvites(){
