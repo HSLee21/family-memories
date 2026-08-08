@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Pacifico&amp;display=optional" rel="stylesheet"/>
-<link href="styles.css?v=family-memories-v175" rel="stylesheet"/>
+<link href="styles.css?v=family-memories-v176" rel="stylesheet"/>
 <!-- PWA -->
 <link href="manifest.json" rel="manifest"/>
 <meta content="#1670f8" name="theme-color"/>
@@ -199,7 +199,7 @@
 </div>
 </section>
 <section class="page hidden utility-page" id="searchPage"><h1>Search</h1><p class="muted">Find albums, trips, celebrations and study materials.</p><div class="search-box">🔍 <input id="globalSearch" placeholder="Search your family space..."/></div><div class="search-results" id="searchResults"><div class="empty">Start typing to search.</div></div></section>
-<section class="page hidden utility-page" id="profilePage"><div class="profile-panel"><button class="profile-large" id="profileEditPhoto"><img alt="Profile" class="hidden" id="profileLargePhoto"/><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p class="muted" id="profileDisplayEmail"></p><div class="profile-menu"><button class="hidden" id="familyAdminShortcut">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div></div></section>
+<section class="page hidden utility-page" id="profilePage"><div class="profile-panel"><button class="profile-large" id="profileEditPhoto"><img alt="Profile" class="hidden" id="profileLargePhoto"/><span id="profileLargeFallback">FM</span><small>📷</small></button><h1 id="profileDisplayName">Profile</h1><p class="muted" id="profileDisplayEmail"></p><div class="profile-menu"><button class="hidden" id="familyAdminShortcut">👨‍👩‍👧‍👦 <span>Family Admin</span><b>›</b></button><button id="changePasswordShortcut">🔐 <span>Change password</span><b>›</b></button><button id="settingsShortcut">⚙️ <span>Settings</span><b>›</b></button><button id="profileSignOut">↪ <span>Sign out</span><b>›</b></button></div><p class="muted small" id="appVersionLabel" style="text-align:center;margin-top:18px"></p></div></section>
 <section class="page hidden utility-page admin-page" id="adminPage">
 <div class="admin-tree-card">
   <h1 class="admin-tree-title" id="adminTreeTitle">Our Family <span class="admin-tree-heart">♥</span></h1>
@@ -291,7 +291,7 @@
 
 <div class="dialog-actions"><button class="secondary" id="cancelSettingsDialog" type="button">Cancel</button><button class="primary" id="settingsSaveBtn">Save</button></div></form></dialog>
 <dialog id="addDialog"><form class="dialog-card" id="addForm" novalidate=""><div class="dialog-head"><h2 id="dialogTitle">Add item</h2><button class="icon-btn" id="closeDialog" type="button">×</button></div><input id="itemTitle" placeholder="Title (optional)"/><textarea id="itemDescription" placeholder="Description or notes (optional)"></textarea><input id="itemDate" type="date"/><label class="file-picker">📎 <span id="itemFileLabel">Choose photo or file</span><input hidden="" id="itemFile" type="file" multiple=""/></label><div class="dialog-actions"><button class="secondary" id="cancelDialog" type="button">Cancel</button><button class="primary">Save</button></div></form></dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=family-memories-v175"></script><script src="app.js?v=family-memories-v175"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=family-memories-v176"></script><script src="app.js?v=family-memories-v176"></script>
 <script>
 (function(){
   function resetScroll(){ window.scrollTo(0,window.scrollY); document.documentElement.scrollLeft=0; document.body.scrollLeft=0; }
@@ -336,7 +336,8 @@ if ('serviceWorker' in navigator) {
 // server "what version are you actually running?" and compare it to the
 // version this page was loaded with. Simple, deterministic, no guessing.
 (function(){
-  var CURRENT_APP_VERSION = 'family-memories-v175';
+  var CURRENT_APP_VERSION = 'family-memories-v176';
+  window.APP_RUNNING_VERSION = CURRENT_APP_VERSION;
   var reloadingForUpdate = false;
   function checkForUpdate(){
     if (reloadingForUpdate) return;
@@ -346,10 +347,10 @@ if ('serviceWorker' in navigator) {
     // the visibilitychange listener already re-checks the moment you come
     // back, so nothing is missed.
     if (document.visibilityState !== 'visible') return;
-    fetch('sw.js?_=' + Date.now(), {cache:'no-store'}).then(function(res){ return res.text(); }).then(function(txt){
-      var m = txt.match(/CACHE_NAME\s*=\s*"([^"]+)"/);
-      console.log('[update-check] page version:', CURRENT_APP_VERSION, '| live sw.js version:', m ? m[1] : '(no match found in fetched text)');
-      if (!m || m[1] === CURRENT_APP_VERSION) return;
+    fetch('version.json?_=' + Date.now(), {cache:'no-store'}).then(function(res){ return res.json(); }).then(function(data){
+      var liveVersion = data && data.version;
+      console.log('[update-check] page version:', CURRENT_APP_VERSION, '| live version.json:', liveVersion || '(missing or malformed response)');
+      if (!liveVersion || liveVersion === CURRENT_APP_VERSION) return;
       var banner = document.getElementById('updateBanner');
       var btn = document.getElementById('updateBannerBtn');
       if (!banner || !btn) return;

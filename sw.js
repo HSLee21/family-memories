@@ -1,4 +1,4 @@
-const CACHE_NAME = "family-memories-v175";
+const CACHE_NAME = "family-memories-v176";
 // Images live in their own cache that is NOT tied to the app version and is
 // deliberately never deleted on activate. Using the versioned CACHE_NAME for
 // images meant every single update wiped out everything previously cached,
@@ -102,10 +102,17 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
+  const isVersionCheck = url.pathname.endsWith("/version.json");
   const isAppShellFile = APP_SHELL.some((f) => url.pathname.endsWith(f.replace("./", "/")));
   const isLocalImage = url.origin === self.location.origin && /\/assets\/images\//.test(url.pathname);
 
-  if (isAppShellFile) {
+  if (isVersionCheck) {
+    // This file's entire purpose is telling a page whether it's stale -
+    // serving a cached copy of it would defeat that purpose entirely, so
+    // it always goes straight to the network with no caching involved at
+    // any layer, on top of the page's own cache:"no-store" fetch.
+    event.respondWith(fetch(req, { cache: "no-store" }));
+  } else if (isAppShellFile) {
     event.respondWith(
       fetch(req, { cache: "reload" })
         .then((res) => {
