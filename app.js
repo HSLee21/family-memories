@@ -188,7 +188,17 @@ let _toastHideTimer=null;
 function toast(msg){
   const t=$("toast");
   t.textContent=msg;
-  if(!t.open){ try{t.show()}catch(e){} }
+  // showModal() (not show()) is deliberate: native <dialog> elements opened
+  // via showModal() render in the browser's "top layer", which always sits
+  // above regular content regardless of z-index. Other dialogs in this app
+  // (Add to Memory Folder, etc.) also use showModal() - if the toast used
+  // plain show() instead, it would render in normal document flow and end
+  // up hidden behind any dialog that's still open, invisible under its
+  // backdrop. showModal() puts the toast in that same top layer so it
+  // always stacks above whatever else is open. Its own backdrop is
+  // already transparent (see #toast::backdrop), so this adds no unwanted
+  // screen-dimming of its own.
+  if(!t.open){ try{t.showModal()}catch(e){ try{t.show()}catch(e2){} } }
   t.classList.add("show");
   clearTimeout(_toastHideTimer);
   _toastHideTimer=setTimeout(()=>{
