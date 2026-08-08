@@ -154,6 +154,11 @@ function lockBodyScroll(){
   document.body.style.right = "0";
   document.body.style.width = "100%";
   document.body.style.overflow = "hidden";
+  // Safety net: while a full-screen dark overlay (photo slideshow or video
+  // player) is open, force the page background dark too - so even if some
+  // future edge case leaves a sliver of the overlay uncovered, what's
+  // revealed behind it is black, not the site's normal white background.
+  document.body.classList.add("overlay-open");
 }
 function unlockBodyScroll(){
   document.body.style.position = "";
@@ -162,6 +167,7 @@ function unlockBodyScroll(){
   document.body.style.right = "";
   document.body.style.width = "";
   document.body.style.overflow = "";
+  document.body.classList.remove("overlay-open");
   window.scrollTo(0, _scrollLockY);
 }
 const views = ["authView","pendingView","appView"];
