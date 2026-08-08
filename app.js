@@ -490,12 +490,19 @@ async function openFolder(section,folder){
   $(browser).innerHTML=`<div class="folder-toolbar">
     <button class="secondary back-folders">← All folders</button>
     ${isUncategorized ? '<p class="muted folder-toolbar-desc">'+escapeHtml(folder.description||"")+'</p>' : ""}
-    ${isUncategorized ? "" : '<button class="primary upload-folder hidden">+ Add / Upload</button>'}
-  </div><div id="${browser}Items" class="content-grid"></div>`;
+    ${isUncategorized ? "" : '<button class="secondary reorder-toggle hidden">↕ Reorder</button><button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden">+ Add / Upload</button>'}
+  </div><div class="bulk-bar hidden"><span class="bulk-bar-count">0 selected</span><button type="button" class="secondary bulk-cancel">Cancel</button><button type="button" class="bulk-delete">🗑 Delete Selected</button></div><div id="${browser}Items" class="content-grid"></div>`;
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
   const uploadBtn=$(browser).querySelector(".upload-folder");
   if(uploadBtn) uploadBtn.onclick=()=>openAddForFolder(type);
-  loadFolderItems(type, isUncategorized ? {ids:folder._orphanIds||[]} : folder.id, browser+"Items", uploadBtn);
+  const reorderBtn=$(browser).querySelector(".reorder-toggle");
+  const selectBtn=$(browser).querySelector(".select-toggle");
+  const folderRef = isUncategorized ? {ids:folder._orphanIds||[]} : folder.id;
+  if(reorderBtn) reorderBtn.onclick=()=>setFolderMode(browser,type,folderRef,reorderBtn.classList.contains("active")?null:"reorder");
+  if(selectBtn) selectBtn.onclick=()=>setFolderMode(browser,type,folderRef,selectBtn.classList.contains("active")?null:"select");
+  $(browser).querySelector(".bulk-cancel").onclick=()=>setFolderMode(browser,type,folderRef,null);
+  $(browser).querySelector(".bulk-delete").onclick=()=>bulkDeleteSelected(browser,type,folderRef);
+  loadFolderItems(type, folderRef, browser+"Items", uploadBtn, reorderBtn, selectBtn, browser);
 }
 
 function openAddForFolder(type){
@@ -532,7 +539,13 @@ $("itemFile").onchange = () => {
 // Uploads and saves a single file as one item row. Shared title/description/date
 // (from the dialog) are applied to every file in a multi-file batch; each file still
 // gets its own auto-title from its filename when no title was typed in.
-async function uploadAndSaveOneItem(rawFile, {table, title, description, eventDate}) {
+async function getNextSortOrder(table, folderId){
+  const { data } = await client.from(table).select("sort_order").eq("folder_id", folderId).order("sort_order", {ascending:false, nullsFirst:false}).limit(1);
+  const max = data && data[0] && typeof data[0].sort_order === "number" ? data[0].sort_order : -1;
+  return max + 1;
+}
+
+async function uploadAndSaveOneItem(rawFile, {table, title, description, eventDate, sortOrder}) {
   const uploadFile = await compressImageIfNeeded(rawFile);
   const safe = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
   const file_path = `${currentUser.id}/${currentFolder.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safe}`;
@@ -551,7 +564,8 @@ async function uploadAndSaveOneItem(rawFile, {table, title, description, eventDa
     description: description || null,
     user_id: currentUser.id,
     folder_id: currentFolder.id,
-    file_path
+    file_path,
+    sort_order: sortOrder
   };
   if (eventDate) payload.event_date = eventDate;
   if (currentAddType === "trip") {
@@ -586,13 +600,15 @@ $("addForm").onsubmit = async e => {
   if (submitBtn) submitBtn.disabled = true;
 
   try {
+    let nextSortOrder = await getNextSortOrder(table, currentFolder.id);
     if (!files.length) {
       // Text-only item, no file attached.
       const payload = {
         title: title || "Untitled",
         description: description || null,
         user_id: currentUser.id,
-        folder_id: currentFolder.id
+        folder_id: currentFolder.id,
+        sort_order: nextSortOrder
       };
       if (eventDate) payload.event_date = eventDate;
       if (currentAddType === "trip") {
@@ -610,7 +626,7 @@ $("addForm").onsubmit = async e => {
       for (let i = 0; i < files.length; i++) {
         if (files.length > 1) toast(`Uploading ${i + 1} of ${files.length}…`);
         try {
-          await uploadAndSaveOneItem(files[i], {table, title, description, eventDate});
+          await uploadAndSaveOneItem(files[i], {table, title, description, eventDate, sortOrder: nextSortOrder + i});
           successCount++;
         } catch (fileErr) {
           console.error(fileErr);
@@ -676,7 +692,7 @@ function renderItemsIncrementally(items,target){
   renderBatch();
 }
 
-async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn){
+async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser){
   $(target).innerHTML='<div class="empty">Loading…</div>';
   const table=tableMap[type];
   let query = client.from(table).select("*");
@@ -691,10 +707,13 @@ async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn){
   } else {
     query = query.is("folder_id",null);
   }
-  const {data,error} = await query.order("created_at",{ascending:false});
+  const {data,error} = await query.order("sort_order",{ascending:true, nullsFirst:false}).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
-  if(!data?.length){ renderEmptyFolderState(type,target); toolbarUploadBtn?.classList.add("hidden"); return }
+  if(!data?.length){ renderEmptyFolderState(type,target); toolbarUploadBtn?.classList.add("hidden"); reorderBtn?.classList.add("hidden"); selectBtn?.classList.add("hidden"); return }
   toolbarUploadBtn?.classList.remove("hidden");
+  // Reordering needs at least 2 items to mean anything.
+  reorderBtn?.classList.toggle("hidden", data.length < 2);
+  selectBtn?.classList.remove("hidden");
 
   const items=await Promise.all(data.map(async item=>{
     let signedUrl=null;
@@ -716,12 +735,19 @@ const cards=items.map(item=>{
           ? `<div class="video-wrap"><video class="content-preview" playsinline muted preload="metadata"${getVideoPosterCached(item.file_path)?` poster="${getVideoPosterCached(item.file_path)}"`:""} data-video-path="${encodeURIComponent(item.file_path)}" src="${item.signedUrl}"></video><button type="button" class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><button type="button" class="video-fs-btn" aria-label="Full screen">⛶</button></div>`
           : `<button class="secondary file-link" data-file="${encodeURIComponent(item.file_path)}">Open file</button>`
       : "";
-    return `<article class="content-card">
+    return `<article class="content-card" data-id="${item.id}" data-sort="${item.sort_order ?? ""}">
+      <label class="content-select hidden"><input type="checkbox" class="item-checkbox" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}"></label>
       ${media}
       <div class="meta">${item.event_date||new Date(item.created_at).toLocaleDateString()}</div>
       <h3>${escapeHtml(item.title||"Untitled")}</h3>
       ${item.description?`<p>${escapeHtml(item.description)}</p>`:""}
-      <button class="secondary delete-item" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}">Delete</button>
+      <div class="content-card-actions">
+        <div class="reorder-controls hidden">
+          <button type="button" class="move-up" data-id="${item.id}" aria-label="Move up">↑</button>
+          <button type="button" class="move-down" data-id="${item.id}" aria-label="Move down">↓</button>
+        </div>
+        <button class="secondary delete-item" data-id="${item.id}" data-file-path="${item.file_path?encodeURIComponent(item.file_path):""}">Delete</button>
+      </div>
     </article>`;
   });
   renderItemsIncrementally(cards,target);
@@ -769,9 +795,92 @@ const cards=items.map(item=>{
     }
     mediaIndexCache.items=null;
     toast("Deleted.");
-    loadFolderItems(type,folderIdOrIds,target);
+    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
   });
+
+  document.querySelectorAll(`#${target} .move-up`).forEach(btn=>btn.onclick=async()=>{
+    const idx=items.findIndex(x=>x.id===btn.dataset.id);
+    if(idx<=0) return;
+    btn.disabled=true;
+    await swapSortOrder(table,items[idx],items[idx-1]);
+    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
+  });
+  document.querySelectorAll(`#${target} .move-down`).forEach(btn=>btn.onclick=async()=>{
+    const idx=items.findIndex(x=>x.id===btn.dataset.id);
+    if(idx<0||idx>=items.length-1) return;
+    btn.disabled=true;
+    await swapSortOrder(table,items[idx],items[idx+1]);
+    loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
+  });
+  document.querySelectorAll(`#${target} .item-checkbox`).forEach(cb=>cb.onchange=()=>updateBulkBarCount(browser));
+
+  // Re-apply whichever mode (reorder/select) was already active before this
+  // re-render, so toggling a checkbox or arrow doesn't silently reset back
+  // to the plain view every time.
+  if(browser) setFolderMode(browser,type,folderIdOrIds,folderModeState[browser]||null,{skipReload:true});
   },0);
+}
+
+async function swapSortOrder(table,itemA,itemB){
+  const a = typeof itemA.sort_order === "number" ? itemA.sort_order : 0;
+  const b = typeof itemB.sort_order === "number" ? itemB.sort_order : 0;
+  await Promise.all([
+    client.from(table).update({sort_order:b}).eq("id",itemA.id),
+    client.from(table).update({sort_order:a}).eq("id",itemB.id)
+  ]);
+}
+
+// Tracks which mode (if any) is active per folder-browser element, so it
+// can be restored across re-renders (e.g. after deleting or reordering an
+// item) instead of silently dropping back to the plain view each time.
+const folderModeState = {};
+function setFolderMode(browser,type,folderIdOrIds,mode,opts){
+  folderModeState[browser]=mode;
+  const root=$(browser);
+  if(!root) return;
+  root.querySelectorAll(".content-select").forEach(el=>el.classList.toggle("hidden",mode!=="select"));
+  root.querySelectorAll(".reorder-controls").forEach(el=>el.classList.toggle("hidden",mode!=="reorder"));
+  root.querySelectorAll(".delete-item").forEach(el=>el.classList.toggle("hidden",mode==="select"||mode==="reorder"));
+  const bulkBar=root.querySelector(".bulk-bar");
+  if(bulkBar) bulkBar.classList.toggle("hidden",mode!=="select");
+  const reorderBtn=root.querySelector(".reorder-toggle");
+  const selectBtn=root.querySelector(".select-toggle");
+  const uploadBtn=root.querySelector(".upload-folder");
+  if(reorderBtn) reorderBtn.classList.toggle("active",mode==="reorder");
+  if(selectBtn) selectBtn.classList.toggle("active",mode==="select");
+  if(uploadBtn) uploadBtn.classList.toggle("hidden",mode==="select"||mode==="reorder");
+  updateBulkBarCount(browser);
+}
+function updateBulkBarCount(browser){
+  const root=$(browser);
+  if(!root) return;
+  const count=root.querySelectorAll(".item-checkbox:checked").length;
+  const countEl=root.querySelector(".bulk-bar-count");
+  if(countEl) countEl.textContent=`${count} selected`;
+}
+async function bulkDeleteSelected(browser,type,folderIdOrIds){
+  const root=$(browser);
+  const checked=[...root.querySelectorAll(".item-checkbox:checked")];
+  if(!checked.length) return toast("Nothing selected.");
+  if(!confirm(`Delete ${checked.length} item${checked.length>1?"s":""}? This cannot be undone.`)) return;
+  const table=tableMap[type];
+  const ids=checked.map(cb=>cb.dataset.id);
+  const filePaths=checked.map(cb=>cb.dataset.filePath?decodeURIComponent(cb.dataset.filePath):null).filter(Boolean);
+  const {error}=await client.from(table).delete().in("id",ids);
+  if(error){ toast(error.message); return; }
+  if(filePaths.length){
+    await b2Storage.remove(filePaths);
+    filePaths.forEach(fp=>{ videoPosterCache.delete(fp); });
+    persistVideoPosterCache();
+  }
+  mediaIndexCache.items=null;
+  toast(`Deleted ${ids.length} item${ids.length>1?"s":""}.`);
+  const target=browser+"Items";
+  const toolbarUploadBtn=root.querySelector(".upload-folder");
+  const reorderBtn=root.querySelector(".reorder-toggle");
+  const selectBtn=root.querySelector(".select-toggle");
+  folderModeState[browser]=null; // bulk delete implicitly exits select mode - nothing left selected
+  loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,reorderBtn,selectBtn,browser);
 }
 // Videos hosted in storage have no poster image, so mobile browsers show a
 // blank box until the user taps play. Grab the first frame ourselves on a
