@@ -580,17 +580,57 @@ html,body{overflow-x:hidden}
   bottom:15px !important;
 }
 
-/* Android only */
+/* Android only — scoped to body.android, so none of this touches iOS/iPhone.
+   Root cause of "cards trimmed off / upcoming event missing": this block used
+   to make the hero photo and cards BIGGER (205px / fixed 165px) than the
+   default, which pushed total Home content taller than Android's real
+   viewport. Because the bottom nav is a fixed, floating pill, the overflow
+   didn't just require a scroll — it rendered permanently underneath the nav,
+   unreachable. Shrinking these (and tightening the nav clearance below,
+   which was tuned around iPhone's ~34px safe-area-inset-bottom and left a
+   gap on Android where that inset is 0) fixes both symptoms at once. */
 body.android .family-cover{
-    height:205px !important;
-    min-height:205px !important;
-    max-height:205px !important;
+    height:150px !important;
+    min-height:150px !important;
+    max-height:150px !important;
+}
+
+body.android .family-space-grid{
+    min-height:225px !important;
 }
 
 body.android .family-space-card{
-    height:165px !important;
-    min-height:165px !important;
-    max-height:165px !important;
+    height:100% !important;
+    min-height:0 !important;
+    max-height:none !important;
+}
+
+/* Shorter bottom nav on Android, and clearance that actually matches its
+   real footprint (offset + height) instead of relying on an iPhone-style
+   safe-area inset Android mostly doesn't report. Fixes the nav overlapping/
+   sitting flush against content on every non-Home page. */
+body.android .mobile-bottom-nav{
+    height:54px !important;
+    bottom:calc(14px + env(safe-area-inset-bottom)) !important;
+}
+body.android .mobile-nav-item{
+    padding:6px 0 4px !important;
+    gap:3px !important;
+}
+body.android .mobile-nav-item .nav-ico{
+    width:22px !important;
+    height:22px !important;
+}
+body.android .mobile-nav-item small{
+    font-size:11px !important;
+}
+body.android .mobile-nav-item.add-main .add-plus{
+    width:18px !important;
+    height:18px !important;
+    margin-bottom:3px !important;
+}
+body.android .main{
+    padding-bottom:calc(76px + env(safe-area-inset-bottom)) !important;
 }
 
 /* ===== Admin page balance + avatar polish ===== */
