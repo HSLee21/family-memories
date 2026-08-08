@@ -2459,6 +2459,9 @@ async function openVideoGallery(types,label,opts){
     tryPlay();
     el.addEventListener("loadedmetadata",tryPlay,{once:true});
     el.addEventListener("canplay",tryPlay,{once:true});
+    updateMuteIcon();
+    if($("videoSeekBar")) $("videoSeekBar").value = 0;
+    if($("videoTimeLabel")) $("videoTimeLabel").textContent = "0:00 / 0:00";
   }
   videoPlayNext = () => playVideoAt(videoPlayerIndex + 1);
 
@@ -2496,6 +2499,67 @@ async function openVideoGallery(types,label,opts){
 let videoPlayerIndex = 0;
 let videoPlayNext = null;
 $("videoPlayerEl").addEventListener("ended", () => { if (videoPlayNext) videoPlayNext(); });
+
+// Custom playback controls, replacing the browser's native <video controls>
+// UI - on iOS Safari that native bar renders as an opaque light/white strip
+// that can't be restyled via CSS at all, clashing with this app's dark
+// video-player theme. These fully replace it with matching dark controls.
+function updatePlayPauseIcon(){
+  const el = $("videoPlayerEl");
+  const playIcon = $("videoPlayIcon");
+  const pauseIcon = $("videoPauseIcon");
+  if (!el || !playIcon || !pauseIcon) return;
+  playIcon.classList.toggle("hidden", !el.paused);
+  pauseIcon.classList.toggle("hidden", el.paused);
+}
+function updateMuteIcon(){
+  const el = $("videoPlayerEl");
+  const mutedIcon = $("videoMutedIcon");
+  const unmutedIcon = $("videoUnmutedIcon");
+  if (!el || !mutedIcon || !unmutedIcon) return;
+  mutedIcon.classList.toggle("hidden", !el.muted);
+  unmutedIcon.classList.toggle("hidden", el.muted);
+}
+(function(){
+  const el = $("videoPlayerEl");
+  const playPauseBtn = $("videoPlayPauseBtn");
+  const muteBtn = $("videoMuteBtn");
+  const seekBar = $("videoSeekBar");
+  const timeLabel = $("videoTimeLabel");
+  if (!el || !playPauseBtn || !muteBtn || !seekBar || !timeLabel) return;
+
+  playPauseBtn.onclick = () => { if (el.paused) el.play().catch(()=>{}); else el.pause(); };
+  // Tapping the video itself also toggles play/pause, matching the
+  // expected feel of a video player, not just the small button.
+  el.onclick = () => playPauseBtn.onclick();
+  muteBtn.onclick = () => { el.muted = !el.muted; updateMuteIcon(); };
+
+  el.addEventListener("play", updatePlayPauseIcon);
+  el.addEventListener("pause", updatePlayPauseIcon);
+  el.addEventListener("volumechange", updateMuteIcon);
+
+  let seeking = false;
+  seekBar.addEventListener("input", () => {
+    seeking = true;
+    if (el.duration) timeLabel.textContent = `${formatVideoTime(seekBar.value/100*el.duration)} / ${formatVideoTime(el.duration)}`;
+  });
+  seekBar.addEventListener("change", () => {
+    if (el.duration) el.currentTime = (seekBar.value/100) * el.duration;
+    seeking = false;
+  });
+  el.addEventListener("timeupdate", () => {
+    if (seeking || !el.duration) return;
+    seekBar.value = (el.currentTime / el.duration) * 100;
+    timeLabel.textContent = `${formatVideoTime(el.currentTime)} / ${formatVideoTime(el.duration)}`;
+  });
+})();
+function formatVideoTime(sec){
+  if (!isFinite(sec) || sec < 0) sec = 0;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s < 10 ? "0" : ""}${s}`;
+}
+
 function closeVideoOverlay(){
   $("videoOverlay").classList.add("hidden");
   const el=$("videoPlayerEl");
