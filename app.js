@@ -717,7 +717,12 @@ async function loadFolderItems(type,folderIdOrIds,target,toolbarUploadBtn,select
   const {data,error} = await query.order("sort_order",{ascending:true, nullsFirst:false}).order("created_at",{ascending:false});
   if(error){$(target).innerHTML=`<div class="empty">${escapeHtml(error.message)}</div>`;return}
   if(!data?.length){ renderEmptyFolderState(type,target); toolbarUploadBtn?.classList.add("hidden"); selectBtn?.classList.add("hidden"); return }
-  toolbarUploadBtn?.classList.remove("hidden");
+  // Respect the currently-active mode instead of unconditionally revealing
+  // Upload - otherwise every reload (e.g. after moving or deleting an item
+  // while in Select mode) briefly flashes it visible again before
+  // setFolderMode re-hides it moments later.
+  if(browser && folderModeState[browser]==="select") toolbarUploadBtn?.classList.add("hidden");
+  else toolbarUploadBtn?.classList.remove("hidden");
   selectBtn?.classList.remove("hidden");
 
   const items=await Promise.all(data.map(async item=>{
