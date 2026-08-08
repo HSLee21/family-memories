@@ -1,4 +1,4 @@
-console.log("APP.JS family-memories-v162 loaded");
+console.log("APP.JS family-memories-v163 loaded");
 const cfg = window.APP_CONFIG;
 
 // Keep the Supabase session signed in across app restarts, until the user
@@ -1849,7 +1849,7 @@ function setUsageBar(fillEl, pct){
 function renderSupabaseUsageText(){
   const gb = (supabaseUsageTracker.totalBytes / (1024*1024*1024));
   const since = new Date(supabaseUsageTracker.since).toLocaleDateString();
-  $("supabaseUsageText").textContent = `~${gb.toFixed(3)} GB transferred (${supabaseUsageTracker.requestCount} requests) since ${since}`;
+  $("supabaseUsageText").textContent = `~${gb.toFixed(3)} GB (${supabaseUsageTracker.requestCount} reqs) since ${since}`;
 }
 async function refreshB2Usage(){
   $("b2UsageText").textContent = "Checking...";
@@ -1858,9 +1858,9 @@ async function refreshB2Usage(){
     const usedGB = usedBytes / (1024*1024*1024);
     const pct = (usedGB / B2_TOTAL_GB) * 100;
     setUsageBar($("b2UsageBarFill"), pct);
-    $("b2UsageText").textContent = `${usedGB.toFixed(2)} GB / ${B2_TOTAL_GB} GB used (${pct.toFixed(0)}%)`;
+    $("b2UsageText").textContent = `${usedGB.toFixed(2)} / ${B2_TOTAL_GB} GB (${pct.toFixed(0)}%)`;
   }catch(e){
-    $("b2UsageText").textContent = "Couldn't check usage: " + e.message;
+    $("b2UsageText").textContent = "Error: " + e.message;
   }
 }
 function initStorageUsagePanel(){
@@ -1868,7 +1868,7 @@ function initStorageUsagePanel(){
   $("b2AlertThreshold").value = t.b2Pct;
   $("supabaseAlertThreshold").value = t.supabaseGB;
   renderSupabaseUsageText();
-  $("b2UsageText").textContent = "Tap Refresh to check current usage.";
+  $("b2UsageText").textContent = "Not checked yet";
   setUsageBar($("b2UsageBarFill"), 0);
 }
 if($("refreshB2UsageBtn")) $("refreshB2UsageBtn").onclick = refreshB2Usage;
