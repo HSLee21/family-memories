@@ -2063,7 +2063,7 @@ let slideshowTimer = null;
 let slideshowPlaying = true;
 let slideshowFallbackLabel = "";
 let lastSlideUrl = "";
-const musicStoragePath = (key) => `${currentUser.id}/app-settings/slideshow-music-${key||"all"}`;
+const musicStoragePath = (key) => `family/app-settings/slideshow-music-${key||"all"}`;
 let slideshowMusicKey = "all";
 let slideshowHasMusic = false;
 let loadedMusicKey = null; // which key's audio is currently loaded into the <audio> element,

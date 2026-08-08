@@ -82,6 +82,23 @@ function ownsPath(userId, path) {
   return typeof path === "string" && (path === userId || path.startsWith(`${userId}/`));
 }
 
+// Paths any approved family member may write to, despite not being inside
+// their own "<user_id>/..." folder - deliberately a short explicit list,
+// not a broad pattern, so this stays a narrow exception rather than a hole.
+// Anyone approved (checked before this is ever consulted) can overwrite
+// these; that's intentional since they're meant to be one shared family
+// setting (e.g. slideshow background music), not owned by whoever
+// uploaded first.
+const SHARED_FAMILY_PATHS = [
+  "family/app-settings/slideshow-music-all",
+  "family/app-settings/slideshow-music-memory",
+  "family/app-settings/slideshow-music-trip",
+  "family/app-settings/slideshow-music-celebration"
+];
+function isSharedFamilyPath(path) {
+  return typeof path === "string" && SHARED_FAMILY_PATHS.includes(path);
+}
+
 function b2Endpoint(env) {
   // e.g. https://s3.us-west-004.backblazeb2.com
   return `https://s3.${env.B2_REGION}.backblazeb2.com`;
@@ -105,7 +122,7 @@ async function handleUpload(request, env, user) {
   const path = url.searchParams.get("path");
   const contentType = url.searchParams.get("contentType") || request.headers.get("content-type") || "application/octet-stream";
   if (!path) return json({ error: "path query param is required" }, 400);
-  if (!ownsPath(user.id, path)) {
+  if (!ownsPath(user.id, path) && !isSharedFamilyPath(path)) {
     return json({ error: "You can only upload inside your own folder." }, 403);
   }
 
@@ -126,7 +143,7 @@ async function handleUpload(request, env, user) {
 async function handleSignUpload(request, env, user) {
   const { path, contentType } = await request.json();
   if (!path) return json({ error: "path is required" }, 400);
-  if (!ownsPath(user.id, path)) {
+  if (!ownsPath(user.id, path) && !isSharedFamilyPath(path)) {
     return json({ error: "You can only upload inside your own folder." }, 403);
   }
 
