@@ -492,7 +492,7 @@ async function openFolder(section,folder){
     ${isUncategorized ? '<p class="muted folder-toolbar-desc">'+escapeHtml(folder.description||"")+'</p>' : ""}
     ${isUncategorized ? "" : '<button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-cloud-icon"><path d="M7 18a4.6 4.4 0 0 1-1.5-8.8 5.5 5.5 0 0 1 10.8-1.5 4.5 4.5 0 0 1 1.2 8.9"/><path d="M12 12v8"/><path d="m8.5 15.5 3.5-3.5 3.5 3.5"/></svg>+ Upload</button>'}
   </div><div class="bulk-bar hidden">
-    <span class="bulk-bar-count">0 selected</span>
+    <span class="bulk-bar-count">0 Selected</span>
     <div class="bulk-actions">
     <button type="button" class="move-btn move-left" aria-label="Move left"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></button>
     <button type="button" class="move-btn move-up" aria-label="Move up"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
@@ -835,7 +835,7 @@ function updateBulkBarCount(browser){
   if(!root) return;
   const count=root.querySelectorAll(".item-checkbox:checked").length;
   const countEl=root.querySelector(".bulk-bar-count");
-  if(countEl) countEl.textContent=`${count} selected`;
+  if(countEl) countEl.textContent=`${count} Selected`;
   // Moving only makes sense for exactly one selected item at a time - a
   // grid has no single well-defined meaning for "move 3 different photos
   // left simultaneously". Delete works fine for any number, so it's left
