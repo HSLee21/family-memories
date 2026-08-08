@@ -493,10 +493,10 @@ async function openFolder(section,folder){
     ${isUncategorized ? "" : '<button class="secondary select-toggle hidden">☑ Select</button><button class="primary upload-folder hidden"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-cloud-icon"><path d="M7 18a4.6 4.4 0 0 1-1.5-8.8 5.5 5.5 0 0 1 10.8-1.5 4.5 4.5 0 0 1 1.2 8.9"/><path d="M12 12v8"/><path d="m8.5 15.5 3.5-3.5 3.5 3.5"/></svg>+ Upload</button>'}
   </div><div class="bulk-bar hidden">
     <span class="bulk-bar-count">0 selected</span>
-    <button type="button" class="move-btn move-left" aria-label="Move left">←</button>
-    <button type="button" class="move-btn move-up" aria-label="Move up">↑</button>
-    <button type="button" class="move-btn move-down" aria-label="Move down">↓</button>
-    <button type="button" class="move-btn move-right" aria-label="Move right">→</button>
+    <button type="button" class="move-btn move-left" aria-label="Move left"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg></button>
+    <button type="button" class="move-btn move-up" aria-label="Move up"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
+    <button type="button" class="move-btn move-down" aria-label="Move down"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
+    <button type="button" class="move-btn move-right" aria-label="Move right"><svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
     <button type="button" class="bulk-delete">🗑 Delete</button>
   </div><div id="${browser}Items" class="content-grid"></div>`;
   $(browser).querySelector(".back-folders").onclick=()=>loadFolders(section);
